@@ -33,8 +33,34 @@ function setup() {
     "createdAt", "updatedAt", "folderUrl", "folderId"
   ];
   
+  sheet.clear();
   sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
   sheet.setFrozenRows(1);
+
+  // Add dummy data on setup
+  const dummyVendors = [
+    {
+      id: "V001", name: "Teckno Systems Ltd", requestType: "New",
+      addr_floor: "Level 4, Orion Tower", addr_street: "12th Main Road", addr_city: "Bangalore", addr_state: "Karnataka", addr_pin: "560001", addr_country: "India", addr_mobile: "+91 98765 43210", addr_email: "contact@tecknosys.com",
+      cont_name: "Rahul Sharma", cont_desig: "Sales Director", cont_email: "rahul@tecknosys.com",
+      type: "Goods", establishmentYear: "2015", constitution: "Private Limited",
+      pan: "ABCDE1234F", gstin: "29ABCDE1234F1Z5", compoundingDealer: "NO", bank_beneficiary: "Teckno Systems Ltd", bank_name: "HDFC Bank", bank_account: "50100234567890", bank_ifsc: "HDFC0000001",
+      currency: "INR", creditTerms: "NET 30"
+    },
+    {
+      id: "V002", name: "Global Logistics Solutions", requestType: "Change",
+      addr_floor: "Plot 45", addr_street: "Nh 8, Industrial Area", addr_city: "Gurgaon", addr_state: "Haryana", addr_pin: "122001", addr_country: "India", addr_mobile: "+91 88888 77777", addr_email: "ops@globallogistics.in",
+      cont_name: "Amit Verma", cont_desig: "Operations Manager", cont_email: "amit@globallogistics.in",
+      type: "Services", establishmentYear: "2010", constitution: "LLP",
+      pan: "GHIJK5678L", gstin: "06GHIJK5678L1Z1", compoundingDealer: "NO", bank_beneficiary: "Global Logistics Solutions", bank_name: "ICICI Bank", bank_account: "000105001234", bank_ifsc: "ICIC0000001",
+      currency: "INR", creditTerms: "NET 45"
+    }
+  ];
+
+  dummyVendors.forEach(v => {
+    const row = headers.map(h => v[h] || (h === "createdAt" || h === "updatedAt" ? new Date() : ""));
+    sheet.appendRow(row);
+  });
 }
 
 function doGet(e) {

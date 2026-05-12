@@ -7,7 +7,7 @@ import express from 'express';
 import axios from 'axios';
 import { createServer as createViteServer } from 'vite';
 import path from 'path';
-import { DUMMY_VENDORS } from './src/dummyData';
+// import { DUMMY_VENDORS } from './src/dummyData';
 
 async function startServer() {
   const app = express();
@@ -49,14 +49,14 @@ async function startServer() {
     console.log('GET /api/vendors');
     try {
       if (!SCRIPT_URL) {
-        console.log('No SCRIPT_URL, returning DUMMY_VENDORS');
-        return res.json(DUMMY_VENDORS);
+        console.log('No SCRIPT_URL, returning empty list');
+        return res.json([]);
       }
       const data = await callScript('list');
       res.json(data);
     } catch (error) {
       console.error('Error fetching vendors:', error);
-      res.json(DUMMY_VENDORS);
+      res.json([]);
     }
   });
 

@@ -1,5 +1,4 @@
 import { configureStore, createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { DUMMY_VENDORS } from './dummyData';
 import axios from 'axios';
 import type { Vendor } from './types/vendor';
 
@@ -30,7 +29,7 @@ export const loadVendors = createAsyncThunk('vendors/fetchAll', async () => {
     // On static hosts without script URL, skip backend call
     if (isStaticHost && !scriptUrl) {
       const stored = localStorage.getItem('vendor_registry');
-      return stored ? JSON.parse(stored) : DUMMY_VENDORS;
+      return stored ? JSON.parse(stored) : [];
     }
 
     const res = await axios.get('/api/vendors');
@@ -41,15 +40,15 @@ export const loadVendors = createAsyncThunk('vendors/fetchAll', async () => {
       if (Array.isArray(data.vendors)) return data.vendors;
       if (Array.isArray(data.data)) return data.data;
     }
-    return Array.isArray(data) ? data : DUMMY_VENDORS;
+    return Array.isArray(data) ? data : [];
   } catch (error) {
     if (isStaticHost || (axios.isAxiosError(error) && (error.response?.status === 404 || error.response?.status === 405))) {
       console.warn('Synchronous server not found, falling back to client-side persistence');
       const stored = localStorage.getItem('vendor_registry');
-      return stored ? JSON.parse(stored) : DUMMY_VENDORS;
+      return stored ? JSON.parse(stored) : [];
     }
     console.error('Fetch error in store:', error);
-    return DUMMY_VENDORS;
+    return [];
   }
 });
 
@@ -102,7 +101,7 @@ export const addBulkVendors = createAsyncThunk('vendors/bulkAdd', async (vendors
       });
     }
     const stored = localStorage.getItem('vendor_registry');
-    const current = stored ? JSON.parse(stored) : DUMMY_VENDORS;
+    const current = stored ? JSON.parse(stored) : [];
     const updated = [...vendors, ...current];
     localStorage.setItem('vendor_registry', JSON.stringify(updated));
     return vendors;
@@ -114,7 +113,7 @@ export const addBulkVendors = createAsyncThunk('vendors/bulkAdd', async (vendors
 const vendorSlice = createSlice({
   name: 'vendors',
   initialState: {
-    items: DUMMY_VENDORS as Vendor[],
+    items: [] as Vendor[],
     loading: false,
     error: null as string | null,
     systemHealth: { status: 'demo', db: 'demo' },
@@ -131,7 +130,7 @@ const vendorSlice = createSlice({
       })
       .addCase(loadVendors.fulfilled, (state, action) => {
         state.loading = false;
-        state.items = Array.isArray(action.payload) ? action.payload : DUMMY_VENDORS;
+        state.items = Array.isArray(action.payload) ? action.payload : [];
       })
       .addCase(loadVendors.rejected, (state) => {
         state.loading = false;

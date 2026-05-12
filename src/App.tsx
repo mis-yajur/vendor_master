@@ -87,7 +87,7 @@ import {
   addBulkVendors as bulkAddThunk
 } from './store';
 
-import { DUMMY_VENDORS } from './dummyData';
+// 
 
 const getScriptUrl = () => {
   const custom = localStorage.getItem('VITE_GOOGLE_SCRIPT_URL');
@@ -152,7 +152,7 @@ const apiCall = async (action: string, data: any = {}) => {
     if (action === 'list') {
       if (isStaticHost) {
         const stored = localStorage.getItem('vendor_registry');
-        return stored ? JSON.parse(stored) : DUMMY_VENDORS;
+        return stored ? JSON.parse(stored) : [];
       }
 
       try {
@@ -161,14 +161,14 @@ const apiCall = async (action: string, data: any = {}) => {
       } catch (err) {
         console.warn('Backend unavailable, using LocalStorage repository');
         const stored = localStorage.getItem('vendor_registry');
-        return stored ? JSON.parse(stored) : DUMMY_VENDORS;
+        return stored ? JSON.parse(stored) : [];
       }
     }
     
     if (action === 'add') {
       if (isStaticHost) {
         const stored = localStorage.getItem('vendor_registry');
-        const current = stored ? JSON.parse(stored) : DUMMY_VENDORS;
+        const current = stored ? JSON.parse(stored) : [];
         const updated = [data.vendor, ...current];
         localStorage.setItem('vendor_registry', JSON.stringify(updated));
         return { success: true, mode: 'local_persistence' };
@@ -179,7 +179,7 @@ const apiCall = async (action: string, data: any = {}) => {
         return res.data;
       } catch (err) {
         const stored = localStorage.getItem('vendor_registry');
-        const current = stored ? JSON.parse(stored) : DUMMY_VENDORS;
+        const current = stored ? JSON.parse(stored) : [];
         const updated = [data.vendor, ...current];
         localStorage.setItem('vendor_registry', JSON.stringify(updated));
         return { success: true, mode: 'local_persistence' };
@@ -203,7 +203,7 @@ const apiCall = async (action: string, data: any = {}) => {
     console.error(`apiCall ${action} failure:`, error);
     if (action === 'list') {
       const stored = localStorage.getItem('vendor_registry');
-      return stored ? JSON.parse(stored) : DUMMY_VENDORS;
+      return stored ? JSON.parse(stored) : [];
     }
     if (action === 'health') return { status: 'offline', db: 'disconnected' };
     throw error;
