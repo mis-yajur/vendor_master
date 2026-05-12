@@ -471,33 +471,33 @@ function Layout({ children, systemHealth, onLogout }: { children: React.ReactNod
   return (
     <div className="min-h-screen bg-[var(--theme-bg)] font-sans flex flex-col transition-colors duration-500">
       {/* Top bar with Navigation */}
-      <header className="h-32 bg-[var(--theme-nav)] text-white flex items-center justify-between px-12 sticky top-0 z-50 border-b border-white/10 shadow-2xl transition-all duration-500">
-         <div className="flex items-center gap-24">
-            <Link to="/" className="flex items-center gap-6 group">
-              <div className="h-16 w-16 items-center justify-center rounded-[1.5rem] bg-[var(--theme-primary)] text-white shadow-2xl shadow-indigo-500/20 flex transform group-hover:rotate-6 transition-all duration-300">
-                <Building2 className="h-9 w-9" />
+      <header className="h-36 bg-[var(--theme-nav)] text-white flex items-center justify-between px-16 sticky top-0 z-50 border-b border-white/10 shadow-2xl transition-all duration-500">
+         <div className="flex items-center gap-28">
+            <Link to="/" className="flex items-center gap-7 group">
+              <div className="h-18 w-18 items-center justify-center rounded-[1.75rem] bg-[var(--theme-primary)] text-white shadow-2xl shadow-indigo-500/20 flex transform group-hover:rotate-6 transition-all duration-300">
+                <Building2 className="h-10 w-10" />
               </div>
               <div className="flex flex-col">
-                <span className="text-5xl font-black tracking-tighter text-white leading-none font-display uppercase italic">
+                <span className="text-6xl font-black tracking-tighter text-white leading-none font-display uppercase italic">
                   YAJUR<span className="text-[var(--theme-accent)] not-italic opacity-90">PORTAL</span>
                 </span>
-                <span className="text-[12px] font-bold uppercase tracking-[0.6em] text-slate-500 mt-2.5">Vendor Master v2.5</span>
+                <span className="text-[13px] font-bold uppercase tracking-[0.7em] text-slate-500 mt-3">Vendor Master v2.6</span>
               </div>
             </Link>
 
-            <nav className="hidden xl:flex items-center gap-4 h-full">
+            <nav className="hidden xl:flex items-center gap-6 h-full">
               {navItems.map((item) => (
                 <Link
                   key={item.path}
                    to={item.path}
                    className={cn(
-                     "flex items-center gap-5 px-10 py-5 rounded-[2rem] text-[18px] font-black uppercase tracking-widest transition-all duration-300 active:scale-95",
+                     "flex items-center gap-6 px-12 py-6 rounded-[2.5rem] text-[20px] font-black uppercase tracking-widest transition-all duration-300 active:scale-95",
                      location.pathname === item.path 
                        ? "bg-[var(--theme-primary)] text-white shadow-2xl shadow-indigo-900/40 ring-1 ring-white/20" 
                        : "text-slate-400 hover:text-white hover:bg-white/5 font-bold"
                    )}
                  >
-                   <item.icon className={cn("h-7 w-7", location.pathname === item.path ? "text-white" : "text-slate-500")} />
+                   <item.icon className={cn("h-8 w-8", location.pathname === item.path ? "text-white" : "text-slate-500")} />
                    <span>{item.label}</span>
                  </Link>
                ))}
@@ -599,11 +599,11 @@ function Dashboard({ vendors = [], health }: any) {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: idx * 0.05 }}
-            className="group bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl hover:border-indigo-100 transition-all cursor-default relative overflow-hidden"
+            className="group bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl hover:border-[var(--theme-primary)]/20 transition-all cursor-default relative overflow-hidden"
           >
             <div className={cn(
               "absolute top-0 right-0 h-24 w-24 -mr-8 -mt-8 rounded-full blur-3xl opacity-0 group-hover:opacity-20 transition-opacity",
-              stat.color === 'indigo' ? "bg-indigo-600" :
+              stat.color === 'indigo' ? "bg-[var(--theme-primary)]" :
               stat.color === 'emerald' ? "bg-emerald-600" :
               stat.color === 'amber' ? "bg-amber-600" : "bg-rose-600"
             )} />
@@ -611,7 +611,7 @@ function Dashboard({ vendors = [], health }: any) {
             <div className="flex items-center justify-between mb-4 relative z-10">
               <div className={cn(
                 "h-10 w-10 rounded-xl flex items-center justify-center transition-all group-hover:scale-110 shadow-sm",
-                stat.color === 'indigo' ? "bg-indigo-50 text-indigo-600 border border-indigo-100" :
+                stat.color === 'indigo' ? "bg-[var(--theme-primary)]/10 text-[var(--theme-primary)] border border-[var(--theme-primary)]/20" :
                 stat.color === 'emerald' ? "bg-emerald-50 text-emerald-600 border border-emerald-100" :
                 stat.color === 'amber' ? "bg-amber-50 text-amber-600 border border-amber-100" : 
                 "bg-rose-50 text-rose-600 border border-rose-100"
@@ -637,7 +637,7 @@ function Dashboard({ vendors = [], health }: any) {
 
       <div className="grid lg:grid-cols-12 gap-8">
         <div className="lg:col-span-8 bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden min-h-[500px] flex flex-col relative">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 blur-3xl rounded-full -mr-16 -mt-16" />
+          <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--theme-primary)]/5 blur-3xl rounded-full -mr-16 -mt-16" />
           
           <div className="px-8 py-7 border-b border-slate-50 flex items-center justify-between relative z-10">
             <div>
@@ -731,7 +731,7 @@ function Dashboard({ vendors = [], health }: any) {
                        <Plus className="h-7 w-7" />
                     </div>
                     <h3 className="text-2xl font-black font-display mb-3 tracking-tighter italic uppercase">Terminal Entry</h3>
-                    <p className="text-indigo-100 text-[13px] font-medium mb-10">Initialize secure onboarding protocol for new enterprise entity.</p>
+                    <p className="text-white/80 text-[13px] font-medium mb-10">Initialize secure onboarding protocol for new enterprise entity.</p>
                  </div>
                  <button 
                   onClick={() => navigate('/register')}
@@ -753,14 +753,14 @@ function StatCard({ title, value, icon: Icon, trend, color }: any) {
     amber: "bg-amber-400 shadow-amber-100",
     rose: "bg-rose-500 shadow-rose-100",
     emerald: "bg-emerald-500 shadow-emerald-100",
-    indigo: "bg-[#4069FF] shadow-indigo-100"
+    indigo: "bg-[var(--theme-primary)] shadow-indigo-100"
   };
 
   const labels: any = {
     amber: "bg-amber-500",
     rose: "bg-rose-600",
     emerald: "bg-emerald-600",
-    indigo: "bg-[#2C5EFF]"
+    indigo: "bg-[var(--theme-accent)]"
   };
 
   return (
@@ -1871,7 +1871,7 @@ function SettingsView({ health, currentTheme, onThemeChange }: { health: any, cu
           {/* Theme Palette Section */}
           <section className="space-y-8">
               <div className="flex items-center gap-4 pb-4 border-b border-slate-100">
-                <Palette className="h-5 w-5 text-indigo-500" />
+                <Palette className="h-5 w-5 text-[var(--theme-primary)]" />
                 <h3 className="text-lg font-bold text-slate-900 font-display uppercase tracking-widest italic">Aesthetic Protocols</h3>
               </div>
               
@@ -1914,7 +1914,7 @@ function SettingsView({ health, currentTheme, onThemeChange }: { health: any, cu
           <section className="space-y-8">
               <div className="flex items-center justify-between pb-4 border-b border-slate-100">
                 <div className="flex items-center gap-4">
-                  <Database className="h-5 w-5 text-indigo-500" />
+                  <Database className="h-5 w-5 text-[var(--theme-primary)]" />
                   <h3 className="text-lg font-bold text-slate-900 font-display uppercase tracking-widest italic">Core Connectivity</h3>
                 </div>
                 {health.db === 'disconnected' && (
@@ -1925,7 +1925,7 @@ function SettingsView({ health, currentTheme, onThemeChange }: { health: any, cu
               <div className="bg-slate-50 p-8 rounded-[2rem] border border-slate-100 shadow-inner space-y-6">
                 <div>
                   <h4 className="text-[12px] font-black text-slate-900 uppercase tracking-widest flex items-center gap-2 mb-2">
-                    <ExternalLink className="h-4 w-4 text-indigo-500" />
+                    <ExternalLink className="h-4 w-4 text-[var(--theme-primary)]" />
                     Web App URL Override
                   </h4>
                   <p className="text-[11px] text-slate-500 font-medium leading-relaxed max-w-2xl">
@@ -1940,7 +1940,7 @@ function SettingsView({ health, currentTheme, onThemeChange }: { health: any, cu
                       placeholder="https://script.google.com/macros/s/.../exec"
                       value={customUrl}
                       onChange={(e) => setCustomUrl(e.target.value)}
-                      className="w-full bg-white border border-slate-200 rounded-xl py-3.5 px-5 text-[13px] font-mono text-slate-700 focus:ring-4 focus:ring-indigo-50 focus:border-indigo-600 transition-all outline-none"
+                      className="w-full bg-white border border-slate-200 rounded-xl py-3.5 px-5 text-[13px] font-mono text-slate-700 focus:ring-4 focus:ring-[var(--theme-primary)]/10 focus:border-[var(--theme-primary)] transition-all outline-none"
                     />
                     {customUrl && (
                       <button 

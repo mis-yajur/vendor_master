@@ -11,6 +11,8 @@ function setup() {
   let sheet = ss.getSheetByName("Vendors");
   if (!sheet) {
     sheet = ss.insertSheet("Vendors");
+  } else {
+    sheet.clear();
   }
   
   const headers = [
@@ -28,6 +30,35 @@ function setup() {
   
   sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
   sheet.setFrozenRows(1);
+
+  // Add dummy data for first-time visibility
+  const dummyRows = [
+    [
+      "VND-001", "New", "Alpha Systems Inc",
+      "Penthouse", "Tech Road", "San Jose", "Silicon Valley", "95110", "CA", "USA", "1234567890", "", "0987654321", "contact@alpha.com",
+      "John Doe", "Director", "1234567890", "", "john@alpha.com",
+      "Service", "2010", "Private Limited",
+      "CIN123456", "TL-999", "PAN-ALPHA", "27AAAAA0000A1Z5", "", "No", "MSME-111", "", "", "", "", "",
+      "", "",
+      "Alpha Systems", "Bank of America", "123456789", "Main Branch", "123 Wall St", "Current", "BOFAUS3N", "", "bank@alpha.com",
+      "USD", "Net 30",
+      "", "", "", "", "", "",
+      new Date(), new Date(), "", ""
+    ],
+    [
+      "VND-002", "Update", "Global Logistics Ltd",
+      "Building 4", "Harbor Way", "Mumbai", "Mumbai Suburban", "400001", "Maharashtra", "India", "2223334444", "", "9876543210", "info@global.in",
+      "Anita Sharma", "Operations Manager", "2223334444", "", "anita@global.in",
+      "Logistics", "2005", "Partnership",
+      "", "TL-888", "PAN-GLOBAL", "27BBBBB0000B1Z5", "", "Yes", "", "", "", "", "", "",
+      "", "",
+      "Global Logistics", "HDFC Bank", "987654321", "BKC Branch", "BKC G Block", "Current", "HDFC000123", "", "acc@global.in",
+      "INR", "Net 45",
+      "", "", "", "", "", "",
+      new Date(), new Date(), "", ""
+    ]
+  ];
+  sheet.getRange(2, 1, dummyRows.length, headers.length).setValues(dummyRows);
 }
 
 function doGet(e) {
