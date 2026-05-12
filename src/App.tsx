@@ -197,95 +197,114 @@ export default function App() {
 
 function Layout({ children, systemHealth }: { children: React.ReactNode, systemHealth: any }) {
   const location = useLocation();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   const navItems = [
-    { path: '/', label: 'Dashboard', icon: LayoutDashboard },
+    { path: '/', label: 'Overview', icon: LayoutDashboard },
     { path: '/vendors', label: 'Vendor Registry', icon: Users },
     { path: '/register', label: 'New Onboarding', icon: Plus },
     { path: '/settings', label: 'System Settings', icon: Settings },
   ];
 
   return (
-    <div className="min-h-screen bg-[#F8F9FD] font-sans">
-      {/* Top Header */}
-      <header className="h-24 bg-white border-b border-slate-100 flex items-center justify-between px-8 md:px-16 sticky top-0 z-40 shadow-sm">
-         <div className="flex items-center gap-12">
-            <Link to="/" className="flex items-center gap-3 group">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-600 text-white shadow-xl group-hover:scale-105 transition-transform">
-                <Building2 className="h-7 w-7" />
-              </div>
+    <div className="min-h-screen bg-[#f8fafc] font-sans flex overflow-hidden">
+      {/* Sidebar */}
+      <motion.aside 
+        initial={false}
+        animate={{ width: isSidebarOpen ? 280 : 80 }}
+        className="bg-[#0f172a] text-slate-400 flex flex-col relative z-50 border-r border-slate-800"
+      >
+        <div className="h-20 flex items-center px-6 mb-8 border-b border-slate-800/50">
+          <Link to="/" className="flex items-center gap-3 overflow-hidden whitespace-nowrap">
+            <div className="flex-shrink-0 h-10 w-10 items-center justify-center rounded-xl bg-indigo-500 text-white shadow-lg shadow-indigo-500/20 flex">
+              <Building2 className="h-6 w-6" />
+            </div>
+            {isSidebarOpen && (
               <div className="flex flex-col">
-                <span className="text-2xl font-black tracking-tighter text-slate-900 leading-none">
-                  Yajur<span className="text-indigo-600">Portal</span>
+                <span className="text-xl font-bold tracking-tight text-white leading-none font-display">
+                  Yajur<span className="text-indigo-400">Portal</span>
                 </span>
-                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mt-1">Vendor Onboarding</span>
+                <span className="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 mt-1">Vendor Master</span>
               </div>
-            </Link>
-
-            <nav className="hidden xl:flex items-center gap-1">
-              {navItems.map((item) => (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  className={cn(
-                    "px-6 py-2.5 rounded-2xl text-[13px] font-bold transition-all flex items-center gap-2.5",
-                    location.pathname === item.path 
-                      ? "bg-indigo-600 text-white shadow-lg shadow-indigo-200" 
-                      : "text-slate-500 hover:text-indigo-600 hover:bg-indigo-50/50"
-                  )}
-                >
-                  <item.icon className="h-4 w-4" />
-                  <span>{item.label}</span>
-                </Link>
-              ))}
-            </nav>
-         </div>
-
-         <div className="flex items-center gap-6">
-            <div className="hidden md:flex items-center gap-8 mr-8">
-               <div className="flex items-center gap-3 px-4 py-2 bg-slate-50 rounded-2xl border border-slate-100">
-                 <div className={cn("h-2.5 w-2.5 rounded-full", systemHealth.db !== 'disconnected' ? "bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]" : "bg-rose-500")} />
-                 <span className="text-[11px] font-black uppercase tracking-widest text-slate-500">{systemHealth.db !== 'disconnected' ? 'Cloud Sync Active' : 'Offline'}</span>
-               </div>
-               <button className="p-2.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-2xl transition-all relative">
-                 <Bell className="h-5 w-5" />
-                 <span className="absolute top-2 right-2 h-2.5 w-2.5 bg-rose-500 rounded-full border-2 border-white" />
-               </button>
-            </div>
-            
-            <div className="h-10 w-px bg-slate-100 hidden sm:block" />
-            
-            <div className="flex items-center gap-4 cursor-pointer group pl-2">
-              <div className="text-right hidden sm:block">
-                 <p className="text-[13px] font-black text-slate-900 group-hover:text-indigo-600 transition-colors uppercase tracking-tight">Prosun Majhi</p>
-                 <p className="text-[9px] font-bold text-slate-400 uppercase tracking-[0.15em] mt-0.5">Global Admin</p>
-              </div>
-              <div className="h-12 w-12 rounded-2xl bg-indigo-50 border-2 border-white shadow-md overflow-hidden flex items-center justify-center transition-all group-hover:shadow-lg">
-                <User className="h-7 w-7 text-indigo-400" />
-              </div>
-            </div>
-         </div>
-      </header>
-
-      {/* Main Content */}
-      <main className="max-w-[1600px] mx-auto p-6 md:p-14">
-         {children}
-      </main>
-
-      {/* Mobile Nav */}
-      <div className="xl:hidden fixed bottom-8 left-1/2 -translate-x-1/2 bg-white/90 backdrop-blur-2xl border border-white/50 shadow-2xl rounded-[2.5rem] px-5 py-4 flex items-center gap-4 z-50">
-        {navItems.map((item) => (
-          <Link
-            key={item.path}
-            to={item.path}
-            className={cn(
-              "p-4 rounded-2xl transition-all",
-              location.pathname === item.path ? "bg-indigo-600 text-white shadow-xl shadow-indigo-100" : "text-slate-400 hover:bg-slate-50"
             )}
-          >
-            <item.icon className="h-6 w-6" />
           </Link>
-        ))}
+        </div>
+
+        <nav className="flex-1 px-4 space-y-2">
+          {navItems.map((item) => (
+            <Link
+              key={item.path}
+              to={item.path}
+              className={cn(
+                "group flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all overflow-hidden whitespace-nowrap",
+                location.pathname === item.path 
+                  ? "bg-indigo-600 text-white shadow-lg shadow-indigo-600/20" 
+                  : "hover:bg-slate-800 hover:text-slate-200"
+              )}
+            >
+              <item.icon className={cn("h-5 w-5 flex-shrink-0", location.pathname === item.path ? "text-white" : "group-hover:text-indigo-400")} />
+              {isSidebarOpen && <span>{item.label}</span>}
+            </Link>
+          ))}
+        </nav>
+
+        <div className="p-4 border-t border-slate-800/50">
+          <div className="bg-slate-800/40 rounded-2xl p-4 flex items-center gap-3 overflow-hidden">
+             <div className="h-10 w-10 rounded-xl bg-indigo-500/20 flex items-center justify-center flex-shrink-0">
+               <User className="h-5 w-5 text-indigo-400" />
+             </div>
+             {isSidebarOpen && (
+               <div className="overflow-hidden">
+                 <p className="text-xs font-bold text-white truncate">Prosun Majhi</p>
+                 <p className="text-[10px] text-slate-500 truncate">Global Admin</p>
+               </div>
+             )}
+          </div>
+        </div>
+
+        <button 
+          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+          className="absolute -right-3 top-24 h-6 w-6 bg-indigo-600 text-white rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-all border-4 border-[#f8fafc] z-[60]"
+        >
+          {isSidebarOpen ? <ChevronRight className="h-3 w-3 rotate-180" /> : <ChevronRight className="h-3 w-3" />}
+        </button>
+      </motion.aside>
+
+      {/* Main Container */}
+      <div className="flex-1 flex flex-col h-screen overflow-hidden">
+        {/* Top bar */}
+        <header className="h-20 bg-white/80 backdrop-blur-md border-b border-slate-200 flex items-center justify-between px-8 sticky top-0 z-40">
+           <div className="flex items-center gap-4">
+              <h1 className="text-lg font-bold text-slate-800 font-display">
+                {navItems.find(i => i.path === location.pathname)?.label || 'Page'}
+              </h1>
+           </div>
+
+           <div className="flex items-center gap-6">
+              <div className="flex items-center gap-6 pr-6 border-r border-slate-100">
+                 <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 rounded-full">
+                    <div className={cn("h-2 w-2 rounded-full", systemHealth.db !== 'disconnected' ? "bg-emerald-500" : "bg-rose-500")} />
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">{systemHealth.db !== 'disconnected' ? 'Cloud Live' : 'Offline'}</span>
+                 </div>
+                 <button className="relative p-2 text-slate-400 hover:text-indigo-600 transition-colors">
+                    <Bell className="h-5 w-5" />
+                    <span className="absolute top-1.5 right-1.5 h-2 w-2 bg-rose-500 rounded-full border-2 border-white" />
+                 </button>
+              </div>
+              <div className="flex items-center gap-3">
+                 <div className="h-10 w-10 rounded-full bg-slate-100 flex items-center justify-center border-2 border-white shadow-sm overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop&q=80" alt="Avatar" className="h-full w-full object-cover" />
+                 </div>
+              </div>
+           </div>
+        </header>
+
+        {/* Content Area */}
+        <main className="flex-1 overflow-y-auto p-8 relative">
+           <div className="w-full max-w-full">
+             {children}
+           </div>
+        </main>
       </div>
     </div>
   );
@@ -296,143 +315,146 @@ function Dashboard({ vendors = [] }: any) {
   const vendorsArray = Array.isArray(vendors) ? vendors : [];
 
   const stats = [
-    { label: 'Total Active Vendors', value: vendorsArray.length.toString(), icon: Users, color: 'indigo', description: 'Verified registry' },
-    { label: 'Goods Suppliers', value: vendorsArray.filter(v => v.statutory?.vendorType === 'Goods').length.toString(), icon: Box, color: 'emerald', description: 'Material partners' },
-    { label: 'Service Providers', value: vendorsArray.filter(v => v.statutory?.vendorType === 'Services').length.toString(), icon: Activity, color: 'amber', description: 'Service contracts' },
-    { label: 'New Requests', value: vendorsArray.filter(v => v.requestType === 'New').length.toString(), icon: Plus, color: 'rose', description: 'Pending review' },
-    { label: 'Address Changes', value: vendorsArray.filter(v => v.requestType === 'Change').length.toString(), icon: RefreshCw, color: 'blue', description: 'Details update' },
-    { label: 'Recent Onboarding', value: vendorsArray.filter(v => new Date(v.createdAt).getTime() > Date.now() - 86400000 * 7).length.toString(), icon: Clock, color: 'purple', description: 'Last 7 days' },
+    { label: 'Active Registry', value: vendorsArray.length.toString(), icon: Users, color: 'indigo', description: 'Verified partners' },
+    { label: 'Material Supply', value: vendorsArray.filter(v => v.statutory?.vendorType === 'Goods').length.toString(), icon: Box, color: 'emerald', description: 'Goods vendors' },
+    { label: 'Key Services', value: vendorsArray.filter(v => v.statutory?.vendorType === 'Services').length.toString(), icon: Activity, color: 'amber', description: 'Service providers' },
+    { label: 'Pending Review', value: vendorsArray.filter(v => v.requestType === 'New').length.toString(), icon: Clock, color: 'rose', description: 'Queue' },
   ];
 
   return (
-    <div className="space-y-12">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-2">
+    <div className="space-y-8">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-indigo-600 mb-3 ml-1">Platform Overview</h2>
-          <h1 className="text-5xl font-black text-slate-900 tracking-tighter">Vendor Command <span className="text-slate-300">Center</span></h1>
+          <h2 className="text-3xl font-bold text-slate-800 font-display flex items-center gap-3">
+             Command Center
+             <span className="px-2 py-0.5 bg-indigo-100 text-indigo-600 text-[10px] font-black uppercase rounded-lg tracking-widest">v2.0</span>
+          </h2>
+          <p className="text-slate-500 text-sm mt-1">Monitor vendor health and onboarding performance in real-time.</p>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           <button 
             onClick={() => navigate('/vendors')}
-            className="px-8 py-5 bg-white text-slate-600 rounded-[2rem] text-[13px] font-black uppercase tracking-widest hover:bg-slate-50 border border-slate-100 shadow-xl shadow-slate-100/50 transition-all"
+            className="px-5 py-2.5 bg-white text-slate-700 rounded-xl text-sm font-bold border border-slate-200 shadow-sm hover:bg-slate-50 transition-all active:scale-95"
           >
-            Manage Registry
+            Manage Fleet
           </button>
           <button 
             onClick={() => navigate('/register')}
-            className="px-10 py-5 bg-indigo-600 text-white rounded-[2rem] text-[13px] font-black uppercase tracking-widest hover:bg-indigo-700 shadow-2xl shadow-indigo-200 active:scale-95 transition-all flex items-center gap-4"
+            className="px-6 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-bold shadow-lg shadow-indigo-600/20 hover:bg-indigo-700 transition-all flex items-center gap-2 active:scale-95"
           >
-            <div className="h-6 w-6 rounded-lg bg-white/20 flex items-center justify-center">
-              <Plus className="h-4 w-4" />
-            </div>
-            Initiate Onboarding
+            <Plus className="h-4 w-4" />
+            New Onboarding
           </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
         {stats.map((stat, idx) => (
           <motion.div 
             key={idx}
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: idx * 0.05 }}
-            className="group bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all"
+            transition={{ delay: idx * 0.1 }}
+            className="group bg-white p-6 rounded-3xl border border-slate-200/60 shadow-sm hover:shadow-xl hover:shadow-slate-200/50 hover:border-indigo-100 transition-all cursor-default"
           >
-            <div className={cn(
-              "h-12 w-12 mb-6 rounded-2xl flex items-center justify-center transition-all group-hover:scale-110 shadow-md",
-              stat.color === 'indigo' ? "bg-indigo-600 text-white" :
-              stat.color === 'emerald' ? "bg-emerald-500 text-white" :
-              stat.color === 'amber' ? "bg-amber-400 text-white" : 
-              stat.color === 'rose' ? "bg-rose-500 text-white" :
-              stat.color === 'blue' ? "bg-blue-500 text-white" : "bg-purple-500 text-white"
-            )}>
-              <stat.icon className="h-6 w-6" />
+            <div className="flex items-center justify-between mb-4">
+              <div className={cn(
+                "h-12 w-12 rounded-2xl flex items-center justify-center transition-all group-hover:scale-110",
+                stat.color === 'indigo' ? "bg-indigo-50 text-indigo-600" :
+                stat.color === 'emerald' ? "bg-emerald-50 text-emerald-600" :
+                stat.color === 'amber' ? "bg-amber-50 text-amber-600" : 
+                "bg-rose-50 text-rose-600"
+              )}>
+                <stat.icon className="h-6 w-6" />
+              </div>
+              <TrendingUp className="h-4 w-4 text-slate-200" />
             </div>
             <div>
               <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{stat.label}</p>
-              <h3 className="text-3xl font-black text-slate-900 tracking-tighter">{stat.value}</h3>
-              <p className="text-[9px] font-bold text-slate-400 mt-2">{stat.description}</p>
+              <h3 className="text-3xl font-bold text-slate-900 tracking-tight font-display">{stat.value}</h3>
+              <p className="text-[10px] text-slate-400 mt-2 font-medium">{stat.description}</p>
             </div>
           </motion.div>
         ))}
       </div>
 
       <div className="grid lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 bg-white rounded-[3rem] border border-slate-100 shadow-xl overflow-hidden p-10">
-          <div className="flex items-center justify-between mb-10">
+        <div className="lg:col-span-2 bg-white rounded-3xl border border-slate-200/60 shadow-sm overflow-hidden flex flex-col">
+          <div className="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
             <div>
-              <h3 className="text-2xl font-black text-slate-900 tracking-tight">Onboarding Activity</h3>
-              <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Vendor registration distribution by category</p>
+              <h3 className="text-lg font-bold text-slate-800 font-display">Performance Metrics</h3>
+              <p className="text-xs text-slate-400 mt-0.5">Distribution of vendor batches by classification</p>
             </div>
-            <div className="flex items-center gap-6">
-               <div className="flex items-center gap-2">
-                 <span className="h-3 w-3 rounded-full bg-indigo-600" />
-                 <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Goods</span>
-               </div>
-               <div className="flex items-center gap-2">
-                 <span className="h-3 w-3 rounded-full bg-slate-200" />
-                 <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Services</span>
-               </div>
-            </div>
+            <select className="bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-slate-600 outline-none focus:ring-2 focus:ring-indigo-100">
+               <option>Last 30 Days</option>
+               <option>Last Quarter</option>
+            </select>
           </div>
           
-          <div className="h-[400px] w-full bg-slate-50/30 rounded-[2.5rem] flex items-end justify-center gap-8 p-10 pb-16 relative overflow-hidden">
-             {[
-               { h: 45, s: 20 }, { h: 60, s: 35 }, { h: 35, s: 15 }, 
-               { h: 80, s: 45 }, { h: 55, s: 25 }, { h: 95, s: 60 }
-             ].map((val, i) => (
-               <div key={i} className="flex flex-col items-center justify-end h-full gap-2 relative">
-                 <motion.div 
-                   initial={{ height: 0 }}
-                   animate={{ height: `${val.h}%` }}
-                   className="w-16 bg-indigo-600 rounded-t-2xl shadow-xl shadow-indigo-100"
-                 />
-                 <motion.div 
-                   initial={{ height: 0 }}
-                   animate={{ height: `${val.s}%` }}
-                   className="w-16 bg-slate-200 rounded-t-xl absolute bottom-0 z-10"
-                 />
-                 <span className="text-[9px] font-black text-slate-400 uppercase absolute -bottom-8">Batch {i+1}</span>
-               </div>
-             ))}
-             <div className="absolute inset-x-0 top-0 bottom-0 pointer-events-none p-10 flex flex-col justify-between">
-                <div className="h-px w-full bg-slate-100" />
-                <div className="h-px w-full bg-slate-100" />
-                <div className="h-px w-full bg-slate-100" />
-                <div className="h-px w-full bg-slate-100" />
-             </div>
+          <div className="flex-1 p-8">
+            <div className="h-[300px] w-full flex items-end justify-around gap-4 group/chart">
+              {[65, 40, 85, 30, 55, 90, 45].map((h, i) => (
+                <div key={i} className="flex-1 flex flex-col items-center gap-3 h-full justify-end">
+                   <div className="w-full max-w-[40px] relative group flex flex-col justify-end h-full">
+                      <motion.div 
+                        initial={{ height: 0 }}
+                        animate={{ height: `${h}%` }}
+                        transition={{ delay: i * 0.1, type: 'spring' }}
+                        className="bg-indigo-500 rounded-t-xl group-hover:bg-indigo-600 transition-colors cursor-pointer relative"
+                      >
+                         <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-2 py-1 rounded text-[10px] opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                           Batch {i+1}: {h} units
+                         </div>
+                      </motion.div>
+                      <motion.div 
+                        initial={{ height: 0 }}
+                        animate={{ height: `${h/2}%` }}
+                        transition={{ delay: i * 0.1 + 0.2 }}
+                        className="bg-slate-200 rounded-t-lg absolute bottom-0 w-full"
+                      />
+                   </div>
+                   <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Q{i+1}</span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
-        <div className="bg-slate-900 rounded-[3rem] shadow-2xl p-10 text-white relative overflow-hidden group">
-           <div className="relative z-10 h-full flex flex-col">
-              <div className="h-16 w-16 rounded-[1.5rem] bg-indigo-600 flex items-center justify-center mb-10 shadow-2xl shadow-indigo-500/20 group-hover:scale-110 transition-transform">
+        <div className="bg-[#0f172a] rounded-3xl shadow-xl p-8 text-white flex flex-col relative overflow-hidden group">
+           <div className="relative z-10 flex-1">
+              <div className="h-14 w-14 rounded-2xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center mb-8 border border-indigo-500/30 group-hover:scale-110 transition-transform">
                  <ShieldCheck className="h-8 w-8" />
               </div>
-              <h3 className="text-3xl font-black tracking-tight mb-4 leading-tight">Master Compliance Assurance</h3>
-              <p className="text-slate-400 text-sm font-medium leading-relaxed mb-10">
-                All vendors undergo rigorous validation. Data is synchronized with Google Drive and Sheets in real-time.
+              <h3 className="text-2xl font-bold font-display mb-3 text-white leading-tight">Identity & Trust</h3>
+              <p className="text-slate-400 text-sm font-medium leading-relaxed mb-8">
+                Enterprise-grade validation for every vendor. Automated KYC and statutory checks ensured.
               </p>
               
-              <div className="mt-auto space-y-4">
-                 <div className="flex items-center gap-4 p-5 bg-white/5 rounded-[1.5rem] border border-white/10 hover:bg-white/10 transition-colors">
-                    <CheckCircle2 className="h-5 w-5 text-emerald-400" />
-                    <div>
-                      <p className="text-[10px] font-black uppercase tracking-widest text-white">Statutory Check</p>
-                      <p className="text-[9px] text-slate-500 font-bold uppercase mt-1">Real-time GSTN Validation</p>
-                    </div>
-                 </div>
-                 <div className="flex items-center gap-4 p-5 bg-white/5 rounded-[1.5rem] border border-white/10 hover:bg-white/10 transition-colors">
-                    <CheckCircle2 className="h-5 w-5 text-emerald-400" />
-                    <div>
-                      <p className="text-[10px] font-black uppercase tracking-widest text-white">Identity Audit</p>
-                      <p className="text-[9px] text-slate-500 font-bold uppercase mt-1">256-bit Document Encryption</p>
-                    </div>
-                 </div>
+              <div className="space-y-3">
+                 {[
+                   { label: 'GSTIN Verified', val: '98%' },
+                   { label: 'PAN Validated', val: '100%' },
+                   { label: 'Bank Sync', val: 'Live' }
+                 ].map((item, i) => (
+                   <div key={i} className="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/5 hover:bg-white/10 transition-colors">
+                      <div className="flex items-center gap-2">
+                        <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-slate-300">{item.label}</span>
+                      </div>
+                      <span className="text-[10px] font-black text-indigo-400">{item.val}</span>
+                   </div>
+                 ))}
               </div>
            </div>
-           <Building2 className="absolute -right-20 -bottom-20 h-80 w-80 text-white/5 group-hover:rotate-12 transition-transform duration-1000" />
+           
+           <div className="mt-8 relative z-10">
+              <button className="w-full py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 group">
+                 Security Audit
+                 <ChevronRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+              </button>
+           </div>
+           
+           <Building2 className="absolute -right-16 -bottom-16 h-64 w-64 text-white/5 group-hover:rotate-6 transition-transform duration-1000" />
         </div>
       </div>
     </div>
@@ -504,58 +526,62 @@ function VendorList({ vendors = [], loading }: { vendors: Vendor[], loading: boo
   );
 
   return (
-    <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} className="space-y-10 pb-20">
-      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 bg-white p-10 rounded-[3rem] border border-slate-100 shadow-xl">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 bg-white p-8 rounded-3xl border border-slate-200 shadow-sm">
         <div className="flex-1">
-          <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-indigo-600 mb-3 ml-1">Registry Management</h2>
-          <h1 className="text-4xl font-black text-slate-900 tracking-tighter">Vendor <span className="text-slate-300">Database</span></h1>
+          <h2 className="text-2xl font-bold text-slate-800 font-display">Vendor Registry</h2>
+          <p className="text-slate-500 text-sm mt-1">Search and manage verified business partners.</p>
           
-          <div className="relative mt-8 group">
-            <Search className="absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-indigo-600 transition-colors" />
+          <div className="relative mt-6 max-w-2xl">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
             <input 
               type="text" 
-              placeholder="Search by legal name, GSTIN, PAN or System ID..."
+              placeholder="Filter by name, GSTIN, PAN or ID..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-slate-50 border-none rounded-3xl py-5 pl-14 pr-6 text-sm font-bold focus:ring-4 focus:ring-indigo-100 transition-all outline-none"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 pl-11 pr-4 text-sm font-medium focus:ring-4 focus:ring-indigo-100 focus:bg-white transition-all outline-none"
             />
           </div>
         </div>
         
-        <div className="flex items-center gap-4">
-           <button className="flex items-center gap-2.5 px-8 py-5 bg-white border border-slate-100 rounded-[2rem] text-[11px] font-black uppercase tracking-widest text-slate-500 hover:bg-slate-50 transition-all shadow-sm">
-             <Download className="h-4 w-4" /> Export CSV
+        <div className="flex items-center gap-3">
+           <button className="flex items-center gap-2 px-5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-50 transition-all">
+             <Download className="h-4 w-4" /> Export
            </button>
-           <Link to="/register" className="flex items-center gap-3 px-10 py-5 bg-indigo-600 text-white rounded-[2rem] text-[11px] font-black uppercase tracking-widest hover:bg-indigo-700 shadow-2xl shadow-indigo-100 active:scale-95 transition-all">
-             <Plus className="h-4 w-4" /> Register New
+           <Link to="/register" className="flex items-center gap-2 px-6 py-2.5 bg-indigo-600 text-white rounded-xl text-xs font-bold hover:bg-indigo-700 shadow-lg shadow-indigo-600/10 active:scale-95 transition-all">
+             <Plus className="h-4 w-4" /> Register
            </Link>
         </div>
       </div>
 
-      <div className="grid gap-10 md:grid-cols-2 xl:grid-cols-3">
-        {filteredVendors.map((vendor, idx) => (
-          <motion.div
-            key={vendor.id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: idx * 0.05 }}
-          >
-            <VendorCard vendor={vendor} onSelect={() => setSelectedVendor(vendor)} />
-          </motion.div>
-        ))}
+      <div className="grid gap-6 md:grid-cols-2 2xl:grid-cols-3">
+        <AnimatePresence mode="popLayout">
+          {filteredVendors.map((vendor, idx) => (
+            <motion.div
+              layout
+              key={vendor.id}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ delay: idx * 0.05 }}
+            >
+              <VendorCard vendor={vendor} onSelect={() => setSelectedVendor(vendor)} />
+            </motion.div>
+          ))}
+        </AnimatePresence>
         {loading && (
-          <div className="col-span-full py-40 flex flex-col items-center justify-center gap-4">
-             <div className="h-12 w-12 border-4 border-indigo-600/20 border-t-indigo-600 rounded-full animate-spin" />
-             <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Syncing Master Data...</p>
+          <div className="col-span-full py-32 flex flex-col items-center justify-center gap-4">
+             <div className="h-10 w-10 border-3 border-indigo-600/20 border-t-indigo-600 rounded-full animate-spin" />
+             <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Syncing Master Registry...</p>
           </div>
         )}
         {!loading && filteredVendors.length === 0 && (
-          <div className="col-span-full py-40 text-center bg-white rounded-[4rem] border border-slate-100 border-dashed">
-            <div className="h-24 w-24 bg-slate-50 rounded-[2.5rem] flex items-center justify-center mx-auto mb-8 text-slate-200">
-               <Users className="h-12 w-12" />
+          <div className="col-span-full py-32 text-center bg-white rounded-3xl border border-slate-200 border-dashed">
+            <div className="h-16 w-16 bg-slate-50 rounded-2xl flex items-center justify-center mx-auto mb-6 text-slate-300">
+               <Users className="h-8 w-8" />
             </div>
-            <h3 className="text-xl font-black text-slate-900 tracking-tight">No Match Found</h3>
-            <p className="text-slate-400 font-bold text-xs uppercase tracking-widest mt-2">Try a different search query or filter</p>
+            <h3 className="text-lg font-bold text-slate-800 font-display">No Results</h3>
+            <p className="text-slate-400 text-sm mt-1 uppercase tracking-tight">Try adjusting your search filters</p>
           </div>
         )}
       </div>
@@ -569,45 +595,43 @@ function VendorList({ vendors = [], loading }: { vendors: Vendor[], loading: boo
 
 function VendorCard({ vendor, onSelect }: { vendor: Vendor, onSelect: () => void }) {
   return (
-    <div className="group bg-white rounded-[3rem] border border-slate-100 p-8 shadow-xl hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 overflow-hidden relative">
-      <div className="absolute top-0 right-0 h-40 w-40 bg-indigo-50/50 rounded-full -mr-20 -mt-20 blur-3xl group-hover:scale-150 transition-transform duration-1000" />
-      
-      <div className="flex items-start justify-between relative z-10 mb-8">
-        <div className="h-16 w-16 rounded-[1.5rem] bg-indigo-600 text-white flex items-center justify-center font-black text-2xl shadow-xl shadow-indigo-100 group-hover:scale-110 transition-transform">
+    <div className="group bg-white rounded-3xl border border-slate-200/60 p-6 shadow-sm hover:shadow-xl hover:shadow-slate-200/40 hover:border-indigo-200 transition-all duration-300 flex flex-col h-full relative overflow-hidden">
+      <div className="flex items-start justify-between mb-6">
+        <div className="h-14 w-14 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold text-xl border border-indigo-100 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300">
           {vendor.name.charAt(0)}
         </div>
-        <div className="text-right">
+        <div className="flex flex-col items-end">
            <span className={cn(
-             "px-4 py-2 rounded-2xl text-[9px] font-black uppercase tracking-[0.15em]",
+             "px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider",
              vendor.statutory.vendorType === 'Goods' ? "bg-emerald-50 text-emerald-600" : "bg-amber-50 text-amber-600"
            )}>
              {vendor.statutory.vendorType}
            </span>
-           <p className="text-[10px] font-black text-slate-300 mt-4 uppercase tracking-[0.2em]">{vendor.id}</p>
+           <p className="text-[10px] font-bold text-slate-300 mt-3 uppercase tracking-widest">{vendor.id}</p>
         </div>
       </div>
 
-      <div className="relative z-10">
-        <h3 className="text-2xl font-black text-slate-900 truncate tracking-tighter group-hover:text-indigo-600 transition-colors uppercase leading-tight">{vendor.name}</h3>
-        <div className="flex items-center gap-2 mt-2">
-           <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-           <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{vendor.address.city}, {vendor.address.state}</p>
+      <div className="flex-1">
+        <h3 className="text-xl font-bold text-slate-800 font-display line-clamp-1 group-hover:text-indigo-600 transition-colors uppercase">{vendor.name}</h3>
+        <div className="flex items-center gap-2 mt-1.5 mb-6 text-slate-400">
+           <MapPin className="h-3 w-3" />
+           <p className="text-xs font-medium">{vendor.address.city}, {vendor.address.state}</p>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100">
+           <div>
+              <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Tax ID</p>
+              <p className="text-xs font-bold text-slate-700 uppercase tracking-tight">{vendor.statutory.pan}</p>
+           </div>
+           <div>
+              <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">GSTIN</p>
+              <p className="text-xs font-bold text-slate-700 uppercase tracking-tight truncate">{vendor.statutory.gstin}</p>
+           </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-8 mt-10 p-6 bg-slate-50/50 rounded-3xl relative z-10 border border-slate-50">
-         <div>
-            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 opacity-50">Tax ID (PAN)</p>
-            <p className="text-sm font-black text-slate-700 tracking-tight uppercase">{vendor.statutory.pan}</p>
-         </div>
-         <div>
-            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 opacity-50">Business Model</p>
-            <p className="text-sm font-black text-slate-700 tracking-tight uppercase">{vendor.statutory.constitution}</p>
-         </div>
-      </div>
-
-      <button onClick={onSelect} className="mt-10 w-full py-5 bg-white border border-slate-100 text-slate-500 rounded-[2rem] text-[11px] font-black uppercase tracking-widest hover:bg-slate-900 hover:text-white hover:border-slate-900 transition-all shadow-sm active:scale-95 relative z-10">
-        Review Master Profile
+      <button onClick={onSelect} className="mt-6 w-full py-3 bg-white border border-slate-200 text-slate-600 rounded-xl text-xs font-bold hover:bg-[#0f172a] hover:text-white hover:border-[#0f172a] transition-all active:scale-95">
+        View Profile
       </button>
     </div>
   );
@@ -791,13 +815,27 @@ function RegistrationForm({ onComplete }: { onComplete: () => void }) {
   const navigate = useNavigate();
 
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-5xl mx-auto pb-20">
-      <div className="mb-10 text-center">
-        <h1 className="text-4xl font-black text-slate-900 tracking-tight">Onboarding Request</h1>
-        <p className="text-slate-500 font-medium text-sm mt-2 uppercase tracking-widest">Complete the vendor master information form</p>
+    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="max-w-6xl mx-auto space-y-8 pb-20">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white p-8 rounded-3xl border border-slate-200 shadow-sm">
+        <div>
+          <h1 className="text-3xl font-bold text-slate-800 font-display">Onboarding Terminal</h1>
+          <p className="text-slate-500 text-sm mt-1 font-medium">Complete the vendor master information to initiate partnership.</p>
+        </div>
+        <button onClick={() => navigate('/vendors')} className="px-5 py-2.5 bg-slate-100 text-slate-600 rounded-xl text-sm font-bold hover:bg-slate-200 transition-all">
+          Exit Wizard
+        </button>
       </div>
 
-      <div className="bg-white rounded-[3rem] p-8 md:p-16 border border-slate-100 shadow-2xl">
+      <div className="bg-white rounded-[2.5rem] border border-slate-200 shadow-xl shadow-slate-200/40 relative overflow-hidden">
+        <div className="absolute top-0 left-0 right-0 h-1.5 bg-slate-100">
+           <motion.div 
+             initial={{ width: '0%' }}
+             animate={{ width: '100%' }}
+             transition={{ duration: 1 }}
+             className="h-full bg-indigo-600" 
+           />
+        </div>
+
         <Formik
           initialValues={{
             requestType: 'New',
@@ -842,118 +880,80 @@ function RegistrationForm({ onComplete }: { onComplete: () => void }) {
           }}
         >
           {({ isSubmitting, errors, touched, setFieldValue, values }) => (
-            <Form className="space-y-16">
-              {/* A. General Information */}
-              <FormSection title="A. General Information" icon={Settings}>
-                <div className="grid gap-6 sm:grid-cols-2">
-                   <FormInput label="Request Type" name="requestType" type="select" options={['New', 'Change']} />
-                </div>
-              </FormSection>
+            <Form className="p-10 md:p-14 space-y-12">
+              <div className="grid gap-12">
+                <FormSection title="Master Details" icon={Settings}>
+                  <div className="grid gap-6 sm:grid-cols-2 max-w-lg">
+                     <FormInput label="Request Action" name="requestType" type="select" options={['New', 'Change']} />
+                  </div>
+                </FormSection>
 
-              {/* B. Address Details */}
-              <FormSection title="B. Address Details" icon={MapPin}>
-                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                   <FormInput label="Name in Full" name="name" placeholder="Legal Name" error={touched.name && errors.name} />
-                   <FormInput label="Floor/Building No" name="address.floorBuilding" placeholder="Unit, Building name" error={touched.address?.floorBuilding && (errors as any).address?.floorBuilding} />
-                   <FormInput label="Street" name="address.street" placeholder="Main road, area" error={touched.address?.street && (errors as any).address?.street} />
-                   <FormInput label="City" name="address.city" placeholder="City" error={touched.address?.city && (errors as any).address?.city} />
-                   <FormInput label="District" name="address.district" placeholder="District" error={touched.address?.district && (errors as any).address?.district} />
-                   <FormInput label="Pin Code" name="address.pinCode" placeholder="6 digits" error={touched.address?.pinCode && (errors as any).address?.pinCode} />
-                   <FormInput label="State" name="address.state" placeholder="State" error={touched.address?.state && (errors as any).address?.state} />
-                   <FormInput label="Country" name="address.country" placeholder="Country" error={touched.address?.country && (errors as any).address?.country} />
-                   <FormInput label="Phone No" name="address.phone" placeholder="Landline" />
-                   <FormInput label="Fax" name="address.fax" placeholder="Fax number" />
-                   <FormInput label="Mobile No" name="address.mobile" placeholder="Contact mobile" error={touched.address?.mobile && (errors as any).address?.mobile} />
-                   <FormInput label="E-Mail ID" name="address.email" placeholder="Business email" error={touched.address?.email && (errors as any).address?.email} />
-                </div>
-              </FormSection>
+                <FormSection title="Legal & Presence" icon={MapPin}>
+                  <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                     <FormInput label="Official Legal Name" name="name" placeholder="E.g. Acme Corp Private Ltd" error={touched.name && errors.name} />
+                     <FormInput label="Floor/Building" name="address.floorBuilding" placeholder="Unit, Level" error={touched.address?.floorBuilding && (errors as any).address?.floorBuilding} />
+                     <FormInput label="Street / Area" name="address.street" placeholder="Main road" error={touched.address?.street && (errors as any).address?.street} />
+                     <FormInput label="City" name="address.city" placeholder="City" error={touched.address?.city && (errors as any).address?.city} />
+                     <FormInput label="Postal Code" name="address.pinCode" placeholder="6 digits" error={touched.address?.pinCode && (errors as any).address?.pinCode} />
+                     <FormInput label="State" name="address.state" placeholder="Province/State" error={touched.address?.state && (errors as any).address?.state} />
+                     <FormInput label="Primary Mobile" name="address.mobile" placeholder="Mobile" error={touched.address?.mobile && (errors as any).address?.mobile} />
+                     <FormInput label="Official Email" name="address.email" placeholder="email@corp.com" error={touched.address?.email && (errors as any).address?.email} />
+                  </div>
+                </FormSection>
 
-              {/* C. Contact Details */}
-              <FormSection title="C. Contact Details" icon={User}>
-                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                   <FormInput label="Contact Person" name="contact.name" placeholder="Full name" error={touched.contact?.name && (errors as any).contact?.name} />
-                   <FormInput label="Designation" name="contact.designation" placeholder="Job title" error={touched.contact?.designation && (errors as any).contact?.designation} />
-                   <FormInput label="Phone" name="contact.phone" placeholder="Direct line" error={touched.contact?.phone && (errors as any).contact?.phone} />
-                   <FormInput label="Fax" name="contact.fax" placeholder="Direct fax" />
-                   <FormInput label="E-Mail" name="contact.email" placeholder="Personal business email" error={touched.contact?.email && (errors as any).contact?.email} />
-                </div>
-              </FormSection>
+                <FormSection title="Statutory & Tax" icon={ShieldCheck}>
+                  <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                     <FormInput label="PAN" name="statutory.pan" placeholder="10 Digit PAN" error={touched.statutory?.pan && (errors as any).statutory?.pan} />
+                     <FormInput label="GSTIN" name="statutory.gstin" placeholder="15 Digit GSTIN" error={touched.statutory?.gstin && (errors as any).statutory?.gstin} />
+                     <FormInput label="Year Estd." name="statutory.yearOfEstablishment" placeholder="YYYY" error={touched.statutory?.yearOfEstablishment && (errors as any).statutory?.yearOfEstablishment} />
+                     <FormInput label="Legal Entity" name="statutory.constitution" type="select" options={['Proprietary', 'Private Limited', 'LLP', 'Partnership', 'Public Limited', 'Trust']} />
+                  </div>
+                </FormSection>
 
-              {/* D. Vendor Classification & Constitution */}
-              <FormSection title="D. Vendor Classification & Constitution" icon={Briefcase}>
-                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                   <FormInput label="Vendor Type" name="statutory.vendorType" type="select" options={['Goods', 'Services']} />
-                   <FormInput label="Year of Establishment" name="statutory.yearOfEstablishment" placeholder="YYYY" error={touched.statutory?.yearOfEstablishment && (errors as any).statutory?.yearOfEstablishment} />
-                   <FormInput label="Constitution" name="statutory.constitution" type="select" options={['Proprietary', 'Private Limited', 'LLP', 'Partnership', 'Public Limited', 'Trust']} />
-                </div>
-              </FormSection>
+                <FormSection title="Financial Nexus" icon={CreditCard}>
+                  <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                     <FormInput label="Beneficiary" name="bank.beneficiaryName" placeholder="Account Name" error={touched.bank?.beneficiaryName && (errors as any).bank?.beneficiaryName} />
+                     <FormInput label="Bank Name" name="bank.bankName" placeholder="E.g. HDFC Bank" error={touched.bank?.bankName && (errors as any).bank?.bankName} />
+                     <FormInput label="Account Number" name="bank.accountNumber" placeholder="Core account no" error={touched.bank?.accountNumber && (errors as any).bank?.accountNumber} />
+                     <FormInput label="IFSC / BIC" name="bank.ifscCode" placeholder="Branch Code" error={touched.bank?.ifscCode && (errors as any).bank?.ifscCode} />
+                     <FormInput label="Account Type" name="bank.accountType" type="select" options={['Savings', 'Current', 'CC/OD']} />
+                     <FormInput label="Credit Terms" name="creditTerms" placeholder="E.g. NET 30" error={touched.creditTerms && errors.creditTerms} />
+                  </div>
+                </FormSection>
 
-              {/* E. Statutory Details */}
-              <FormSection title="E. Statutory Details" icon={ShieldCheck}>
-                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                   <FormInput label="CIN" name="statutory.cin" placeholder="Corporate ID No" />
-                   <FormInput label="Trade License" name="statutory.tradeLicense" placeholder="License no" />
-                   <FormInput label="PAN" name="statutory.pan" placeholder="10 Digit PAN" error={touched.statutory?.pan && (errors as any).statutory?.pan} />
-                   <FormInput label="GSTIN" name="statutory.gstin" placeholder="15 Digit GSTIN" error={touched.statutory?.gstin && (errors as any).statutory?.gstin} />
-                   <FormInput label="LUT NO" name="statutory.lutNo" placeholder="LUT number" />
-                   <FormInput label="Compounding Dealer" name="statutory.compoundingDealer" type="select" options={['YES', 'NO']} />
-                   <FormInput label="MSMED Reg No" name="statutory.msmedRegNo" placeholder="MSME registration" />
-                   <FormInput label="IEC No" name="statutory.iecNo" placeholder="Import Export Code" />
-                   <FormInput label="PF Reg No" name="statutory.pfRegNo" placeholder="Provident Fund" />
-                   <FormInput label="ESIC Reg No" name="statutory.esicRegNo" placeholder="ESIC no" />
-                   <FormInput label="Labour License" name="statutory.labourLicenseNo" placeholder="Labour license" />
-                   <FormInput label="Factory License" name="statutory.factoryLicense" placeholder="Factory license" />
-                </div>
-              </FormSection>
+                <FormSection title="Digital Repository" icon={Paperclip}>
+                  <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                     <FileField label="GSTIN Authority" value={values.documents.gstinCopy} onUpload={(url) => setFieldValue('documents.gstinCopy', url)} required />
+                     <FileField label="PAN Authority" value={values.documents.panCopy} onUpload={(url) => setFieldValue('documents.panCopy', url)} required />
+                     <FileField label="Bank Evidence" value={values.documents.cancelledChequeCopy} onUpload={(url) => setFieldValue('documents.cancelledChequeCopy', url)} required />
+                  </div>
+                </FormSection>
+              </div>
 
-              {/* F. Additional Compliance */}
-              <FormSection title="F. Additional Compliance" icon={Activity}>
-                <div className="grid gap-6 sm:grid-cols-2">
-                   <FormInput label="TDS Exemption Details" name="statutory.tdsExemptionDetails" placeholder="Certificate details" />
-                   <FormInput label="Consent to Operate (PCB)" name="statutory.consentToOperate" placeholder="Pollution Control Board" />
-                </div>
-              </FormSection>
-
-              {/* G. Bank Details */}
-              <FormSection title="G. Bank Details" icon={CreditCard}>
-                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                   <FormInput label="Beneficiary Name" name="bank.beneficiaryName" placeholder="As per bank record" error={touched.bank?.beneficiaryName && (errors as any).bank?.beneficiaryName} />
-                   <FormInput label="Bank Name" name="bank.bankName" placeholder="Full Bank Name" error={touched.bank?.bankName && (errors as any).bank?.bankName} />
-                   <FormInput label="Account Number" name="bank.accountNumber" placeholder="Bank Account No" error={touched.bank?.accountNumber && (errors as any).bank?.accountNumber} />
-                   <FormInput label="Bank Branch" name="bank.branchName" placeholder="Branch Name" error={touched.bank?.branchName && (errors as any).bank?.branchName} />
-                   <FormInput label="Branch Address" name="bank.branchAddress" placeholder="Full office address" error={touched.bank?.branchAddress && (errors as any).bank?.branchAddress} />
-                   <FormInput label="Account Type" name="bank.accountType" type="select" options={['Savings', 'Current', 'CC/OD']} />
-                   <FormInput label="IFSC Code" name="bank.ifscCode" placeholder="Branch IFSC" error={touched.bank?.ifscCode && (errors as any).bank?.ifscCode} />
-                   <FormInput label="SWIFT/IBAN" name="bank.swiftIban" placeholder="Intl transfers" />
-                   <FormInput label="Bank Email" name="bank.bankEmail" placeholder="Contact of branch" />
-                </div>
-              </FormSection>
-
-              {/* H. Currency & Credit Terms */}
-              <FormSection title="H. Currency & Credit Terms" icon={CircleDollarSign}>
-                <div className="grid gap-6 sm:grid-cols-2">
-                   <FormInput label="Transaction Currency" name="currency" type="select" options={['INR', 'USD', 'EUR', 'GBP', 'AED']} />
-                   <FormInput label="Credit Terms" name="creditTerms" placeholder="E.g. NET 30" error={touched.creditTerms && errors.creditTerms} />
-                </div>
-              </FormSection>
-
-              {/* Required Attachment Files */}
-              <FormSection title="Required Attachment Files" icon={Paperclip}>
-                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                   <FileField label="GSTIN Copy" value={values.documents.gstinCopy} onUpload={(url) => setFieldValue('documents.gstinCopy', url)} required />
-                   <FileField label="PAN Copy" value={values.documents.panCopy} onUpload={(url) => setFieldValue('documents.panCopy', url)} required />
-                   <FileField label="MSMED Copy" value={values.documents.msmedCopy} onUpload={(url) => setFieldValue('documents.msmedCopy', url)} />
-                   <FileField label="Cancelled Cheque" value={values.documents.cancelledChequeCopy} onUpload={(url) => setFieldValue('documents.cancelledChequeCopy', url)} required />
-                   <FileField label="TDS Exemption" value={values.documents.tdsExemptionCopy} onUpload={(url) => setFieldValue('documents.tdsExemptionCopy', url)} />
-                   <FileField label="Signed Declaration" value={values.documents.signedDeclaration} onUpload={(url) => setFieldValue('documents.signedDeclaration', url)} />
-                </div>
-              </FormSection>
-
-              <div className="pt-10 flex items-center justify-center gap-6 border-t border-slate-50">
-                 <button type="button" onClick={() => navigate('/vendors')} className="px-12 py-4 bg-slate-50 text-slate-500 rounded-2xl text-sm font-black uppercase tracking-widest hover:bg-slate-100 transition-all">Cancel</button>
-                 <button type="submit" disabled={isSubmitting} className="px-16 py-4 bg-indigo-600 text-white rounded-2xl text-sm font-black uppercase tracking-widest hover:bg-indigo-700 shadow-xl active:scale-95 transition-all flex items-center gap-2">
-                   {isSubmitting ? <RefreshCw className="h-5 w-5 animate-spin" /> : <CheckCircle2 className="h-5 w-5" />}
-                   Submit Onboarding
+              <div className="pt-12 flex items-center justify-end gap-4 border-t border-slate-100">
+                 <button 
+                   type="button" 
+                   onClick={() => navigate('/vendors')} 
+                   className="px-8 py-3 bg-white text-slate-500 rounded-xl text-sm font-bold border border-slate-200 hover:bg-slate-50 hover:text-slate-800 transition-all"
+                 >
+                   Discard
+                 </button>
+                 <button 
+                   type="submit" 
+                   disabled={isSubmitting} 
+                   className="px-10 py-3 bg-indigo-600 text-white rounded-xl text-sm font-bold shadow-xl shadow-indigo-600/10 hover:bg-indigo-700 active:scale-95 transition-all flex items-center gap-2"
+                 >
+                   {isSubmitting ? (
+                     <>
+                       <RefreshCw className="h-4 w-4 animate-spin" />
+                       Validating Master...
+                     </>
+                   ) : (
+                     <>
+                       <CheckCircle2 className="h-4 w-4" />
+                       Finalize Onboarding
+                     </>
+                   )}
                  </button>
               </div>
             </Form>
@@ -966,14 +966,16 @@ function RegistrationForm({ onComplete }: { onComplete: () => void }) {
 
 function FormSection({ title, icon: Icon, children }: any) {
   return (
-    <div className="space-y-8 p-8 md:p-10 bg-slate-50/30 rounded-[2.5rem] border border-slate-50/50">
-      <div className="flex items-center gap-4 border-b border-white pb-6">
-        <div className="h-12 w-12 rounded-2xl bg-white shadow-sm flex items-center justify-center text-indigo-600">
-          <Icon className="h-6 w-6" />
+    <div className="space-y-6">
+      <div className="flex items-center gap-3 pb-3 border-b border-slate-100">
+        <div className="h-8 w-8 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-600">
+          <Icon className="h-4 w-4" />
         </div>
-        <h3 className="text-sm font-black uppercase tracking-[0.15em] text-slate-600 font-mono tracking-tighter">{title}</h3>
+        <h3 className="text-xs font-black uppercase tracking-[0.2em] text-slate-800 font-display">{title}</h3>
       </div>
-      {children}
+      <div className="pl-0">
+        {children}
+      </div>
     </div>
   );
 }
@@ -987,7 +989,6 @@ function FileField({ label, value, onUpload, required }: any) {
 
     setUploading(true);
     try {
-      // Simulate file upload - in real app, we would upload to storage/API
       await new Promise(resolve => setTimeout(resolve, 1500));
       onUpload('https://example.com/uploaded/' + file.name);
     } catch (error) {
@@ -998,33 +999,28 @@ function FileField({ label, value, onUpload, required }: any) {
   };
 
   return (
-    <div className="space-y-3">
-      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1 flex items-center gap-1">
+    <div className="space-y-2">
+      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">
         {label} {required && <span className="text-rose-500">*</span>}
       </label>
       <div className={cn(
-        "relative group h-40 rounded-3xl border-2 border-dashed transition-all flex flex-col items-center justify-center gap-3 overflow-hidden",
-        value ? "bg-emerald-50 border-emerald-200" : "bg-white border-slate-100 hover:border-indigo-400 hover:bg-slate-50"
+        "relative h-32 rounded-2xl border-2 border-dashed transition-all flex flex-col items-center justify-center gap-2 overflow-hidden",
+        value ? "bg-emerald-50 border-emerald-200" : "bg-slate-50 border-slate-200 hover:border-indigo-400 hover:bg-white"
       )}>
         {uploading ? (
-          <div className="flex flex-col items-center gap-2">
-            <RefreshCw className="h-8 w-8 text-indigo-600 animate-spin" />
-            <span className="text-[10px] font-black uppercase tracking-widest text-indigo-600">Uploading...</span>
+          <div className="flex flex-col items-center gap-1 text-indigo-600 animate-pulse">
+            <RefreshCw className="h-5 w-5 animate-spin mb-1" />
+            <span className="text-[9px] font-bold uppercase">Processing...</span>
           </div>
         ) : value ? (
-          <div className="flex flex-col items-center gap-2 text-emerald-600">
-            <div className="h-10 w-10 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow-md">
-              <Check className="h-6 w-6" />
-            </div>
-            <span className="text-[10px] font-black uppercase tracking-widest">Document Secured</span>
-            <span className="text-[8px] font-bold opacity-70 max-w-[150px] truncate">{value.split('/').pop()}</span>
+          <div className="flex flex-col items-center gap-1 text-emerald-600">
+            <CheckCircle2 className="h-5 w-5" />
+            <span className="text-[9px] font-bold uppercase tracking-widest">Verified</span>
           </div>
         ) : (
           <>
-            <div className="h-10 w-10 rounded-2xl bg-slate-50 text-slate-400 flex items-center justify-center group-hover:bg-indigo-600 group-hover:text-white transition-all shadow-sm">
-              <Upload className="h-5 w-5" />
-            </div>
-            <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 group-hover:text-indigo-600">Upload File</span>
+            <Upload className="h-4 w-4 text-slate-300" />
+            <span className="text-[9px] font-bold uppercase tracking-widest text-slate-400">Target File</span>
           </>
         )}
         <input 
@@ -1043,13 +1039,25 @@ function FormInput({ label, name, type = 'text', placeholder, options, error }: 
     <div className="space-y-2">
        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">{label}</label>
        {type === 'select' ? (
-         <Field as="select" name={name} className="w-full bg-slate-50/50 border border-slate-100 rounded-2xl py-4 px-5 text-sm font-bold focus:ring-4 focus:ring-indigo-50 focus:bg-white transition-all outline-none">
+         <Field as="select" name={name} className="w-full bg-white border border-slate-200 rounded-xl py-2.5 px-4 text-sm font-bold focus:ring-[3px] focus:ring-indigo-100 focus:border-indigo-400 transition-all outline-none">
             {options.map((o: string) => <option key={o} value={o}>{o}</option>)}
          </Field>
        ) : (
-         <Field name={name} placeholder={placeholder} className="w-full bg-slate-50/50 border border-slate-100 rounded-2xl py-4 px-5 text-sm font-bold focus:ring-4 focus:ring-indigo-50 focus:bg-white transition-all outline-none" />
+         <Field name={name} placeholder={placeholder} className="w-full bg-white border border-slate-200 rounded-xl py-2.5 px-4 text-sm font-bold focus:ring-[3px] focus:ring-indigo-100 focus:border-indigo-400 transition-all outline-none placeholder:text-slate-300" />
        )}
-       {error && <p className="text-[9px] font-black text-rose-500 uppercase tracking-widest pl-1">{error}</p>}
+       <div className="h-4">
+         <AnimatePresence>
+           {error && (
+             <motion.p 
+               initial={{ opacity: 0, y: -5 }}
+               animate={{ opacity: 1, y: 0 }}
+               className="text-[9px] font-bold text-rose-500 uppercase tracking-widest pl-1"
+             >
+               {error}
+             </motion.p>
+           )}
+         </AnimatePresence>
+       </div>
     </div>
   );
 }
