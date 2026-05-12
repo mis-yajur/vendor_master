@@ -48,3 +48,27 @@
   --theme-bg: #f0f9ff;
   --theme-nav: #0c4a6e;
 }
+
+.theme-amber {
+  --theme-primary: theme('colors.amber.600');
+  --theme-bg: #fffbeb;
+  --theme-nav: #78350f;
+}
+
+.theme-rose {
+  --theme-primary: theme('colors.rose-600');
+  --theme-bg: #fff1f2;
+  --theme-nav: #881337;
+}
+
+.theme-violet {
+  --theme-primary: theme('colors.violet.600');
+  --theme-bg: #f5f3ff;
+  --theme-nav: #4c1d95;
+}
+
+.theme-crimson {
+  --theme-primary: theme('colors.red.600');
+  --theme-bg: #fef2f2;
+  --theme-nav: #450a0a;
+}

@@ -50,6 +50,9 @@ import {
   Check,
   Paperclip,
   Box,
+  Heart,
+  Zap,
+  Flame,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn, formatDate } from './lib/utils';
@@ -463,55 +466,55 @@ function Layout({ children, systemHealth, onLogout }: { children: React.ReactNod
   return (
     <div className="min-h-screen bg-slate-50 font-sans flex flex-col">
       {/* Top bar with Navigation */}
-      <header className="h-20 bg-slate-900 text-white flex items-center justify-between px-8 sticky top-0 z-50 border-b border-slate-800 shadow-2xl">
-         <div className="flex items-center gap-12">
-            <Link to="/" className="flex items-center gap-4 group">
-              <div className="h-11 w-11 items-center justify-center rounded-xl bg-indigo-500 text-white shadow-lg shadow-indigo-500/20 flex transform group-hover:rotate-6 transition-all duration-300">
-                <Building2 className="h-6 w-6" />
+      <header className="h-16 bg-[var(--theme-nav)] text-white flex items-center justify-between px-8 sticky top-0 z-50 border-b border-white/10 shadow-2xl transition-colors duration-500">
+         <div className="flex items-center gap-10">
+            <Link to="/" className="flex items-center gap-3 group">
+              <div className="h-9 w-9 items-center justify-center rounded-lg bg-indigo-500 text-white shadow-lg shadow-indigo-500/20 flex transform group-hover:rotate-6 transition-all duration-300">
+                <Building2 className="h-5 w-5" />
               </div>
               <div className="flex flex-col">
-                <span className="text-2xl font-black tracking-tight text-white leading-none font-display uppercase italic">
+                <span className="text-xl font-black tracking-tight text-white leading-none font-display uppercase italic">
                   YAJUR<span className="text-indigo-400 not-italic">PORTAL</span>
                 </span>
-                <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-slate-500 mt-1">Vendor Master v2.1</span>
+                <span className="text-[8px] font-bold uppercase tracking-[0.4em] text-slate-500 mt-0.5">Vendor Master v2.1</span>
               </div>
             </Link>
 
-            <nav className="hidden lg:flex items-center gap-2">
+            <nav className="hidden lg:flex items-center gap-1">
               {navItems.map((item) => (
                 <Link
                   key={item.path}
                   to={item.path}
                   className={cn(
-                    "flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-[11px] font-bold uppercase tracking-widest transition-all duration-300",
+                    "flex items-center gap-2 px-4 py-2 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all duration-300",
                     location.pathname === item.path 
                       ? "bg-slate-800 text-white shadow-inner ring-1 ring-white/10" 
                       : "text-slate-400 hover:text-white hover:bg-white/5"
                   )}
                 >
-                  <item.icon className={cn("h-3.5 w-3.5", location.pathname === item.path ? "text-indigo-400" : "text-slate-500")} />
+                  <item.icon className={cn("h-3 w-3", location.pathname === item.path ? "text-indigo-400" : "text-slate-500")} />
                   <span>{item.label}</span>
                 </Link>
               ))}
             </nav>
          </div>
 
-         <div className="flex items-center gap-6">
-            <div className="hidden xl:flex items-center gap-4 pr-6 border-r border-slate-800">
-               <div className="flex items-center gap-3 px-4 py-2 bg-slate-800/50 rounded-xl border border-slate-700/50 shadow-inner">
-                  <div className={cn("h-2 w-2 rounded-full", systemHealth.db !== 'disconnected' ? "bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]" : "bg-rose-500")} />
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">{systemHealth.db !== 'disconnected' ? 'Cloud Link: Active' : 'Offline Mode'}</span>
+         <div className="flex items-center gap-4">
+            <div className="hidden xl:flex items-center gap-3 pr-4 border-r border-slate-800">
+               <div className="flex items-center gap-2.5 px-3 py-1.5 bg-slate-800/50 rounded-lg border border-slate-700/50 shadow-inner">
+                  <div className={cn("h-1.5 w-1.5 rounded-full", systemHealth.db !== 'disconnected' ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" : "bg-rose-500")} />
+                  <span className="text-[9px] font-bold uppercase tracking-widest text-slate-400">{systemHealth.db !== 'disconnected' ? 'Cloud Link' : 'Offline'}</span>
                </div>
             </div>
             
-            <div className="flex items-center gap-4">
-               <div className="flex items-center gap-3 cursor-pointer group p-1 rounded-xl transition-all">
-                  <div className="h-10 w-10 rounded-xl bg-slate-800 border border-slate-700 shadow-lg group-hover:scale-105 transition-all duration-300 flex items-center justify-center text-slate-400 group-hover:text-white group-hover:bg-indigo-600 group-hover:border-indigo-500">
-                     <User className="h-5 w-5" />
+            <div className="flex items-center gap-3">
+               <div className="flex items-center gap-2.5 cursor-pointer group p-1 rounded-lg transition-all">
+                  <div className="h-8 w-8 rounded-lg bg-slate-800 border border-slate-700 shadow-lg group-hover:scale-105 transition-all duration-300 flex items-center justify-center text-slate-400 group-hover:text-white group-hover:bg-indigo-600 group-hover:border-indigo-500">
+                     <User className="h-4 w-4" />
                   </div>
                   <div className="hidden sm:block">
-                    <p className="text-[13px] font-bold text-white leading-none tracking-wide text-right">P. Majhi</p>
-                    <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-1 text-right">Administrator</p>
+                    <p className="text-[11px] font-bold text-white leading-none tracking-wide text-right">P. Majhi</p>
+                    <p className="text-[8px] font-bold text-slate-500 uppercase tracking-widest mt-0.5 text-right">Admin</p>
                   </div>
                </div>
                
@@ -521,17 +524,17 @@ function Layout({ children, systemHealth, onLogout }: { children: React.ReactNod
                      onLogout();
                    }
                  }}
-                 className="p-2.5 bg-slate-800 hover:bg-rose-600 text-slate-400 hover:text-white rounded-xl transition-all shadow-md border border-slate-700 hover:border-rose-500 active:scale-95 group"
+                 className="p-2 bg-slate-800 hover:bg-rose-600 text-slate-400 hover:text-white rounded-lg transition-all shadow-md border border-slate-700 hover:border-rose-500 active:scale-95 group"
                >
-                 <LogOut className="h-5 w-5" />
+                 <LogOut className="h-4 w-4" />
                </button>
             </div>
          </div>
       </header>
 
       {/* Content Area */}
-      <main className="flex-1 p-6 md:p-10 xl:p-12 bg-slate-50 relative">
-         <div className="absolute inset-0 bg-gradient-to-br from-slate-100/50 to-transparent pointer-events-none" />
+      <main className="flex-1 p-6 md:p-10 xl:p-12 bg-[var(--theme-bg)] relative transition-colors duration-500">
+         <div className="absolute inset-0 bg-gradient-to-br from-white/50 to-transparent pointer-events-none" />
          <div className="w-full max-w-[1700px] mx-auto relative z-10 transition-all duration-500">
            {children}
          </div>
@@ -544,6 +547,7 @@ function Dashboard({ vendors = [], health }: any) {
   const navigate = useNavigate();
   const vendorsArray = Array.isArray(vendors) ? vendors : [];
   const scriptUrl = getScriptUrl();
+  const [analyticsTab, setAnalyticsTab] = useState<'real-time' | 'history'>('real-time');
 
   const stats = [
     { label: 'Total Registry', value: vendorsArray.length.toString(), icon: Users, color: 'indigo', description: 'Certified Partners' },
@@ -554,36 +558,30 @@ function Dashboard({ vendors = [], health }: any) {
 
   return (
     <div className="space-y-10 pb-20">
-      <div className="bg-white p-8 md:p-12 rounded-[2.5rem] border border-slate-200 shadow-sm relative overflow-hidden">
+      <div className="bg-white p-6 md:p-8 rounded-[2rem] border border-slate-200 shadow-sm relative overflow-hidden">
         <div className="absolute top-0 left-0 w-1.5 h-full bg-indigo-600" />
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 relative z-10">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
           <div>
-            <h2 className="text-4xl font-black text-slate-900 font-display tracking-tight flex items-center gap-4">
+            <h2 className="text-2xl md:text-3xl font-black text-slate-900 font-display tracking-tight flex items-center gap-4">
                Command Center
-               <span className="px-3 py-1 bg-slate-900 text-white text-[10px] font-bold uppercase rounded-lg tracking-[0.2em] shadow-lg">REL 2.1</span>
+               <span className="px-2 py-0.5 bg-slate-900 text-white text-[9px] font-bold uppercase rounded-md tracking-[0.2em] shadow-lg">REL 2.1</span>
             </h2>
-            <p className="text-slate-500 text-lg mt-2 font-medium">Real-time oversight of the vendor ecosystem and procurement health.</p>
-            {!scriptUrl && isStaticHost && (
-              <div className="mt-4 flex items-center gap-3 px-4 py-2 bg-amber-50 border border-amber-200 rounded-xl text-amber-800 text-[11px] font-bold uppercase tracking-wider max-w-max">
-                 <AlertCircle className="h-4 w-4" />
-                 Local Mode: Sync disabled. Data persists in browser storage.
-              </div>
-            )}
+            <p className="text-slate-500 text-sm mt-1 font-medium italic">Strategic oversight of the partner ecosystem and real-time procurement health.</p>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             <button 
               onClick={() => navigate('/vendors')}
-              className="px-6 py-3.5 bg-slate-50 text-slate-900 rounded-xl text-[12px] font-bold uppercase tracking-widest border border-slate-200 shadow-sm hover:bg-white hover:border-indigo-200 transition-all active:scale-95 flex items-center gap-2"
+              className="px-5 py-2.5 bg-slate-50 text-slate-900 rounded-xl text-[11px] font-bold uppercase tracking-widest border border-slate-200 shadow-sm hover:bg-white hover:border-indigo-200 transition-all active:scale-95 flex items-center gap-2"
             >
-              <Database className="h-4 w-4 text-indigo-500" />
+              <Database className="h-3.5 w-3.5 text-indigo-500" />
               Registry
             </button>
             <button 
               onClick={() => navigate('/register')}
-              className="px-8 py-3.5 bg-indigo-600 text-white rounded-xl text-[12px] font-bold uppercase tracking-widest shadow-xl shadow-indigo-600/20 hover:bg-indigo-700 transition-all flex items-center gap-2 active:scale-95"
+              className="px-6 py-2.5 bg-indigo-600 text-white rounded-xl text-[11px] font-bold uppercase tracking-widest shadow-xl shadow-indigo-600/20 hover:bg-indigo-700 transition-all flex items-center gap-2 active:scale-95"
             >
-              <Plus className="h-5 w-5" />
-              New Onboarding
+              <Plus className="h-4 w-4" />
+              Onboard
             </button>
           </div>
         </div>
@@ -596,26 +594,36 @@ function Dashboard({ vendors = [], health }: any) {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: idx * 0.05 }}
-            className="group bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md hover:border-indigo-100 transition-all cursor-default"
+            className="group bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl hover:border-indigo-100 transition-all cursor-default relative overflow-hidden"
           >
-            <div className="flex items-center justify-between mb-4">
+            <div className={cn(
+              "absolute top-0 right-0 h-24 w-24 -mr-8 -mt-8 rounded-full blur-3xl opacity-0 group-hover:opacity-20 transition-opacity",
+              stat.color === 'indigo' ? "bg-indigo-600" :
+              stat.color === 'emerald' ? "bg-emerald-600" :
+              stat.color === 'amber' ? "bg-amber-600" : "bg-rose-600"
+            )} />
+            
+            <div className="flex items-center justify-between mb-4 relative z-10">
               <div className={cn(
-                "h-10 w-10 rounded-xl flex items-center justify-center transition-all group-hover:scale-110",
-                stat.color === 'indigo' ? "bg-indigo-50 text-indigo-600" :
-                stat.color === 'emerald' ? "bg-emerald-50 text-emerald-600" :
-                stat.color === 'amber' ? "bg-amber-50 text-amber-600" : 
-                "bg-rose-50 text-rose-600"
+                "h-10 w-10 rounded-xl flex items-center justify-center transition-all group-hover:scale-110 shadow-sm",
+                stat.color === 'indigo' ? "bg-indigo-50 text-indigo-600 border border-indigo-100" :
+                stat.color === 'emerald' ? "bg-emerald-50 text-emerald-600 border border-emerald-100" :
+                stat.color === 'amber' ? "bg-amber-50 text-amber-600 border border-amber-100" : 
+                "bg-rose-50 text-rose-600 border border-rose-100"
               )}>
                 <stat.icon className="h-5 w-5" />
               </div>
-              <TrendingUp className="h-3 w-3 text-slate-300" />
+              <div className="flex items-center gap-1.5">
+                <div className="h-1 w-1 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="text-[8px] font-black text-emerald-500 uppercase tracking-widest">Live</span>
+              </div>
             </div>
-            <div>
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">{stat.label}</p>
-              <h3 className="text-3xl font-black text-slate-900 tracking-tight font-display">{stat.value}</h3>
+            <div className="relative z-10">
+              <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">{stat.label}</p>
+              <h3 className="text-3xl font-black text-slate-900 tracking-tight font-display italic">{stat.value}</h3>
               <div className="mt-4 pt-4 border-t border-slate-50 flex items-center justify-between">
                 <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{stat.description}</span>
-                <span className="text-[9px] font-bold text-emerald-500 uppercase tracking-widest">Stable</span>
+                <TrendingUp className="h-3.5 w-3.5 text-slate-300" />
               </div>
             </div>
           </motion.div>
@@ -623,57 +631,86 @@ function Dashboard({ vendors = [], health }: any) {
       </div>
 
       <div className="grid lg:grid-cols-12 gap-8">
-        <div className="lg:col-span-8 bg-white rounded-[2rem] border border-slate-100 shadow-sm overflow-hidden min-h-[500px] flex flex-col">
-          <div className="px-8 py-6 border-b border-slate-50 flex items-center justify-between">
+        <div className="lg:col-span-8 bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden min-h-[500px] flex flex-col relative">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 blur-3xl rounded-full -mr-16 -mt-16" />
+          
+          <div className="px-8 py-7 border-b border-slate-50 flex items-center justify-between relative z-10">
             <div>
-              <h3 className="text-xl font-bold text-slate-900 font-display">Activity Analytics</h3>
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Onboarding cycles vs Performance</p>
+              <h3 className="text-xl font-black text-slate-900 font-display uppercase italic tracking-tight flex items-center gap-2">
+                <Activity className="h-5 w-5 text-indigo-500" />
+                Activity Analytics
+              </h3>
+              <p className="text-[9px] font-bold text-slate-400 uppercase tracking-[0.2em] mt-1">Onboarding cycles vs Performance throughput</p>
             </div>
-            <div className="flex bg-slate-50 p-1 rounded-xl">
-               <button className="px-4 py-1.5 bg-white text-slate-900 rounded-lg text-[10px] font-bold shadow-sm uppercase tracking-widest">Real-time</button>
-               <button className="px-4 py-1.5 text-slate-400 hover:text-slate-600 rounded-lg text-[10px] font-bold uppercase tracking-widest">History</button>
+            <div className="flex bg-slate-100/80 p-1.5 rounded-2xl border border-slate-200/50 shadow-inner">
+               <button 
+                 onClick={() => setAnalyticsTab('real-time')}
+                 className={cn(
+                   "px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all",
+                   analyticsTab === 'real-time' ? "bg-white text-indigo-600 shadow-lg ring-1 ring-slate-200/50" : "text-slate-400 hover:text-slate-600"
+                 )}
+               >
+                 Real-time
+               </button>
+               <button 
+                 onClick={() => setAnalyticsTab('history')}
+                 className={cn(
+                   "px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all",
+                   analyticsTab === 'history' ? "bg-white text-indigo-600 shadow-lg ring-1 ring-slate-200/50" : "text-slate-400 hover:text-slate-600"
+                 )}
+               >
+                 History
+               </button>
             </div>
           </div>
           
-          <div className="flex-1 p-8">
-             <div className="h-full w-full flex items-end justify-around gap-4 xl:gap-8 min-h-[300px]">
-                {[65, 45, 85, 55, 95, 75, 100].map((h, i) => (
-                  <div key={i} className="flex-1 flex flex-col items-center gap-4 h-full justify-end group">
-                     <div className="w-full max-w-[40px] relative flex flex-col justify-end h-full">
+          <div className="flex-1 p-10 bg-slate-50/30">
+             <div className="h-full w-full flex items-end justify-around gap-4 xl:gap-8 min-h-[320px] bg-white/40 rounded-[2rem] p-8 border border-white/60 shadow-inner">
+                {(analyticsTab === 'real-time' ? [65, 45, 85, 55, 95, 75, 100] : [40, 70, 30, 90, 50, 80, 60]).map((h, i) => (
+                  <div key={i} className="flex-1 flex flex-col items-center gap-5 h-full justify-end group">
+                     <div className="w-full max-w-[12px] relative flex flex-col justify-end h-full">
+                        <div className="absolute inset-0 bg-slate-100 rounded-full w-full" />
                         <motion.div 
+                          key={analyticsTab + i}
                           initial={{ height: 0 }}
                           animate={{ height: `${h}%` }}
-                          transition={{ delay: i * 0.1, type: 'spring', damping: 12 }}
-                          className="bg-indigo-600 rounded-t-xl group-hover:bg-indigo-500 transition-colors relative"
+                          transition={{ delay: i * 0.04, type: 'spring', damping: 20 }}
+                          className={cn(
+                            "rounded-full transition-all duration-500 relative shadow-lg z-10",
+                            analyticsTab === 'real-time' ? "bg-indigo-600 group-hover:bg-indigo-500 shadow-indigo-200" : "bg-slate-400 group-hover:bg-slate-500 shadow-slate-200"
+                          )}
                         >
-                           <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-3 py-1 rounded text-[9px] font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all z-20">
+                           <div className="absolute -top-12 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all z-20 shadow-xl border border-white/10">
                              {h}%
                            </div>
                         </motion.div>
                      </div>
-                     <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">GRP {i+1}</span>
+                     <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">{analyticsTab === 'real-time' ? `GRP.0${i+1}` : `WEE.0${i+1}`}</span>
                   </div>
                 ))}
              </div>
           </div>
         </div>
 
-        <div className="lg:col-span-4 grid gap-6 flex flex-col">
-           <div className="bg-slate-900 rounded-[2rem] p-8 text-white relative overflow-hidden group border border-slate-800 shadow-xl flex-1">
-              <div className="relative z-10">
-                 <div className="h-12 w-12 rounded-xl bg-indigo-500 text-white flex items-center justify-center mb-8 shadow-lg group-hover:rotate-6 transition-transform">
-                    <ShieldCheck className="h-6 w-6" />
+        <div className="lg:col-span-4 grid gap-8 flex flex-col">
+           <div className="bg-slate-950 rounded-[2.5rem] p-10 text-white relative overflow-hidden group border border-white/5 shadow-2xl flex-1 flex flex-col">
+              <div className="absolute top-0 left-0 w-full h-full bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 pointer-events-none" />
+              <div className="absolute top-0 left-0 w-1.5 h-full bg-indigo-600" />
+              
+              <div className="relative z-10 flex-1">
+                 <div className="h-14 w-14 rounded-2xl bg-indigo-600/20 border border-indigo-500/30 text-indigo-400 flex items-center justify-center mb-8 shadow-2xl group-hover:rotate-6 transition-transform">
+                    <ShieldCheck className="h-7 w-7" />
                  </div>
-                 <h3 className="text-2xl font-bold font-display mb-4 tracking-tight text-white uppercase italic tracking-tighter">Security Protocol</h3>
-                 <p className="text-slate-400 text-sm font-medium leading-relaxed mb-8">
-                   Master records are synchronized with our high-availability cloud cluster.
+                 <h3 className="text-2xl font-black font-display mb-4 tracking-tighter uppercase italic leading-none">Security Protocol</h3>
+                 <p className="text-slate-400 text-[13px] font-medium leading-relaxed mb-10">
+                   Proprietary encryption layer for statutory records and procurement audit logs.
                  </p>
                  
-                 <div className="space-y-3">
-                    {['Identity Lock', 'SHA-256 Auth', 'Auto-Audit'].map((label, i) => (
-                      <div key={i} className="flex items-center gap-3 p-3 bg-white/5 rounded-xl border border-white/5 hover:bg-white/10 transition-all">
-                         <div className="h-2 w-2 rounded-full bg-emerald-500" />
-                         <span className="text-[10px] font-bold uppercase tracking-widest text-slate-300">{label}</span>
+                 <div className="space-y-4">
+                    {['Identity Biometrics', 'SHA-512 Matrix', 'Neural Audit'].map((label, i) => (
+                      <div key={i} className="flex items-center gap-4 p-4 bg-white/5 rounded-2xl border border-white/5 hover:bg-white/10 transition-all group/item">
+                         <div className="h-2 w-2 rounded-full bg-emerald-500 group-hover/item:scale-150 transition-transform" />
+                         <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-300">{label}</span>
                       </div>
                     ))}
                  </div>
@@ -681,21 +718,23 @@ function Dashboard({ vendors = [], health }: any) {
               <Building2 className="absolute -right-20 -bottom-20 h-64 w-64 text-white/5 group-hover:rotate-12 transition-all duration-1000 blur-sm" />
            </div>
 
-           <div className="bg-indigo-600 rounded-[2rem] p-8 text-white shadow-xl shadow-indigo-600/20 relative overflow-hidden group">
+           <div className="bg-indigo-600 rounded-[2.5rem] p-10 text-white shadow-2xl shadow-indigo-600/30 relative overflow-hidden group border border-indigo-400/50">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 blur-3xl rounded-full -mr-16 -mt-16" />
+              
               <div className="relative z-10 flex flex-col justify-between h-full">
                  <div>
-                    <div className="h-12 w-12 rounded-xl bg-white/20 backdrop-blur-md text-white flex items-center justify-center mb-6">
-                       <CheckCircle2 className="h-6 w-6" />
+                    <div className="h-14 w-14 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 text-white flex items-center justify-center mb-6 shadow-xl">
+                       <Plus className="h-7 w-7" />
                     </div>
-                    <h3 className="text-2xl font-bold font-display mb-2 tracking-tight">Rapid Entry</h3>
-                    <p className="text-white/70 text-sm font-medium mb-6">Start a new master record onboarding process instantly.</p>
+                    <h3 className="text-2xl font-black font-display mb-3 tracking-tighter italic uppercase">Terminal Entry</h3>
+                    <p className="text-indigo-100 text-[13px] font-medium mb-10">Initialize secure onboarding protocol for new enterprise entity.</p>
                  </div>
                  <button 
                   onClick={() => navigate('/register')}
-                  className="w-full py-4 bg-white text-indigo-600 rounded-xl text-[12px] font-bold uppercase tracking-widest hover:bg-indigo-50 transition-all flex items-center justify-center gap-2 group shadow-xl"
+                  className="w-full py-5 bg-white text-indigo-600 rounded-2xl text-[12px] font-black uppercase tracking-[0.2em] hover:bg-indigo-50 transition-all flex items-center justify-center gap-3 group shadow-2xl hover:shadow-indigo-900/40 active:scale-95"
                  >
-                    Initialize Form
-                    <ChevronRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                    Launch protocol
+                    <ArrowRight className="h-4 w-4 group-hover:translate-x-1.5 transition-transform" />
                  </button>
               </div>
            </div>
@@ -1613,6 +1652,10 @@ function SettingsView({ health, currentTheme, onThemeChange }: { health: any, cu
     { id: 'theme-midnight', name: 'Cyber Night', primary: 'bg-violet-600', secondary: 'bg-slate-950', icon: Activity },
     { id: 'theme-emerald', name: 'Corporate Green', primary: 'bg-emerald-600', secondary: 'bg-emerald-950', icon: CheckCircle2 },
     { id: 'theme-ocean', name: 'Oceanic Blue', primary: 'bg-sky-600', secondary: 'bg-sky-950', icon: Database },
+    { id: 'theme-amber', name: 'Golden Harvest', primary: 'bg-amber-600', secondary: 'bg-amber-900', icon: TrendingUp },
+    { id: 'theme-rose', name: 'Rose Petal', primary: 'bg-rose-600', secondary: 'bg-rose-900', icon: Heart },
+    { id: 'theme-violet', name: 'Digital Violet', primary: 'bg-violet-600', secondary: 'bg-violet-900', icon: Zap },
+    { id: 'theme-crimson', name: 'Crimson Peak', primary: 'bg-red-600', secondary: 'bg-red-950', icon: Flame },
   ];
 
   const handleUpdateUrl = (e: React.FormEvent) => {
