@@ -53,6 +53,64 @@ export const loadVendors = createAsyncThunk('vendors/fetchAll', async () => {
   }
 });
 
+export const deleteVendor = createAsyncThunk('vendors/delete', async (id: string, { rejectWithValue }) => {
+  const scriptUrl = getScriptUrl();
+  try {
+    if (scriptUrl) {
+      await axios.post(scriptUrl, JSON.stringify({ action: 'delete', id }), {
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+      });
+    }
+    const stored = localStorage.getItem('vendor_registry');
+    if (stored) {
+      const current = JSON.parse(stored);
+      const updated = current.filter((v: any) => v.id !== id);
+      localStorage.setItem('vendor_registry', JSON.stringify(updated));
+    }
+    return id;
+  } catch (error: any) {
+    return rejectWithValue(error.message);
+  }
+});
+
+export const updateVendor = createAsyncThunk('vendors/update', async (vendor: Vendor, { rejectWithValue }) => {
+  const scriptUrl = getScriptUrl();
+  try {
+    if (scriptUrl) {
+      await axios.post(scriptUrl, JSON.stringify({ action: 'update', vendor }), {
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+      });
+    }
+    const stored = localStorage.getItem('vendor_registry');
+    if (stored) {
+      const current = JSON.parse(stored);
+      const updated = current.map((v: any) => v.id === vendor.id ? vendor : v);
+      localStorage.setItem('vendor_registry', JSON.stringify(updated));
+    }
+    return vendor;
+  } catch (error: any) {
+    return rejectWithValue(error.message);
+  }
+});
+
+export const addBulkVendors = createAsyncThunk('vendors/bulkAdd', async (vendors: Vendor[], { rejectWithValue }) => {
+  const scriptUrl = getScriptUrl();
+  try {
+    if (scriptUrl) {
+      await axios.post(scriptUrl, JSON.stringify({ action: 'bulkAdd', vendors }), {
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+      });
+    }
+    const stored = localStorage.getItem('vendor_registry');
+    const current = stored ? JSON.parse(stored) : DUMMY_VENDORS;
+    const updated = [...vendors, ...current];
+    localStorage.setItem('vendor_registry', JSON.stringify(updated));
+    return vendors;
+  } catch (error: any) {
+    return rejectWithValue(error.message);
+  }
+});
+
 const vendorSlice = createSlice({
   name: 'vendors',
   initialState: {
@@ -77,6 +135,15 @@ const vendorSlice = createSlice({
       })
       .addCase(loadVendors.rejected, (state) => {
         state.loading = false;
+      })
+      .addCase(deleteVendor.fulfilled, (state, action) => {
+        state.items = state.items.filter(v => v.id !== action.payload);
+      })
+      .addCase(updateVendor.fulfilled, (state, action) => {
+        state.items = state.items.map(v => v.id === action.payload.id ? action.payload : v);
+      })
+      .addCase(addBulkVendors.fulfilled, (state, action) => {
+        state.items = [...action.payload, ...state.items];
       });
   },
 });

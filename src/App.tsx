@@ -76,7 +76,16 @@ import {
   CssBaseline,
 } from '@mui/material';
 import { Provider, useDispatch, useSelector } from 'react-redux';
-import { store, RootState, AppDispatch, loadVendors as fetchVendorsThunk, setHealth } from './store';
+import { 
+  store, 
+  RootState, 
+  AppDispatch, 
+  loadVendors as fetchVendorsThunk, 
+  setHealth,
+  deleteVendor as deleteVendorThunk,
+  updateVendor as updateVendorThunk,
+  addBulkVendors as bulkAddThunk
+} from './store';
 
 import { DUMMY_VENDORS } from './dummyData';
 
@@ -179,7 +188,8 @@ const apiCall = async (action: string, data: any = {}) => {
     
     if (action === 'health') {
       if (isStaticHost) {
-        return { status: 'static_mode', db: SCRIPT_URL ? 'online' : 'local_persistence', message: SCRIPT_URL ? 'Connected to Google Sheets' : 'Offline Persistence Mode' };
+        const url = getScriptUrl();
+        return { status: 'static_mode', db: url ? 'online' : 'local_persistence', message: url ? 'Connected to Google Sheets' : 'Offline Persistence Mode' };
       }
 
       try {
@@ -285,31 +295,26 @@ function AppContent() {
     }
   }, [refreshData, checkHealth, isAuthenticated]);
 
-  if (!isAuthenticated) {
-    return (
-      <ThemeProvider theme={themeConfig}>
-        <CssBaseline />
-        <LoginTerminal onLogin={() => setIsAuthenticated(true)} />
-      </ThemeProvider>
-    );
-  }
-
   return (
     <ThemeProvider theme={themeConfig}>
       <CssBaseline />
       <Router>
         <div className={currentTheme}>
-          <Layout systemHealth={systemHealth} onLogout={() => {
-            localStorage.removeItem('terminal_auth');
-            setIsAuthenticated(false);
-          }}>
-            <Routes>
-              <Route path="/" element={<Dashboard vendors={vendors} health={systemHealth} onRefresh={refreshData} />} />
-              <Route path="/vendors" element={<VendorList vendors={vendors} loading={loading} />} />
-              <Route path="/register" element={<RegistrationForm onComplete={refreshData} />} />
-              <Route path="/settings" element={<SettingsView health={systemHealth} currentTheme={currentTheme} onThemeChange={handleThemeChange} />} />
-            </Routes>
-          </Layout>
+          {isAuthenticated ? (
+            <Layout systemHealth={systemHealth} onLogout={() => {
+              localStorage.removeItem('terminal_auth');
+              setIsAuthenticated(false);
+            }}>
+              <Routes>
+                <Route path="/" element={<Dashboard vendors={vendors} health={systemHealth} onRefresh={refreshData} />} />
+                <Route path="/vendors" element={<VendorList vendors={vendors} loading={loading} />} />
+                <Route path="/register" element={<RegistrationForm onComplete={refreshData} />} />
+                <Route path="/settings" element={<SettingsView health={systemHealth} currentTheme={currentTheme} onThemeChange={handleThemeChange} />} />
+              </Routes>
+            </Layout>
+          ) : (
+            <LoginTerminal onLogin={() => setIsAuthenticated(true)} />
+          )}
         </div>
       </Router>
     </ThemeProvider>
@@ -469,12 +474,12 @@ function Layout({ children, systemHealth, onLogout }: { children: React.ReactNod
       <header className="h-16 bg-[var(--theme-nav)] text-white flex items-center justify-between px-8 sticky top-0 z-50 border-b border-white/10 shadow-2xl transition-colors duration-500">
          <div className="flex items-center gap-10">
             <Link to="/" className="flex items-center gap-3 group">
-              <div className="h-9 w-9 items-center justify-center rounded-lg bg-indigo-500 text-white shadow-lg shadow-indigo-500/20 flex transform group-hover:rotate-6 transition-all duration-300">
+              <div className="h-9 w-9 items-center justify-center rounded-lg bg-[var(--theme-primary)] text-white shadow-lg shadow-indigo-500/20 flex transform group-hover:rotate-6 transition-all duration-300">
                 <Building2 className="h-5 w-5" />
               </div>
               <div className="flex flex-col">
                 <span className="text-xl font-black tracking-tight text-white leading-none font-display uppercase italic">
-                  YAJUR<span className="text-indigo-400 not-italic">PORTAL</span>
+                  YAJUR<span className="text-[var(--theme-accent)] not-italic opacity-80">PORTAL</span>
                 </span>
                 <span className="text-[8px] font-bold uppercase tracking-[0.4em] text-slate-500 mt-0.5">Vendor Master v2.1</span>
               </div>
@@ -571,14 +576,14 @@ function Dashboard({ vendors = [], health }: any) {
           <div className="flex items-center gap-3">
             <button 
               onClick={() => navigate('/vendors')}
-              className="px-5 py-2.5 bg-slate-50 text-slate-900 rounded-xl text-[11px] font-bold uppercase tracking-widest border border-slate-200 shadow-sm hover:bg-white hover:border-indigo-200 transition-all active:scale-95 flex items-center gap-2"
+              className="px-5 py-2.5 bg-white text-slate-900 rounded-xl text-[11px] font-bold uppercase tracking-widest border border-slate-200 shadow-sm hover:bg-slate-50 hover:border-[var(--theme-primary)] transition-all active:scale-95 flex items-center gap-2"
             >
-              <Database className="h-3.5 w-3.5 text-indigo-500" />
+              <Database className="h-3.5 w-3.5 text-[var(--theme-primary)]" />
               Registry
             </button>
             <button 
               onClick={() => navigate('/register')}
-              className="px-6 py-2.5 bg-indigo-600 text-white rounded-xl text-[11px] font-bold uppercase tracking-widest shadow-xl shadow-indigo-600/20 hover:bg-indigo-700 transition-all flex items-center gap-2 active:scale-95"
+              className="px-6 py-2.5 bg-[var(--theme-primary)] text-white rounded-xl text-[11px] font-bold uppercase tracking-widest shadow-xl hover:opacity-90 transition-all flex items-center gap-2 active:scale-95"
             >
               <Plus className="h-4 w-4" />
               Onboard
@@ -637,7 +642,7 @@ function Dashboard({ vendors = [], health }: any) {
           <div className="px-8 py-7 border-b border-slate-50 flex items-center justify-between relative z-10">
             <div>
               <h3 className="text-xl font-black text-slate-900 font-display uppercase italic tracking-tight flex items-center gap-2">
-                <Activity className="h-5 w-5 text-indigo-500" />
+                <Activity className="h-5 w-5 text-[var(--theme-primary)]" />
                 Activity Analytics
               </h3>
               <p className="text-[9px] font-bold text-slate-400 uppercase tracking-[0.2em] mt-1">Onboarding cycles vs Performance throughput</p>
@@ -647,7 +652,7 @@ function Dashboard({ vendors = [], health }: any) {
                  onClick={() => setAnalyticsTab('real-time')}
                  className={cn(
                    "px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all",
-                   analyticsTab === 'real-time' ? "bg-white text-indigo-600 shadow-lg ring-1 ring-slate-200/50" : "text-slate-400 hover:text-slate-600"
+                   analyticsTab === 'real-time' ? "bg-white text-[var(--theme-primary)] shadow-lg ring-1 ring-slate-200/50" : "text-slate-400 hover:text-slate-600"
                  )}
                >
                  Real-time
@@ -656,7 +661,7 @@ function Dashboard({ vendors = [], health }: any) {
                  onClick={() => setAnalyticsTab('history')}
                  className={cn(
                    "px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all",
-                   analyticsTab === 'history' ? "bg-white text-indigo-600 shadow-lg ring-1 ring-slate-200/50" : "text-slate-400 hover:text-slate-600"
+                   analyticsTab === 'history' ? "bg-white text-[var(--theme-primary)] shadow-lg ring-1 ring-slate-200/50" : "text-slate-400 hover:text-slate-600"
                  )}
                >
                  History
@@ -666,18 +671,17 @@ function Dashboard({ vendors = [], health }: any) {
           
           <div className="flex-1 p-10 bg-slate-50/30">
              <div className="h-full w-full flex items-end justify-around gap-4 xl:gap-8 min-h-[320px] bg-white/40 rounded-[2rem] p-8 border border-white/60 shadow-inner">
-                {(analyticsTab === 'real-time' ? [65, 45, 85, 55, 95, 75, 100] : [40, 70, 30, 90, 50, 80, 60]).map((h, i) => (
-                  <div key={i} className="flex-1 flex flex-col items-center gap-5 h-full justify-end group">
+                {(analyticsTab === 'real-time' ? [65, 45, 85, 55, 95, 75, 100] : [20, 40, 60, 50, 40, 70, 90]).map((h, i) => (
+                  <div key={i + analyticsTab} className="flex-1 flex flex-col items-center gap-5 h-full justify-end group">
                      <div className="w-full max-w-[12px] relative flex flex-col justify-end h-full">
                         <div className="absolute inset-0 bg-slate-100 rounded-full w-full" />
                         <motion.div 
-                          key={analyticsTab + i}
                           initial={{ height: 0 }}
                           animate={{ height: `${h}%` }}
                           transition={{ delay: i * 0.04, type: 'spring', damping: 20 }}
                           className={cn(
                             "rounded-full transition-all duration-500 relative shadow-lg z-10",
-                            analyticsTab === 'real-time' ? "bg-indigo-600 group-hover:bg-indigo-500 shadow-indigo-200" : "bg-slate-400 group-hover:bg-slate-500 shadow-slate-200"
+                            analyticsTab === 'real-time' ? "bg-[var(--theme-primary)] group-hover:bg-[var(--theme-accent)] shadow-indigo-200" : "bg-slate-400 group-hover:bg-slate-500 shadow-slate-200"
                           )}
                         >
                            <div className="absolute -top-12 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all z-20 shadow-xl border border-white/10">
@@ -695,10 +699,10 @@ function Dashboard({ vendors = [], health }: any) {
         <div className="lg:col-span-4 grid gap-8 flex flex-col">
            <div className="bg-slate-950 rounded-[2.5rem] p-10 text-white relative overflow-hidden group border border-white/5 shadow-2xl flex-1 flex flex-col">
               <div className="absolute top-0 left-0 w-full h-full bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 pointer-events-none" />
-              <div className="absolute top-0 left-0 w-1.5 h-full bg-indigo-600" />
+              <div className="absolute top-0 left-0 w-1.5 h-full bg-[var(--theme-primary)]" />
               
               <div className="relative z-10 flex-1">
-                 <div className="h-14 w-14 rounded-2xl bg-indigo-600/20 border border-indigo-500/30 text-indigo-400 flex items-center justify-center mb-8 shadow-2xl group-hover:rotate-6 transition-transform">
+                 <div className="h-14 w-14 rounded-2xl bg-[var(--theme-primary)]/20 border border-[var(--theme-primary)]/30 text-[var(--theme-accent)] flex items-center justify-center mb-8 shadow-2xl group-hover:rotate-6 transition-transform">
                     <ShieldCheck className="h-7 w-7" />
                  </div>
                  <h3 className="text-2xl font-black font-display mb-4 tracking-tighter uppercase italic leading-none">Security Protocol</h3>
@@ -718,7 +722,7 @@ function Dashboard({ vendors = [], health }: any) {
               <Building2 className="absolute -right-20 -bottom-20 h-64 w-64 text-white/5 group-hover:rotate-12 transition-all duration-1000 blur-sm" />
            </div>
 
-           <div className="bg-indigo-600 rounded-[2.5rem] p-10 text-white shadow-2xl shadow-indigo-600/30 relative overflow-hidden group border border-indigo-400/50">
+           <div className="bg-[var(--theme-primary)] rounded-[2.5rem] p-10 text-white shadow-2xl relative overflow-hidden group border border-white/20">
               <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 blur-3xl rounded-full -mr-16 -mt-16" />
               
               <div className="relative z-10 flex flex-col justify-between h-full">
@@ -731,7 +735,7 @@ function Dashboard({ vendors = [], health }: any) {
                  </div>
                  <button 
                   onClick={() => navigate('/register')}
-                  className="w-full py-5 bg-white text-indigo-600 rounded-2xl text-[12px] font-black uppercase tracking-[0.2em] hover:bg-indigo-50 transition-all flex items-center justify-center gap-3 group shadow-2xl hover:shadow-indigo-900/40 active:scale-95"
+                  className="w-full py-5 bg-white text-[var(--theme-primary)] rounded-2xl text-[12px] font-black uppercase tracking-[0.2em] hover:bg-white/90 transition-all flex items-center justify-center gap-3 group shadow-2xl active:scale-95"
                  >
                     Launch protocol
                     <ArrowRight className="h-4 w-4 group-hover:translate-x-1.5 transition-transform" />
@@ -797,8 +801,11 @@ function TrafficItem({ label, value, color }: any) {
 }
 
 function VendorList({ vendors = [], loading }: { vendors: Vendor[], loading: boolean }) {
+  const dispatch = useDispatch<AppDispatch>();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedVendor, setSelectedVendor] = useState<Vendor | null>(null);
+  const [editVendor, setEditVendor] = useState<Vendor | null>(null);
+  const [showBulkModal, setShowBulkModal] = useState(false);
 
   const vendorsArray = Array.isArray(vendors) ? vendors : [];
 
@@ -808,10 +815,16 @@ function VendorList({ vendors = [], loading }: { vendors: Vendor[], loading: boo
     v.id.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const handleDelete = (id: string) => {
+    if (confirm('Permanently decommission this partner node?')) {
+      dispatch(deleteVendorThunk(id));
+    }
+  };
+
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8 pb-20">
       <div className="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-sm flex flex-col lg:flex-row lg:items-end justify-between gap-8 relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-1.5 h-full bg-indigo-600" />
+        <div className="absolute top-0 left-0 w-1.5 h-full bg-[var(--theme-primary)]" />
         <div className="flex-1">
           <div className="flex items-center gap-3 mb-2">
             <Users className="h-6 w-6 text-indigo-600" />
@@ -831,8 +844,21 @@ function VendorList({ vendors = [], loading }: { vendors: Vendor[], loading: boo
           </div>
         </div>
         
-        <div className="flex items-center gap-3">
-           <button className="flex items-center gap-2 px-5 py-3 bg-white border border-slate-200 rounded-xl text-[11px] font-bold uppercase tracking-widest text-slate-600 hover:bg-slate-50 transition-all shadow-sm">
+        <div className="flex items-center gap-3 text-[var(--theme-primary)]">
+           <button 
+             onClick={() => setShowBulkModal(true)}
+             className="flex items-center gap-2 px-5 py-3 bg-white border border-slate-200 rounded-xl text-[11px] font-bold uppercase tracking-widest text-slate-600 hover:bg-slate-50 transition-all shadow-sm"
+           >
+             <Upload className="h-4 w-4 text-indigo-500" /> Bulk Import
+           </button>
+           <button 
+             onClick={() => {
+               const csvContent = filteredVendors.map(v => `${v.name},${v.statutory?.pan},${v.statutory?.gstin},${v.address?.city}`).join('\n');
+               const blob = new Blob([`Name,PAN,GSTIN,City\n${csvContent}`], { type: 'text/csv' });
+               saveAs(blob, 'vendor_registry.csv');
+             }}
+             className="flex items-center gap-2 px-5 py-3 bg-white border border-slate-200 rounded-xl text-[11px] font-bold uppercase tracking-widest text-slate-600 hover:bg-slate-50 transition-all shadow-sm"
+           >
              <Download className="h-4 w-4 text-indigo-500" /> Export CSV
            </button>
            <Link to="/register" className="flex items-center gap-2 px-6 py-3.5 bg-slate-900 text-white rounded-xl text-[11px] font-bold uppercase tracking-widest hover:bg-slate-800 shadow-xl active:scale-95 transition-all">
@@ -903,12 +929,29 @@ function VendorList({ vendors = [], loading }: { vendors: Vendor[], loading: boo
                       </div>
                     </td>
                     <td className="px-8 py-6 text-right">
-                      <button 
-                        onClick={() => setSelectedVendor(vendor)}
-                        className="p-2.5 bg-slate-50 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all border border-slate-100 hover:border-indigo-200"
-                      >
-                         <Eye className="h-4 w-4" />
-                      </button>
+                      <div className="flex items-center justify-end gap-2">
+                        <button 
+                          onClick={() => setSelectedVendor(vendor)}
+                          className="p-2 bg-slate-50 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all border border-slate-100"
+                          title="View Details"
+                        >
+                           <Eye className="h-3.5 w-3.5" />
+                        </button>
+                        <button 
+                          onClick={() => setEditVendor(vendor)}
+                          className="p-2 bg-slate-50 text-slate-400 hover:text-amber-500 hover:bg-amber-50 rounded-lg transition-all border border-slate-100"
+                          title="Edit Partner"
+                        >
+                           <Edit className="h-3.5 w-3.5" />
+                        </button>
+                        <button 
+                          onClick={() => handleDelete(vendor.id)}
+                          className="p-2 bg-slate-50 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-all border border-slate-100"
+                          title="Delete Partner"
+                        >
+                           <Trash2 className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
                     </td>
                   </motion.tr>
                 ))}
@@ -929,8 +972,148 @@ function VendorList({ vendors = [], loading }: { vendors: Vendor[], loading: boo
 
       <AnimatePresence>
         {selectedVendor && <VendorDetailModal vendor={selectedVendor} onClose={() => setSelectedVendor(null)} />}
+        {editVendor && <EditVendorModal vendor={editVendor} onClose={() => setEditVendor(null)} />}
+        {showBulkModal && <BulkUploadModal onClose={() => setShowBulkModal(false)} />}
       </AnimatePresence>
     </motion.div>
+  );
+}
+
+function BulkUploadModal({ onClose }: { onClose: () => void }) {
+  const dispatch = useDispatch<AppDispatch>();
+  const [data, setData] = useState<any[]>([]);
+  const [isImporting, setIsImporting] = useState(false);
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    Papa.parse(file, {
+      header: true,
+      skipEmptyLines: true,
+      complete: (results) => {
+        setData(results.data);
+      }
+    });
+  };
+
+  const handleImport = async () => {
+    setIsImporting(true);
+    const newVendors = data.map((row: any) => ({
+      id: `V${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
+      name: row.Name || row.name || 'Unknown Vendor',
+      createdAt: new Date().toISOString(),
+      requestType: 'New',
+      address: {
+        city: row.City || row.city || 'Unknown',
+        state: row.State || row.state || 'Unknown',
+        country: 'India',
+        mobile: row.Mobile || row.mobile || '',
+        email: row.Email || row.email || ''
+      },
+      statutory: {
+        pan: row.PAN || row.pan || '',
+        gstin: row.GSTIN || row.gstin || '',
+        vendorType: row.Type || row.type || 'Goods'
+      }
+    })) as Vendor[];
+
+    await dispatch(bulkAddThunk(newVendors));
+    setIsImporting(false);
+    onClose();
+  };
+
+  return (
+    <div className="fixed inset-0 z-[200] flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4">
+      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-white rounded-[2.5rem] w-full max-w-2xl shadow-2xl overflow-hidden border border-white">
+        <div className="px-8 py-6 border-b border-slate-100 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <Upload className="h-6 w-6 text-indigo-600" />
+            <h2 className="text-xl font-black text-slate-900 font-display uppercase italic">Bulk Ledger Import</h2>
+          </div>
+          <button onClick={onClose} className="p-2 hover:bg-slate-100 rounded-lg transition-colors"><X className="h-5 w-5 text-slate-400" /></button>
+        </div>
+        <div className="p-8 space-y-6">
+          <div className="p-10 border-2 border-dashed border-slate-200 rounded-2xl flex flex-col items-center justify-center gap-4 bg-slate-50">
+            <Upload className="h-10 w-10 text-slate-300" />
+            <div className="text-center">
+              <p className="text-sm font-bold text-slate-900">Select CSV Manifest</p>
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Headers: Name, PAN, GSTIN, City, Mobile, Email</p>
+            </div>
+            <input type="file" accept=".csv" onChange={handleFileUpload} className="absolute inset-0 opacity-0 cursor-pointer" />
+          </div>
+
+          {data.length > 0 && (
+            <div className="bg-emerald-50 border border-emerald-100 p-4 rounded-xl flex items-center justify-between">
+              <p className="text-[11px] font-bold text-emerald-700 uppercase tracking-widest">
+                Manifest Validated: {data.length} Records Detected
+              </p>
+              <CheckCircle2 className="h-5 w-5 text-emerald-500" />
+            </div>
+          )}
+        </div>
+        <div className="px-8 py-6 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
+          <button onClick={onClose} className="px-6 py-2.5 text-[11px] font-bold uppercase tracking-widest text-slate-400">Discard</button>
+          <button 
+            onClick={handleImport}
+            disabled={data.length === 0 || isImporting}
+            className="px-8 py-2.5 bg-indigo-600 text-white rounded-xl text-[11px] font-bold uppercase tracking-widest shadow-xl shadow-indigo-600/20 hover:bg-indigo-700 disabled:opacity-50 transition-all"
+          >
+            {isImporting ? 'Syncing...' : 'Execute Import'}
+          </button>
+        </div>
+      </motion.div>
+    </div>
+  );
+}
+
+function EditVendorModal({ vendor, onClose }: { vendor: Vendor, onClose: () => void }) {
+  const dispatch = useDispatch<AppDispatch>();
+
+  return (
+    <div className="fixed inset-0 z-[200] flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4 overflow-y-auto">
+      <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} className="bg-white rounded-[2.5rem] w-full max-w-4xl shadow-2xl overflow-hidden my-8 border border-white">
+        <div className="px-8 py-6 border-b border-slate-100 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <Edit className="h-6 w-6 text-indigo-600" />
+            <h2 className="text-xl font-black text-slate-900 font-display uppercase italic">Edit Partner Protocol</h2>
+          </div>
+          <button onClick={onClose} className="p-2 hover:bg-slate-100 rounded-lg transition-colors"><X className="h-5 w-5 text-slate-400" /></button>
+        </div>
+        <div className="max-h-[70vh] overflow-y-auto">
+          <Formik
+            initialValues={vendor}
+            onSubmit={async (values) => {
+              await dispatch(updateVendorThunk({ ...values, id: vendor.id }));
+              onClose();
+            }}
+          >
+            {({ isSubmitting, touched, errors }) => (
+              <Form className="p-8 space-y-12">
+                 <div className="grid gap-8 sm:grid-cols-2">
+                    <FormInput label="Partner Name" name="name" error={touched.name && errors.name} />
+                    <FormInput label="Tax ID (PAN)" name="statutory.pan" />
+                    <FormInput label="GST Record" name="statutory.gstin" />
+                    <FormInput label="Classification" name="statutory.vendorType" type="select" options={['Goods', 'Services']} />
+                    <FormInput label="Operating City" name="address.city" />
+                    <FormInput label="Direct Phone" name="address.mobile" />
+                 </div>
+                 <div className="flex justify-end gap-3 pt-8 border-t border-slate-100">
+                    <button type="button" onClick={onClose} className="px-6 py-2.5 text-[11px] font-bold uppercase tracking-widest text-slate-400">Cancel</button>
+                    <button 
+                      type="submit" 
+                      disabled={isSubmitting}
+                      className="px-10 py-3 bg-indigo-600 text-white rounded-xl text-[11px] font-bold uppercase tracking-widest shadow-xl shadow-indigo-600/20 hover:bg-indigo-700 active:scale-95 transition-all"
+                    >
+                      {isSubmitting ? 'Syncing...' : 'Update Record'}
+                    </button>
+                 </div>
+              </Form>
+            )}
+          </Formik>
+        </div>
+      </motion.div>
+    </div>
   );
 }
 
@@ -1648,14 +1831,14 @@ function SettingsView({ health, currentTheme, onThemeChange }: { health: any, cu
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
 
   const themes = [
-    { id: 'theme-default', name: 'Midnight Slate', primary: 'bg-indigo-600', secondary: 'bg-slate-900', icon: ShieldCheck },
-    { id: 'theme-midnight', name: 'Cyber Night', primary: 'bg-violet-600', secondary: 'bg-slate-950', icon: Activity },
-    { id: 'theme-emerald', name: 'Corporate Green', primary: 'bg-emerald-600', secondary: 'bg-emerald-950', icon: CheckCircle2 },
-    { id: 'theme-ocean', name: 'Oceanic Blue', primary: 'bg-sky-600', secondary: 'bg-sky-950', icon: Database },
-    { id: 'theme-amber', name: 'Golden Harvest', primary: 'bg-amber-600', secondary: 'bg-amber-900', icon: TrendingUp },
-    { id: 'theme-rose', name: 'Rose Petal', primary: 'bg-rose-600', secondary: 'bg-rose-900', icon: Heart },
-    { id: 'theme-violet', name: 'Digital Violet', primary: 'bg-violet-600', secondary: 'bg-violet-900', icon: Zap },
-    { id: 'theme-crimson', name: 'Crimson Peak', primary: 'bg-red-600', secondary: 'bg-red-950', icon: Flame },
+    { id: 'theme-default', name: 'Midnight Slate', primary: 'bg-indigo-600', secondary: 'bg-slate-900', icon: ShieldCheck, accent: 'theme-indigo' },
+    { id: 'theme-midnight', name: 'Cyber Night', primary: 'bg-violet-600', secondary: 'bg-slate-950', icon: Activity, accent: 'theme-cyber' },
+    { id: 'theme-emerald', name: 'Corporate Green', primary: 'bg-emerald-600', secondary: 'bg-emerald-950', icon: CheckCircle2, accent: 'theme-green' },
+    { id: 'theme-ocean', name: 'Oceanic Blue', primary: 'bg-sky-600', secondary: 'bg-sky-950', icon: Database, accent: 'theme-blue' },
+    { id: 'theme-amber', name: 'Golden Harvest', primary: 'bg-amber-600', secondary: 'bg-amber-900', icon: TrendingUp, accent: 'theme-gold' },
+    { id: 'theme-rose', name: 'Rose Petal', primary: 'bg-rose-600', secondary: 'bg-rose-900', icon: Heart, accent: 'theme-rose' },
+    { id: 'theme-violet', name: 'Digital Violet', primary: 'bg-violet-600', secondary: 'bg-violet-900', icon: Zap, accent: 'theme-violet' },
+    { id: 'theme-crimson', name: 'Crimson Peak', primary: 'bg-red-600', secondary: 'bg-red-950', icon: Flame, accent: 'theme-red' },
   ];
 
   const handleUpdateUrl = (e: React.FormEvent) => {
@@ -1699,26 +1882,26 @@ function SettingsView({ health, currentTheme, onThemeChange }: { health: any, cu
                     className={cn(
                       "group p-6 rounded-[2rem] border-2 transition-all text-left relative overflow-hidden",
                       currentTheme === theme.id 
-                        ? "border-indigo-600 bg-indigo-50/30 ring-4 ring-indigo-50 shadow-xl" 
-                        : "border-slate-100 bg-white hover:border-slate-200 hover:shadow-lg"
+                        ? "border-[var(--theme-primary)] bg-white shadow-xl ring-4 ring-[var(--theme-primary)]/10" 
+                        : "border-slate-100 bg-slate-50/30 hover:border-slate-200 hover:shadow-lg"
                     )}
                   >
                     <div className="flex items-center justify-between mb-8">
-                      <div className={cn("h-10 w-10 rounded-xl flex items-center justify-center text-white", theme.primary)}>
-                        <theme.icon className="h-5 w-5" />
+                      <div className={cn("h-12 w-12 rounded-2xl flex items-center justify-center text-white shadow-lg", theme.primary)}>
+                        <theme.icon className="h-6 w-6" />
                       </div>
                       {currentTheme === theme.id && (
-                        <div className="h-6 w-6 bg-indigo-600 rounded-full flex items-center justify-center text-white">
+                        <div className="h-6 w-6 bg-[var(--theme-primary)] rounded-full flex items-center justify-center text-white">
                           <Check className="h-3.5 w-3.5" />
                         </div>
                       )}
                     </div>
                     <div>
-                      <p className="text-[12px] font-black text-slate-900 uppercase tracking-tight">{theme.name}</p>
-                      <div className="flex gap-1.5 mt-2">
-                        <div className={cn("h-4 w-4 rounded-full", theme.primary)} />
-                        <div className={cn("h-4 w-4 rounded-full", theme.secondary)} />
-                        <div className="h-4 w-4 rounded-full bg-slate-50 border border-slate-200" />
+                      <p className="text-[13px] font-black text-slate-900 uppercase tracking-tight italic">{theme.name}</p>
+                      <div className="flex gap-2 mt-3">
+                        <div className={cn("h-5 w-5 rounded-lg shadow-sm border border-black/5", theme.primary)} />
+                        <div className={cn("h-5 w-5 rounded-lg shadow-sm border border-black/5", theme.secondary)} />
+                        <div className="h-5 w-5 rounded-lg shadow-sm bg-white border border-slate-200" />
                       </div>
                     </div>
                   </button>
