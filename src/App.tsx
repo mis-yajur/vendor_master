@@ -1091,7 +1091,7 @@ function RegistrationForm({ onComplete }: { onComplete: () => void }) {
                  <button 
                    type="submit" 
                    disabled={isSubmitting} 
-                   className="px-16 py-6 bg-indigo-600 text-white rounded-[2.5rem] text-[15px] font-black uppercase tracking-widest shadow-[0_20px_50px_rgba(79,70,229,0.3)] hover:bg-indigo-700 active:scale-95 transition-all flex items-center gap-4 border-4 border-white"
+                   className="px-24 py-10 bg-indigo-600 text-white rounded-[3rem] text-[20px] font-black uppercase tracking-widest shadow-[0_20px_50px_rgba(79,70,229,0.3)] hover:bg-indigo-700 active:scale-95 transition-all flex items-center gap-4 border-4 border-white"
                  >
                    {isSubmitting ? (
                      <>
@@ -1130,11 +1130,11 @@ function FormSection({ title, icon: Icon, children }: any) {
           </div>
         </div>
         <div className="flex flex-col">
-          <h3 className="text-3xl font-black uppercase tracking-[0.5em] text-slate-900 font-display leading-none">{sectionTitle}</h3>
-          <div className="h-2 w-32 bg-indigo-600 mt-6 rounded-full group-hover:w-64 transition-all duration-1000 shadow-xl shadow-indigo-200" />
+          <h3 className="text-5xl font-black uppercase tracking-[0.5em] text-slate-900 font-display leading-none">{sectionTitle}</h3>
+          <div className="h-3 w-40 bg-indigo-600 mt-8 rounded-full group-hover:w-full transition-all duration-1000 shadow-2xl shadow-indigo-200" />
         </div>
       </div>
-      <div className="pl-4">
+      <div className="pl-12">
         {children}
       </div>
     </div>
