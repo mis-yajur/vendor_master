@@ -604,36 +604,35 @@ function Dashboard({ vendors = [], health }: any) {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: idx * 0.05 }}
-            className="group bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl hover:border-[var(--theme-primary)]/20 transition-all cursor-default relative overflow-hidden"
+            className="group bg-white p-4 rounded-xl border border-slate-100 shadow-sm hover:shadow-xl hover:border-[var(--theme-primary)]/20 transition-all cursor-default relative overflow-hidden"
           >
             <div className={cn(
-              "absolute top-0 right-0 h-24 w-24 -mr-8 -mt-8 rounded-full blur-3xl opacity-0 group-hover:opacity-20 transition-opacity",
+              "absolute top-0 right-0 h-16 w-16 -mr-4 -mt-4 rounded-full blur-3xl opacity-0 group-hover:opacity-20 transition-opacity",
               stat.color === 'indigo' ? "bg-[var(--theme-primary)]" :
               stat.color === 'emerald' ? "bg-emerald-600" :
               stat.color === 'amber' ? "bg-amber-600" : "bg-rose-600"
             )} />
             
-            <div className="flex items-center justify-between mb-4 relative z-10">
+            <div className="flex items-center justify-between mb-2 relative z-10">
               <div className={cn(
-                "h-10 w-10 rounded-xl flex items-center justify-center transition-all group-hover:scale-110 shadow-sm",
+                "h-8 w-8 rounded-lg flex items-center justify-center transition-all group-hover:scale-110 shadow-sm text-xs",
                 stat.color === 'indigo' ? "bg-[var(--theme-primary)]/10 text-[var(--theme-primary)] border border-[var(--theme-primary)]/20" :
                 stat.color === 'emerald' ? "bg-emerald-50 text-emerald-600 border border-emerald-100" :
                 stat.color === 'amber' ? "bg-amber-50 text-amber-600 border border-amber-100" : 
                 "bg-rose-50 text-rose-600 border border-rose-100"
               )}>
-                <stat.icon className="h-5 w-5" />
+                <stat.icon className="h-4 w-4" />
               </div>
-              <div className="flex items-center gap-1.5">
-                <div className="h-1 w-1 rounded-full bg-emerald-500 animate-pulse" />
-                <span className="text-[8px] font-black text-emerald-500 uppercase tracking-widest">Live</span>
+              <div className="flex items-center gap-1 bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-tighter border border-emerald-100">
+                Live
               </div>
             </div>
             <div className="relative z-10">
-              <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">{stat.label}</p>
-              <h3 className="text-3xl font-black text-slate-900 tracking-tight font-display italic">{stat.value}</h3>
-              <div className="mt-4 pt-4 border-t border-slate-50 flex items-center justify-between">
-                <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{stat.description}</span>
-                <TrendingUp className="h-3.5 w-3.5 text-slate-300" />
+              <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-0.5">{stat.label}</p>
+              <h3 className="text-xl font-black text-slate-900 tracking-tight font-display italic">{stat.value}</h3>
+              <div className="mt-2 pt-2 border-t border-slate-50 flex items-center justify-between">
+                <span className="text-[8px] font-bold text-slate-400 uppercase tracking-widest">{stat.description}</span>
+                <TrendingUp className="h-3 w-3 text-slate-300" />
               </div>
             </div>
           </motion.div>
@@ -641,23 +640,23 @@ function Dashboard({ vendors = [], health }: any) {
       </div>
 
       <div className="grid lg:grid-cols-12 gap-8">
-        <div className="lg:col-span-8 bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden flex flex-col relative min-h-[400px]">
+        <div className="lg:col-span-8 bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden flex flex-col relative min-h-[350px]">
           <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--theme-primary)]/5 blur-3xl rounded-full -mr-16 -mt-16" />
           
-          <div className="px-6 py-5 border-b border-slate-50 flex items-center justify-between relative z-10">
+          <div className="px-6 py-4 border-b border-slate-50 flex items-center justify-between relative z-10">
             <div>
-              <h3 className="text-lg font-black text-slate-900 font-display uppercase italic tracking-tight flex items-center gap-2">
+              <h3 className="text-base font-black text-slate-900 font-display uppercase italic tracking-tight flex items-center gap-2">
                 <Activity className="h-4 w-4 text-[var(--theme-primary)]" />
                 Activity Analytics
               </h3>
-              <p className="text-[8px] font-bold text-slate-400 uppercase tracking-[0.2em] mt-1">Onboarding cycles vs Performance throughput</p>
+              <p className="text-[8px] font-bold text-slate-400 uppercase tracking-[0.2em] mt-0.5">Onboarding cycles vs Performance throughput</p>
             </div>
-            <div className="flex bg-slate-100/80 p-1 rounded-xl border border-slate-200/50 shadow-inner">
+            <div className="flex bg-slate-100/80 p-0.5 rounded-lg border border-slate-200/50 shadow-inner">
                <button 
                  onClick={() => setAnalyticsTab('real-time')}
                  className={cn(
-                   "px-4 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all",
-                   analyticsTab === 'real-time' ? "bg-white text-[var(--theme-primary)] shadow-md ring-1 ring-slate-200/50" : "text-slate-400 hover:text-slate-600"
+                   "px-3 py-1 rounded-md text-[9px] font-black uppercase tracking-widest transition-all",
+                   analyticsTab === 'real-time' ? "bg-white text-[var(--theme-primary)] shadow-sm ring-1 ring-slate-200/50" : "text-slate-400 hover:text-slate-600"
                  )}
                >
                  Real-time
@@ -665,8 +664,8 @@ function Dashboard({ vendors = [], health }: any) {
                <button 
                  onClick={() => setAnalyticsTab('history')}
                  className={cn(
-                   "px-4 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all",
-                   analyticsTab === 'history' ? "bg-white text-[var(--theme-primary)] shadow-md ring-1 ring-slate-200/50" : "text-slate-400 hover:text-slate-600"
+                   "px-3 py-1 rounded-md text-[9px] font-black uppercase tracking-widest transition-all",
+                   analyticsTab === 'history' ? "bg-white text-[var(--theme-primary)] shadow-sm ring-1 ring-slate-200/50" : "text-slate-400 hover:text-slate-600"
                  )}
                >
                  History
@@ -674,8 +673,8 @@ function Dashboard({ vendors = [], health }: any) {
             </div>
           </div>
           
-          <div className="flex-1 p-6 bg-slate-50/30">
-             <div className="h-full w-full flex items-end justify-around gap-4 xl:gap-6 min-h-[220px] bg-white/40 rounded-2xl p-6 border border-white/60 shadow-inner">
+          <div className="flex-1 p-4 bg-slate-50/30">
+             <div className="h-full w-full flex items-end justify-around gap-2 xl:gap-4 min-h-[180px] bg-white/40 rounded-xl p-4 border border-white/60 shadow-inner">
                 {(analyticsTab === 'real-time' ? [65, 45, 85, 55, 95, 75, 100] : [20, 40, 60, 50, 40, 70, 90]).map((h, i) => (
                   <div key={i + analyticsTab} className="flex-1 flex flex-col items-center gap-5 h-full justify-end group">
                      <div className="w-full max-w-[12px] relative flex flex-col justify-end h-full">
@@ -699,55 +698,54 @@ function Dashboard({ vendors = [], health }: any) {
                 ))}
              </div>
           </div>
-        </div>
-
-        <div className="lg:col-span-4 grid gap-8 flex flex-col">
-           <div className="bg-slate-950 rounded-[2.5rem] p-10 text-white relative overflow-hidden group border border-white/5 shadow-2xl flex-1 flex flex-col">
+                <div className="lg:col-span-4 grid gap-4 flex flex-col">
+           <div className="bg-slate-950 rounded-2xl p-6 text-white relative overflow-hidden group border border-white/5 shadow-2xl flex-1 flex flex-col">
               <div className="absolute top-0 left-0 w-full h-full bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 pointer-events-none" />
-              <div className="absolute top-0 left-0 w-1.5 h-full bg-[var(--theme-primary)]" />
+              <div className="absolute top-0 left-0 w-1 h-full bg-[var(--theme-primary)]" />
               
               <div className="relative z-10 flex-1">
-                 <div className="h-14 w-14 rounded-2xl bg-[var(--theme-primary)]/20 border border-[var(--theme-primary)]/30 text-[var(--theme-accent)] flex items-center justify-center mb-8 shadow-2xl group-hover:rotate-6 transition-transform">
-                    <ShieldCheck className="h-7 w-7" />
+                 <div className="h-10 w-10 rounded-xl bg-[var(--theme-primary)]/20 border border-[var(--theme-primary)]/30 text-[var(--theme-accent)] flex items-center justify-center mb-4 shadow-2xl group-hover:rotate-6 transition-transform">
+                    <ShieldCheck className="h-5 w-5" />
                  </div>
-                 <h3 className="text-2xl font-black font-display mb-4 tracking-tighter uppercase italic leading-none">Security Protocol</h3>
-                 <p className="text-slate-400 text-[13px] font-medium leading-relaxed mb-10">
+                 <h3 className="text-lg font-black font-display mb-2 tracking-tighter uppercase italic leading-none">Security Protocol</h3>
+                 <p className="text-slate-400 text-[11px] font-medium leading-relaxed mb-6">
                    Proprietary encryption layer for statutory records and procurement audit logs.
                  </p>
                  
-                 <div className="space-y-4">
+                 <div className="space-y-2">
                     {['Identity Biometrics', 'SHA-512 Matrix', 'Neural Audit'].map((label, i) => (
-                      <div key={i} className="flex items-center gap-4 p-4 bg-white/5 rounded-2xl border border-white/5 hover:bg-white/10 transition-all group/item">
-                         <div className="h-2 w-2 rounded-full bg-emerald-500 group-hover/item:scale-150 transition-transform" />
-                         <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-300">{label}</span>
+                      <div key={i} className="flex items-center gap-3 p-3 bg-white/5 rounded-xl border border-white/5 hover:bg-white/10 transition-all group/item">
+                         <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 group-hover/item:scale-125 transition-transform" />
+                         <span className="text-[8px] font-bold uppercase tracking-[0.2em] text-slate-300">{label}</span>
                       </div>
                     ))}
                  </div>
               </div>
-              <Building2 className="absolute -right-20 -bottom-20 h-64 w-64 text-white/5 group-hover:rotate-12 transition-all duration-1000 blur-sm" />
+              <Building2 className="absolute -right-12 -bottom-12 h-40 w-40 text-white/5 group-hover:rotate-12 transition-all duration-1000 blur-sm" />
            </div>
-
-           <div className="bg-[var(--theme-primary)] rounded-[2.5rem] p-10 text-white shadow-2xl relative overflow-hidden group border border-white/20">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 blur-3xl rounded-full -mr-16 -mt-16" />
+ 
+           <div className="bg-[var(--theme-primary)] rounded-2xl p-6 text-white shadow-2xl relative overflow-hidden group border border-white/20">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 blur-3xl rounded-full -mr-12 -mt-12" />
               
               <div className="relative z-10 flex flex-col justify-between h-full">
                  <div>
-                    <div className="h-14 w-14 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 text-white flex items-center justify-center mb-6 shadow-xl">
-                       <Plus className="h-7 w-7" />
+                    <div className="h-10 w-10 rounded-xl bg-white/10 backdrop-blur-xl border border-white/20 text-white flex items-center justify-center mb-4 shadow-xl">
+                       <Plus className="h-5 w-5" />
                     </div>
-                    <h3 className="text-2xl font-black font-display mb-3 tracking-tighter italic uppercase">Terminal Entry</h3>
-                    <p className="text-white/80 text-[13px] font-medium mb-10">Initialize secure onboarding protocol for new enterprise entity.</p>
+                    <h3 className="text-lg font-black font-display mb-2 tracking-tighter italic uppercase">Terminal Entry</h3>
+                    <p className="text-white/80 text-[11px] font-medium mb-6">Initialize secure onboarding protocol for new enterprise entity.</p>
                  </div>
                  <button 
                   onClick={() => navigate('/register')}
-                  className="w-full py-5 bg-white text-[var(--theme-primary)] rounded-2xl text-[12px] font-black uppercase tracking-[0.2em] hover:bg-white/90 transition-all flex items-center justify-center gap-3 group shadow-2xl active:scale-95"
+                  className="w-full py-3 bg-white text-[var(--theme-primary)] rounded-xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-white/90 transition-all flex items-center justify-center gap-2 group shadow-2xl active:scale-95"
                  >
                     Launch protocol
-                    <ArrowRight className="h-4 w-4 group-hover:translate-x-1.5 transition-transform" />
+                    <ArrowRight className="h-3 w-3 group-hover:translate-x-1 transition-transform" />
                  </button>
               </div>
            </div>
         </div>
+ </div>
       </div>
     </div>
   );
