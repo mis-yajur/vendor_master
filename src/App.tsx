@@ -469,38 +469,38 @@ function Layout({ children, systemHealth, onLogout }: { children: React.ReactNod
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50 font-sans flex flex-col">
+    <div className="min-h-screen bg-[var(--theme-bg)] font-sans flex flex-col transition-colors duration-500">
       {/* Top bar with Navigation */}
-      <header className="h-16 bg-[var(--theme-nav)] text-white flex items-center justify-between px-8 sticky top-0 z-50 border-b border-white/10 shadow-2xl transition-colors duration-500">
-         <div className="flex items-center gap-10">
-            <Link to="/" className="flex items-center gap-3 group">
-              <div className="h-9 w-9 items-center justify-center rounded-lg bg-[var(--theme-primary)] text-white shadow-lg shadow-indigo-500/20 flex transform group-hover:rotate-6 transition-all duration-300">
-                <Building2 className="h-5 w-5" />
+      <header className="h-32 bg-[var(--theme-nav)] text-white flex items-center justify-between px-12 sticky top-0 z-50 border-b border-white/10 shadow-2xl transition-all duration-500">
+         <div className="flex items-center gap-24">
+            <Link to="/" className="flex items-center gap-6 group">
+              <div className="h-16 w-16 items-center justify-center rounded-[1.5rem] bg-[var(--theme-primary)] text-white shadow-2xl shadow-indigo-500/20 flex transform group-hover:rotate-6 transition-all duration-300">
+                <Building2 className="h-9 w-9" />
               </div>
               <div className="flex flex-col">
-                <span className="text-xl font-black tracking-tight text-white leading-none font-display uppercase italic">
-                  YAJUR<span className="text-[var(--theme-accent)] not-italic opacity-80">PORTAL</span>
+                <span className="text-5xl font-black tracking-tighter text-white leading-none font-display uppercase italic">
+                  YAJUR<span className="text-[var(--theme-accent)] not-italic opacity-90">PORTAL</span>
                 </span>
-                <span className="text-[8px] font-bold uppercase tracking-[0.4em] text-slate-500 mt-0.5">Vendor Master v2.1</span>
+                <span className="text-[12px] font-bold uppercase tracking-[0.6em] text-slate-500 mt-2.5">Vendor Master v2.5</span>
               </div>
             </Link>
 
-            <nav className="hidden lg:flex items-center gap-1">
+            <nav className="hidden xl:flex items-center gap-4 h-full">
               {navItems.map((item) => (
                 <Link
                   key={item.path}
-                  to={item.path}
-                  className={cn(
-                    "flex items-center gap-2 px-4 py-2 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all duration-300",
-                    location.pathname === item.path 
-                      ? "bg-slate-800 text-white shadow-inner ring-1 ring-white/10" 
-                      : "text-slate-400 hover:text-white hover:bg-white/5"
-                  )}
-                >
-                  <item.icon className={cn("h-3 w-3", location.pathname === item.path ? "text-indigo-400" : "text-slate-500")} />
-                  <span>{item.label}</span>
-                </Link>
-              ))}
+                   to={item.path}
+                   className={cn(
+                     "flex items-center gap-5 px-10 py-5 rounded-[2rem] text-[18px] font-black uppercase tracking-widest transition-all duration-300 active:scale-95",
+                     location.pathname === item.path 
+                       ? "bg-[var(--theme-primary)] text-white shadow-2xl shadow-indigo-900/40 ring-1 ring-white/20" 
+                       : "text-slate-400 hover:text-white hover:bg-white/5 font-bold"
+                   )}
+                 >
+                   <item.icon className={cn("h-7 w-7", location.pathname === item.path ? "text-white" : "text-slate-500")} />
+                   <span>{item.label}</span>
+                 </Link>
+               ))}
             </nav>
          </div>
 
@@ -513,13 +513,13 @@ function Layout({ children, systemHealth, onLogout }: { children: React.ReactNod
             </div>
             
             <div className="flex items-center gap-3">
-               <div className="flex items-center gap-2.5 cursor-pointer group p-1 rounded-lg transition-all">
-                  <div className="h-8 w-8 rounded-lg bg-slate-800 border border-slate-700 shadow-lg group-hover:scale-105 transition-all duration-300 flex items-center justify-center text-slate-400 group-hover:text-white group-hover:bg-indigo-600 group-hover:border-indigo-500">
-                     <User className="h-4 w-4" />
+               <div className="flex items-center gap-3 cursor-pointer group p-1.5 rounded-xl transition-all">
+                  <div className="h-10 w-10 rounded-xl bg-slate-800 border border-slate-700 shadow-lg group-hover:scale-105 transition-all duration-300 flex items-center justify-center text-slate-400 group-hover:text-white group-hover:bg-[var(--theme-primary)] group-hover:border-[var(--theme-primary)]">
+                     <User className="h-5 w-5" />
                   </div>
                   <div className="hidden sm:block">
-                    <p className="text-[11px] font-bold text-white leading-none tracking-wide text-right">P. Majhi</p>
-                    <p className="text-[8px] font-bold text-slate-500 uppercase tracking-widest mt-0.5 text-right">Admin</p>
+                    <p className="text-[13px] font-black text-white leading-none tracking-tight text-right uppercase italic">P. Majhi</p>
+                    <p className="text-[9px] font-black text-[var(--theme-accent)] uppercase tracking-widest mt-1 text-right">Admin Node</p>
                   </div>
                </div>
                
@@ -529,9 +529,9 @@ function Layout({ children, systemHealth, onLogout }: { children: React.ReactNod
                      onLogout();
                    }
                  }}
-                 className="p-2 bg-slate-800 hover:bg-rose-600 text-slate-400 hover:text-white rounded-lg transition-all shadow-md border border-slate-700 hover:border-rose-500 active:scale-95 group"
+                 className="p-3 bg-slate-800 hover:bg-rose-600 text-slate-400 hover:text-white rounded-xl transition-all shadow-md border border-slate-700 hover:border-rose-500 active:scale-95 group"
                >
-                 <LogOut className="h-4 w-4" />
+                 <LogOut className="h-5 w-5" />
                </button>
             </div>
          </div>
@@ -564,12 +564,12 @@ function Dashboard({ vendors = [], health }: any) {
   return (
     <div className="space-y-10 pb-20">
       <div className="bg-white p-6 md:p-8 rounded-[2rem] border border-slate-200 shadow-sm relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-1.5 h-full bg-indigo-600" />
+        <div className="absolute top-0 left-0 w-1.5 h-full bg-[var(--theme-primary)]" />
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
           <div>
             <h2 className="text-2xl md:text-3xl font-black text-slate-900 font-display tracking-tight flex items-center gap-4">
                Command Center
-               <span className="px-2 py-0.5 bg-slate-900 text-white text-[9px] font-bold uppercase rounded-md tracking-[0.2em] shadow-lg">REL 2.1</span>
+               <span className="px-2 py-0.5 bg-[var(--theme-nav)] text-white text-[9px] font-bold uppercase rounded-md tracking-[0.2em] shadow-lg">REL 2.5</span>
             </h2>
             <p className="text-slate-500 text-sm mt-1 font-medium italic">Strategic oversight of the partner ecosystem and real-time procurement health.</p>
           </div>
@@ -827,19 +827,19 @@ function VendorList({ vendors = [], loading }: { vendors: Vendor[], loading: boo
         <div className="absolute top-0 left-0 w-1.5 h-full bg-[var(--theme-primary)]" />
         <div className="flex-1">
           <div className="flex items-center gap-3 mb-2">
-            <Users className="h-6 w-6 text-indigo-600" />
+            <Users className="h-6 w-6 text-[var(--theme-primary)]" />
             <h2 className="text-3xl font-black text-slate-900 font-display tracking-tight uppercase italic">Vendor Registry</h2>
           </div>
           <p className="text-slate-500 text-sm font-medium tracking-wide">Enterprise partner database and statutory archive access.</p>
           
           <div className="relative mt-8 group max-w-xl">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-indigo-600 transition-colors" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-[var(--theme-primary)] transition-colors" />
             <input 
               type="text" 
               placeholder="Search registry by Name, GSTIN, or ID..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 pl-12 pr-6 text-[13px] font-bold focus:ring-4 focus:ring-indigo-50 focus:bg-white focus:border-indigo-600 transition-all outline-none shadow-inner"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 pl-12 pr-6 text-[13px] font-bold focus:ring-4 focus:ring-[var(--theme-primary)]/10 focus:bg-white focus:border-[var(--theme-primary)] transition-all outline-none shadow-inner"
             />
           </div>
         </div>
@@ -849,7 +849,7 @@ function VendorList({ vendors = [], loading }: { vendors: Vendor[], loading: boo
              onClick={() => setShowBulkModal(true)}
              className="flex items-center gap-2 px-5 py-3 bg-white border border-slate-200 rounded-xl text-[11px] font-bold uppercase tracking-widest text-slate-600 hover:bg-slate-50 transition-all shadow-sm"
            >
-             <Upload className="h-4 w-4 text-indigo-500" /> Bulk Import
+             <Upload className="h-4 w-4" /> Bulk Import
            </button>
            <button 
              onClick={() => {
@@ -859,10 +859,10 @@ function VendorList({ vendors = [], loading }: { vendors: Vendor[], loading: boo
              }}
              className="flex items-center gap-2 px-5 py-3 bg-white border border-slate-200 rounded-xl text-[11px] font-bold uppercase tracking-widest text-slate-600 hover:bg-slate-50 transition-all shadow-sm"
            >
-             <Download className="h-4 w-4 text-indigo-500" /> Export CSV
+             <Download className="h-4 w-4" /> Export CSV
            </button>
-           <Link to="/register" className="flex items-center gap-2 px-6 py-3.5 bg-slate-900 text-white rounded-xl text-[11px] font-bold uppercase tracking-widest hover:bg-slate-800 shadow-xl active:scale-95 transition-all">
-             <Plus className="h-4 w-4 text-indigo-400" /> New Partnership
+           <Link to="/register" className="flex items-center gap-2 px-6 py-3.5 bg-[var(--theme-nav)] text-white rounded-xl text-[11px] font-bold uppercase tracking-widest hover:opacity-90 shadow-xl active:scale-95 transition-all">
+             <Plus className="h-4 w-4 text-[var(--theme-accent)]" /> New Partnership
            </Link>
         </div>
       </div>
@@ -929,27 +929,27 @@ function VendorList({ vendors = [], loading }: { vendors: Vendor[], loading: boo
                       </div>
                     </td>
                     <td className="px-8 py-6 text-right">
-                      <div className="flex items-center justify-end gap-2">
+                      <div className="flex items-center justify-end gap-2.5">
                         <button 
                           onClick={() => setSelectedVendor(vendor)}
-                          className="p-2 bg-slate-50 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all border border-slate-100"
+                          className="p-3 bg-slate-50 text-slate-400 hover:text-[var(--theme-primary)] hover:bg-indigo-50 rounded-xl transition-all border border-slate-100 hover:border-[var(--theme-primary)]/20"
                           title="View Details"
                         >
-                           <Eye className="h-3.5 w-3.5" />
+                           <Eye className="h-4 w-4" />
                         </button>
                         <button 
                           onClick={() => setEditVendor(vendor)}
-                          className="p-2 bg-slate-50 text-slate-400 hover:text-amber-500 hover:bg-amber-50 rounded-lg transition-all border border-slate-100"
+                          className="p-3 bg-slate-50 text-slate-400 hover:text-amber-500 hover:bg-amber-50 rounded-xl transition-all border border-slate-100 hover:border-amber-200"
                           title="Edit Partner"
                         >
-                           <Edit className="h-3.5 w-3.5" />
+                           <Edit className="h-4 w-4" />
                         </button>
                         <button 
                           onClick={() => handleDelete(vendor.id)}
-                          className="p-2 bg-slate-50 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-all border border-slate-100"
+                          className="p-3 bg-slate-50 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-xl transition-all border border-slate-100 hover:border-rose-200"
                           title="Delete Partner"
                         >
-                           <Trash2 className="h-3.5 w-3.5" />
+                           <Trash2 className="h-4 w-4" />
                         </button>
                       </div>
                     </td>
@@ -1028,7 +1028,7 @@ function BulkUploadModal({ onClose }: { onClose: () => void }) {
       <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-white rounded-[2.5rem] w-full max-w-2xl shadow-2xl overflow-hidden border border-white">
         <div className="px-8 py-6 border-b border-slate-100 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Upload className="h-6 w-6 text-indigo-600" />
+            <Upload className="h-6 w-6 text-[var(--theme-primary)]" />
             <h2 className="text-xl font-black text-slate-900 font-display uppercase italic">Bulk Ledger Import</h2>
           </div>
           <button onClick={onClose} className="p-2 hover:bg-slate-100 rounded-lg transition-colors"><X className="h-5 w-5 text-slate-400" /></button>
@@ -1057,7 +1057,7 @@ function BulkUploadModal({ onClose }: { onClose: () => void }) {
           <button 
             onClick={handleImport}
             disabled={data.length === 0 || isImporting}
-            className="px-8 py-2.5 bg-indigo-600 text-white rounded-xl text-[11px] font-bold uppercase tracking-widest shadow-xl shadow-indigo-600/20 hover:bg-indigo-700 disabled:opacity-50 transition-all"
+            className="px-8 py-2.5 bg-[var(--theme-primary)] text-white rounded-xl text-[11px] font-bold uppercase tracking-widest shadow-xl shadow-indigo-600/20 hover:opacity-90 disabled:opacity-50 transition-all"
           >
             {isImporting ? 'Syncing...' : 'Execute Import'}
           </button>
@@ -1103,7 +1103,7 @@ function EditVendorModal({ vendor, onClose }: { vendor: Vendor, onClose: () => v
                     <button 
                       type="submit" 
                       disabled={isSubmitting}
-                      className="px-10 py-3 bg-indigo-600 text-white rounded-xl text-[11px] font-bold uppercase tracking-widest shadow-xl shadow-indigo-600/20 hover:bg-indigo-700 active:scale-95 transition-all"
+                      className="px-10 py-3 bg-[var(--theme-primary)] text-white rounded-xl text-[11px] font-bold uppercase tracking-widest shadow-xl shadow-indigo-600/20 hover:opacity-90 active:scale-95 transition-all"
                     >
                       {isSubmitting ? 'Syncing...' : 'Update Record'}
                     </button>
@@ -1119,9 +1119,9 @@ function EditVendorModal({ vendor, onClose }: { vendor: Vendor, onClose: () => v
 
 function VendorCard({ vendor, onSelect }: { vendor: Vendor, onSelect: () => void }) {
   return (
-    <div className="group bg-white rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-xl hover:border-indigo-200 transition-all duration-300 flex flex-col h-full relative overflow-hidden">
+    <div className="group bg-white rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-xl hover:border-[var(--theme-primary)]/20 transition-all duration-300 flex flex-col h-full relative overflow-hidden">
       <div className="flex items-start justify-between mb-6">
-        <div className="h-12 w-12 rounded-xl bg-slate-900 text-white flex items-center justify-center font-bold text-xl shadow-lg transition-transform group-hover:scale-105">
+        <div className="h-12 w-12 rounded-xl bg-[var(--theme-nav)] text-white flex items-center justify-center font-bold text-xl shadow-lg transition-transform group-hover:scale-105">
           {vendor.name.charAt(0)}
         </div>
         <div className="flex flex-col items-end gap-2">
@@ -1380,27 +1380,27 @@ function RegistrationForm({ onComplete }: { onComplete: () => void }) {
 
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="max-w-7xl mx-auto space-y-10 pb-32">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 bg-slate-900 p-8 rounded-[2rem] border border-slate-800 shadow-2xl relative overflow-hidden">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 bg-[var(--theme-nav)] p-12 rounded-[3.5rem] border border-white/5 shadow-2x1 flex transform transition-all duration-500 relative overflow-hidden">
         <div className="relative z-10">
-          <div className="flex items-center gap-3 mb-2">
-            <Plus className="h-5 w-5 text-indigo-400" />
-            <h1 className="text-3xl font-black text-white font-display tracking-tight uppercase italic">Onboarding Hub</h1>
+          <div className="flex items-center gap-5 mb-3">
+            <Plus className="h-8 w-8 text-[var(--theme-accent)]" />
+            <h1 className="text-5xl font-black text-white font-display tracking-tight uppercase italic">Onboarding Hub</h1>
           </div>
-          <p className="text-slate-400 text-sm font-medium tracking-wide">Initialize new vendor partnership and statutory profiling.</p>
+          <p className="text-slate-400 text-lg font-medium tracking-wide">Initialize new vendor partnership and statutory profiling.</p>
         </div>
-        <button onClick={() => navigate('/vendors')} className="px-6 py-3 bg-slate-800 text-slate-300 rounded-xl text-[11px] font-bold uppercase tracking-widest hover:bg-slate-700 hover:text-white transition-all shadow-lg active:scale-95 border border-slate-700">
+        <button onClick={() => navigate('/vendors')} className="px-10 py-5 bg-white/5 text-slate-300 rounded-[2rem] text-[14px] font-black uppercase tracking-widest hover:bg-white/10 hover:text-white transition-all shadow-lg active:scale-95 border border-white/5">
           Cancel Onboarding
         </button>
-        <Building2 className="absolute -right-10 -bottom-10 h-48 w-48 text-white/5" />
+        <Building2 className="absolute -right-12 -bottom-12 h-72 w-72 text-white/5 opacity-50 blur-sm" />
       </div>
 
-      <div className="bg-white rounded-[2.5rem] border border-slate-200 shadow-sm relative overflow-hidden">
-        <div className="absolute top-0 left-0 right-0 h-1 bg-slate-100">
+      <div className="bg-white rounded-[3rem] border border-slate-200 shadow-sm relative overflow-hidden">
+        <div className="absolute top-0 left-0 right-0 h-1.5 bg-slate-100">
            <motion.div 
              initial={{ width: '0%' }}
              animate={{ width: '100%' }}
              transition={{ duration: 1.5 }}
-             className="h-full bg-indigo-500" 
+             className="h-full bg-[var(--theme-primary)]" 
            />
         </div>
 
@@ -1685,14 +1685,15 @@ function AttachmentModal({ values, setFieldValue, onClose }: any) {
 
 function FormSection({ title, icon: Icon, children }: any) {
   return (
-    <div className="space-y-6">
-      <div className="flex items-center gap-4 pb-4 border-b border-slate-100">
-        <div className="h-10 w-10 rounded-xl bg-slate-900 flex items-center justify-center text-white shadow-lg">
-          <Icon className="h-5 w-5" />
+    <div className="space-y-10 group/section transition-all">
+      <div className="flex items-center gap-6">
+        <div className="h-14 w-14 rounded-2xl bg-white shadow-xl shadow-slate-200/50 border border-slate-100 flex items-center justify-center text-[var(--theme-primary)] group-hover/section:scale-110 transition-transform group-hover/section:text-[var(--theme-accent)]">
+          <Icon className="h-7 w-7" />
         </div>
-        <h3 className="text-xl font-bold text-slate-900 font-display tracking-tight italic uppercase">{title}</h3>
+        <h3 className="text-2xl font-black text-slate-900 font-display uppercase italic tracking-tighter">{title}</h3>
       </div>
-      <div className="pl-0 md:pl-14">
+      <div className="pl-6 md:pl-20 border-l-2 border-slate-50 relative">
+        <div className="absolute top-0 -left-1 w-2 h-2 rounded-full bg-[var(--theme-primary)] opacity-20" />
         {children}
       </div>
     </div>
@@ -1831,14 +1832,14 @@ function SettingsView({ health, currentTheme, onThemeChange }: { health: any, cu
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
 
   const themes = [
-    { id: 'theme-default', name: 'Midnight Slate', primary: 'bg-indigo-600', secondary: 'bg-slate-900', icon: ShieldCheck, accent: 'theme-indigo' },
-    { id: 'theme-midnight', name: 'Cyber Night', primary: 'bg-violet-600', secondary: 'bg-slate-950', icon: Activity, accent: 'theme-cyber' },
-    { id: 'theme-emerald', name: 'Corporate Green', primary: 'bg-emerald-600', secondary: 'bg-emerald-950', icon: CheckCircle2, accent: 'theme-green' },
-    { id: 'theme-ocean', name: 'Oceanic Blue', primary: 'bg-sky-600', secondary: 'bg-sky-950', icon: Database, accent: 'theme-blue' },
-    { id: 'theme-amber', name: 'Golden Harvest', primary: 'bg-amber-600', secondary: 'bg-amber-900', icon: TrendingUp, accent: 'theme-gold' },
-    { id: 'theme-rose', name: 'Rose Petal', primary: 'bg-rose-600', secondary: 'bg-rose-900', icon: Heart, accent: 'theme-rose' },
-    { id: 'theme-violet', name: 'Digital Violet', primary: 'bg-violet-600', secondary: 'bg-violet-900', icon: Zap, accent: 'theme-violet' },
-    { id: 'theme-crimson', name: 'Crimson Peak', primary: 'bg-red-600', secondary: 'bg-red-950', icon: Flame, accent: 'theme-red' },
+    { id: 'theme-default', name: 'Midnight Slate', primary: 'bg-[#4F46E5]', secondary: 'bg-[#0f172a]', accent: 'bg-[#6366f1]', bg: 'bg-[#f8fafc]', icon: ShieldCheck },
+    { id: 'theme-midnight', name: 'Cyber Night', primary: 'bg-[#8b5cf6]', secondary: 'bg-[#111827]', accent: 'bg-[#a78bfa]', bg: 'bg-[#030712]', icon: Activity },
+    { id: 'theme-emerald', name: 'Corporate Green', primary: 'bg-[#10b981]', secondary: 'bg-[#064e3b]', accent: 'bg-[#34d399]', bg: 'bg-[#f0fdf4]', icon: CheckCircle2 },
+    { id: 'theme-ocean', name: 'Oceanic Blue', primary: 'bg-[#0ea5e9]', secondary: 'bg-[#0c4a6e]', accent: 'bg-[#38bdf8]', bg: 'bg-[#f0f9ff]', icon: Database },
+    { id: 'theme-amber', name: 'Golden Harvest', primary: 'bg-[#f59e0b]', secondary: 'bg-[#78350f]', accent: 'bg-[#fbbf24]', bg: 'bg-[#fffbeb]', icon: TrendingUp },
+    { id: 'theme-rose', name: 'Rose Petal', primary: 'bg-[#e11d48]', secondary: 'bg-[#881337]', accent: 'bg-[#fb7185]', bg: 'bg-[#fff1f2]', icon: Heart },
+    { id: 'theme-violet', name: 'Digital Violet', primary: 'bg-[#7c3aed]', secondary: 'bg-[#4c1d95]', accent: 'bg-[#8b5cf6]', bg: 'bg-[#f53ff]', icon: Zap },
+    { id: 'theme-crimson', name: 'Crimson Peak', primary: 'bg-[#dc2626]', secondary: 'bg-[#450a0a]', accent: 'bg-[#ef4444]', bg: 'bg-[#fef2f2]', icon: Flame },
   ];
 
   const handleUpdateUrl = (e: React.FormEvent) => {
@@ -1860,10 +1861,10 @@ function SettingsView({ health, currentTheme, onThemeChange }: { health: any, cu
 
   return (
     <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} className="max-w-5xl mx-auto space-y-10 pb-32">
-      <div className="bg-slate-900 p-10 rounded-[2.5rem] border border-slate-800 shadow-xl relative overflow-hidden text-center">
-        <h1 className="text-4xl font-black text-white font-display tracking-tight uppercase italic leading-none">System Terminal</h1>
-        <p className="text-slate-500 font-bold text-sm mt-4 uppercase tracking-[0.3em]">Infrastructure Matrix & Core Integrations</p>
-        <Building2 className="absolute -right-12 -bottom-12 h-48 w-48 text-white/5" />
+      <div className="bg-[var(--theme-nav)] p-12 rounded-[3rem] border border-white/5 shadow-2xl relative overflow-hidden text-center">
+        <h1 className="text-5xl font-black text-white font-display tracking-tighter uppercase italic leading-none">System Terminal</h1>
+        <p className="text-[var(--theme-accent)] font-black text-sm mt-5 uppercase tracking-[0.4em] opacity-80">Infrastructure Matrix & Core Integrations</p>
+        <Building2 className="absolute -right-16 -bottom-16 h-64 w-64 text-white/5 opacity-40 blur-sm" />
       </div>
 
       <div className="bg-white rounded-[2.5rem] p-10 border border-slate-200 shadow-sm space-y-16">
@@ -1897,11 +1898,12 @@ function SettingsView({ health, currentTheme, onThemeChange }: { health: any, cu
                       )}
                     </div>
                     <div>
-                      <p className="text-[13px] font-black text-slate-900 uppercase tracking-tight italic">{theme.name}</p>
-                      <div className="flex gap-2 mt-3">
-                        <div className={cn("h-5 w-5 rounded-lg shadow-sm border border-black/5", theme.primary)} />
-                        <div className={cn("h-5 w-5 rounded-lg shadow-sm border border-black/5", theme.secondary)} />
-                        <div className="h-5 w-5 rounded-lg shadow-sm bg-white border border-slate-200" />
+                      <p className="text-[14px] font-black text-slate-900 uppercase tracking-tight italic">{theme.name}</p>
+                      <div className="flex gap-2.5 mt-4">
+                        <div className={cn("h-6 w-6 rounded-lg shadow-sm border border-black/5", theme.primary)} />
+                        <div className={cn("h-6 w-6 rounded-lg shadow-sm border border-black/5", theme.secondary)} />
+                        <div className={cn("h-6 w-6 rounded-lg shadow-sm border border-black/5", theme.accent)} />
+                        <div className={cn("h-6 w-6 rounded-lg shadow-sm border border-slate-200", theme.bg)} />
                       </div>
                     </div>
                   </button>

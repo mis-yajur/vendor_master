@@ -1,13 +1,6 @@
 /**
- * FINALIZED GOOGLE APPS SCRIPT BACKEND
- * 
- * Instructions:
- * 1. Open your Google Sheet
- * 2. Go to Extensions > Apps Script
- * 3. Replace EVERYTHING in Code.gs with this exact code.
- * 4. Ensure SPREADSHEET_ID is correct: "1vF_kvyjt1hGhalmZ1V52pCvakEsFiMVZvBGyEigALAE"
- * 5. Ensure FOLDER_ID is correct: "1a3EYnUtDSVOF-PdAxuoDcBJqtWZ9fijV"
- * 6. Click "Deploy" > "New Deployment" (Select Web App, Access: Anyone)
+ * UPDATED CODE FOR GOOGLE APPS SCRIPT
+ * Fixes: "Unknown action" error by adding "upload" support.
  */
 
 const SPREADSHEET_ID = "1vF_kvyjt1hGhalmZ1V52pCvakEsFiMVZvBGyEigALAE";
@@ -33,34 +26,8 @@ function setup() {
     "createdAt", "updatedAt", "folderUrl", "folderId"
   ];
   
-  sheet.clear();
   sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
   sheet.setFrozenRows(1);
-
-  // Add dummy data on setup
-  const dummyVendors = [
-    {
-      id: "V001", name: "Teckno Systems Ltd", requestType: "New",
-      addr_floor: "Level 4, Orion Tower", addr_street: "12th Main Road", addr_city: "Bangalore", addr_state: "Karnataka", addr_pin: "560001", addr_country: "India", addr_mobile: "+91 98765 43210", addr_email: "contact@tecknosys.com",
-      cont_name: "Rahul Sharma", cont_desig: "Sales Director", cont_email: "rahul@tecknosys.com",
-      type: "Goods", establishmentYear: "2015", constitution: "Private Limited",
-      pan: "ABCDE1234F", gstin: "29ABCDE1234F1Z5", compoundingDealer: "NO", bank_beneficiary: "Teckno Systems Ltd", bank_name: "HDFC Bank", bank_account: "50100234567890", bank_ifsc: "HDFC0000001",
-      currency: "INR", creditTerms: "NET 30"
-    },
-    {
-      id: "V002", name: "Global Logistics Solutions", requestType: "Change",
-      addr_floor: "Plot 45", addr_street: "Nh 8, Industrial Area", addr_city: "Gurgaon", addr_state: "Haryana", addr_pin: "122001", addr_country: "India", addr_mobile: "+91 88888 77777", addr_email: "ops@globallogistics.in",
-      cont_name: "Amit Verma", cont_desig: "Operations Manager", cont_email: "amit@globallogistics.in",
-      type: "Services", establishmentYear: "2010", constitution: "LLP",
-      pan: "GHIJK5678L", gstin: "06GHIJK5678L1Z1", compoundingDealer: "NO", bank_beneficiary: "Global Logistics Solutions", bank_name: "ICICI Bank", bank_account: "000105001234", bank_ifsc: "ICIC0000001",
-      currency: "INR", creditTerms: "NET 45"
-    }
-  ];
-
-  dummyVendors.forEach(v => {
-    const row = headers.map(h => v[h] || (h === "createdAt" || h === "updatedAt" ? new Date() : ""));
-    sheet.appendRow(row);
-  });
 }
 
 function doGet(e) {
@@ -85,7 +52,7 @@ function doPost(e) {
   
   const action = data.action;
   
-  // New "upload" handler added to fix the error
+  // FIX: Added 'upload' handler to resolve the "Unknown action" error
   if (action === "upload") {
     try {
       const folder = DriveApp.getFolderById(FOLDER_ID);
@@ -115,11 +82,11 @@ function doPost(e) {
     return ContentService.createTextOutput(JSON.stringify(listVendors()))
       .setMimeType(ContentService.MimeType.JSON);
   } else if (action === "health") {
-    return ContentService.createTextOutput(JSON.stringify({ status: "ok", db: "connected" }))
+    return ContentService.createTextOutput(JSON.stringify({ status: "success", db: "connected" }))
       .setMimeType(ContentService.MimeType.JSON);
   }
   
-  return ContentService.createTextOutput(JSON.stringify({ error: "Cloud Sync: Unknown action" }))
+  return ContentService.createTextOutput(JSON.stringify({ error: "Unknown action: " + action }))
     .setMimeType(ContentService.MimeType.JSON);
 }
 
@@ -127,43 +94,22 @@ function listVendors() {
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = ss.getSheetByName("Vendors");
   if (!sheet) return [];
-  
   const data = sheet.getDataRange().getValues();
   if (data.length <= 1) return [];
-  
   const headers = data[0];
   const rows = data.slice(1);
-  
   return rows.map(row => {
     const v = {};
     headers.forEach((h, i) => v[h] = row[i]);
-    
-    // Reconstruct nested structure from flat columns
     return {
-      id: v.id,
-      requestType: v.requestType,
-      name: v.name,
-      address: {
-        floorBuilding: v.addr_floor, street: v.addr_street, city: v.addr_city, district: v.addr_district, pinCode: v.addr_pin, state: v.addr_state, country: v.addr_country, phone: v.addr_phone, fax: v.addr_fax, mobile: v.addr_mobile, email: v.addr_email
-      },
+      id: v.id, requestType: v.requestType, name: v.name,
+      address: { floorBuilding: v.addr_floor, street: v.addr_street, city: v.addr_city, district: v.addr_district, pinCode: v.addr_pin, state: v.addr_state, country: v.addr_country, phone: v.addr_phone, fax: v.addr_fax, mobile: v.addr_mobile, email: v.addr_email },
       contact: { name: v.cont_name, designation: v.cont_desig, phone: v.cont_phone, fax: v.cont_fax, email: v.cont_email },
-      statutory: {
-        vendorType: v.type, yearOfEstablishment: v.establishmentYear, constitution: v.constitution,
-        cin: v.cin, tradeLicense: v.tradeLicense, pan: v.pan, gstin: v.gstin, lutNo: v.lutNo, compoundingDealer: v.compoundingDealer, msmedRegNo: v.msmedNo, iecNo: v.iecNo, pfRegNo: v.pfNo, esicRegNo: v.esicNo, labourLicenseNo: v.labourLicense, factoryLicense: v.factoryLicense,
-        tdsExemptionDetails: v.tdsExemption, consentToOperate: v.pcbConsent
-      },
-      bank: {
-        beneficiaryName: v.bank_beneficiary, bankName: v.bank_name, accountNumber: v.bank_account, branchName: v.bank_branch, branchAddress: v.bank_branchAddr, accountType: v.bank_type, ifscCode: v.bank_ifsc, swiftIban: v.bank_swift, bankEmail: v.bank_email
-      },
-      currency: v.currency,
-      creditTerms: v.creditTerms,
-      documents: {
-        gstinCopy: v.doc_gst, panCopy: v.doc_pan, msmedCopy: v.doc_msmed, cancelledChequeCopy: v.doc_cheque, tdsExemptionCopy: v.doc_tds, signedDeclaration: v.doc_declaration
-      },
-      createdAt: v.createdAt,
-      updatedAt: v.updatedAt,
-      folderUrl: v.folderUrl,
-      folderId: v.folderId
+      statutory: { vendorType: v.type, yearOfEstablishment: v.establishmentYear, constitution: v.constitution, cin: v.cin, tradeLicense: v.tradeLicense, pan: v.pan, gstin: v.gstin, msmedRegNo: v.msmedNo, pfRegNo: v.pfNo, esicRegNo: v.esicNo, tdsExemptionDetails: v.tdsExemption },
+      bank: { beneficiaryName: v.bank_beneficiary, bankName: v.bank_name, accountNumber: v.bank_account, branchName: v.bank_branch, ifscCode: v.bank_ifsc },
+      currency: v.currency, creditTerms: v.creditTerms,
+      documents: { gstinCopy: v.doc_gst, panCopy: v.doc_pan, msmedCopy: v.doc_msmed, cancelledChequeCopy: v.doc_cheque, tdsExemptionCopy: v.doc_tds, signedDeclaration: v.doc_declaration },
+      createdAt: v.createdAt, updatedAt: v.updatedAt, folderUrl: v.folderUrl
     };
   });
 }
@@ -172,51 +118,20 @@ function addVendor(vendor) {
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = ss.getSheetByName("Vendors");
   const id = Utilities.getUuid();
-  
-  let folderUrl = "";
-  let folderId = "";
-  
-  try {
-    const parentFolder = DriveApp.getFolderById(FOLDER_ID);
-    const vendorFolder = parentFolder.createFolder(vendor.name + " (" + id.substring(0, 8) + ")");
-    vendorFolder.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
-    folderUrl = vendorFolder.getUrl();
-    folderId = vendorFolder.getId();
-  } catch (e) {
-    console.error("Folder creation failed: " + e.toString());
-  }
-
   const rowData = [
     id, vendor.requestType, vendor.name,
-    vendor.address?.floorBuilding || "", vendor.address?.street || "", vendor.address?.city || "", vendor.address?.district || "", vendor.address?.pinCode || "", vendor.address?.state || "", vendor.address?.country || "", vendor.address?.phone || "", vendor.address?.fax || "", vendor.address?.mobile || "", vendor.address?.email || "",
-    vendor.contact?.name || "", vendor.contact?.designation || "", vendor.contact?.phone || "", vendor.contact?.fax || "", vendor.contact?.email || "",
-    vendor.statutory?.vendorType || "", vendor.statutory?.yearOfEstablishment || "", vendor.statutory?.constitution || "",
-    vendor.statutory?.cin || "", vendor.statutory?.tradeLicense || "", vendor.statutory?.pan || "", vendor.statutory?.gstin || "", vendor.statutory?.lutNo || "", vendor.statutory?.compoundingDealer || "", vendor.statutory?.msmedRegNo || "", vendor.statutory?.iecNo || "", vendor.statutory?.pfRegNo || "", vendor.statutory?.esicRegNo || "", vendor.statutory?.labourLicenseNo || "", vendor.statutory?.factoryLicense || "",
-    vendor.statutory?.tdsExemptionDetails || "", vendor.statutory?.consentToOperate || "",
-    vendor.bank?.beneficiaryName || "", vendor.bank?.bankName || "", vendor.bank?.accountNumber || "", vendor.bank?.branchName || "", vendor.bank?.branchAddress || "", vendor.bank?.accountType || "", vendor.bank?.ifscCode || "", vendor.bank?.swiftIban || "", vendor.bank?.bankEmail || "",
-    vendor.currency || "", vendor.creditTerms || "",
-    vendor.documents?.gstinCopy || "", vendor.documents?.panCopy || "", vendor.documents?.msmedCopy || "", vendor.documents?.cancelledChequeCopy || "", vendor.documents?.tdsExemptionCopy || "", vendor.documents?.signedDeclaration || "",
-    new Date(), new Date(), folderUrl, folderId
+    vendor.address.floorBuilding, vendor.address.street, vendor.address.city, vendor.address.district, vendor.address.pinCode, vendor.address.state, vendor.address.country, vendor.address.phone, vendor.address.fax, vendor.address.mobile, vendor.address.email,
+    vendor.contact.name, vendor.contact.designation, vendor.contact.phone, vendor.contact.fax, vendor.contact.email,
+    vendor.statutory.vendorType, vendor.statutory.yearOfEstablishment, vendor.statutory.constitution,
+    vendor.statutory.cin, vendor.statutory.tradeLicense, vendor.statutory.pan, vendor.statutory.gstin, vendor.statutory.lutNo, vendor.statutory.compoundingDealer, vendor.statutory.msmedRegNo, vendor.statutory.iecNo, vendor.statutory.pfRegNo, vendor.statutory.esicRegNo, vendor.statutory.labourLicenseNo, vendor.statutory.factoryLicense,
+    vendor.statutory.tdsExemptionDetails, vendor.statutory.consentToOperate,
+    vendor.bank.beneficiaryName, vendor.bank.bankName, vendor.bank.accountNumber, vendor.bank.branchName, vendor.bank.branchAddress, vendor.bank.accountType, vendor.bank.ifscCode, vendor.bank.swiftIban, vendor.bank.bankEmail,
+    vendor.currency, vendor.creditTerms,
+    vendor.documents.gstinCopy, vendor.documents.panCopy, vendor.documents.msmedCopy, vendor.documents.cancelledChequeCopy, vendor.documents.tdsExemptionCopy, vendor.documents.signedDeclaration,
+    new Date(), new Date(), "", ""
   ];
-
   sheet.appendRow(rowData);
-  
-  return ContentService.createTextOutput(JSON.stringify({ success: true, id, folderUrl }))
-    .setMimeType(ContentService.MimeType.JSON);
-}
-
-function deleteVendor(id) {
-  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  const sheet = ss.getSheetByName("Vendors");
-  const data = sheet.getDataRange().getValues();
-  for (let i = 1; i < data.length; i++) {
-    if (data[i][0] == id) {
-      sheet.deleteRow(i + 1);
-      return ContentService.createTextOutput(JSON.stringify({ success: true }))
-        .setMimeType(ContentService.MimeType.JSON);
-    }
-  }
-  return ContentService.createTextOutput(JSON.stringify({ success: false, error: "Not found" }))
+  return ContentService.createTextOutput(JSON.stringify({ success: true, id }))
     .setMimeType(ContentService.MimeType.JSON);
 }
 
@@ -227,9 +142,24 @@ function updateVendor(vendor) {
   for (let i = 1; i < data.length; i++) {
     if (data[i][0] == vendor.id) {
       const rowNum = i + 1;
-      // We only update some fields as an example - can be expanded
       sheet.getRange(rowNum, 3).setValue(vendor.name);
       sheet.getRange(rowNum, 51).setValue(new Date()); // updated at
+      // Update other fields if needed
+      return ContentService.createTextOutput(JSON.stringify({ success: true }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+  }
+  return ContentService.createTextOutput(JSON.stringify({ success: false, error: "Not found" }))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+function deleteVendor(id) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = ss.getSheetByName("Vendors");
+  const data = sheet.getDataRange().getValues();
+  for (let i = 1; i < data.length; i++) {
+    if (data[i][0] == id) {
+      sheet.deleteRow(i + 1);
       return ContentService.createTextOutput(JSON.stringify({ success: true }))
         .setMimeType(ContentService.MimeType.JSON);
     }

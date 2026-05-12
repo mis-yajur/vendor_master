@@ -28,61 +28,70 @@
   --theme-bg: #f8fafc;
   --theme-nav: #0f172a;
   --theme-accent: #6366f1;
+  --theme-text: #1e293b;
 }
 
 /* Theme Classes */
 .theme-default {
-  --theme-primary: theme('colors.indigo.600');
+  --theme-primary: #4F46E5;
   --theme-bg: #f8fafc;
   --theme-nav: #0f172a;
-  --theme-accent: theme('colors.indigo.500');
+  --theme-accent: #6366f1;
+  --theme-text: #1e293b;
 }
 
 .theme-midnight {
-  --theme-primary: theme('colors.violet.500');
+  --theme-primary: #8b5cf6;
   --theme-bg: #030712;
   --theme-nav: #111827;
-  --theme-accent: theme('colors.violet.400');
+  --theme-accent: #a78bfa;
+  --theme-text: #f3f4f6;
 }
 
 .theme-emerald {
-  --theme-primary: theme('colors.emerald.600');
+  --theme-primary: #10b981;
   --theme-bg: #f0fdf4;
   --theme-nav: #064e3b;
-  --theme-accent: theme('colors.emerald.500');
+  --theme-accent: #34d399;
+  --theme-text: #064e3b;
 }
 
 .theme-ocean {
-  --theme-primary: theme('colors.sky.600');
+  --theme-primary: #0ea5e9;
   --theme-bg: #f0f9ff;
   --theme-nav: #0c4a6e;
-  --theme-accent: theme('colors.sky.500');
+  --theme-accent: #38bdf8;
+  --theme-text: #0c4a6e;
 }
 
 .theme-amber {
-  --theme-primary: theme('colors.amber.600');
+  --theme-primary: #f59e0b;
   --theme-bg: #fffbeb;
   --theme-nav: #78350f;
-  --theme-accent: theme('colors.amber.500');
+  --theme-accent: #fbbf24;
+  --theme-text: #78350f;
 }
 
 .theme-rose {
-  --theme-primary: theme('colors.rose-600');
+  --theme-primary: #e11d48;
   --theme-bg: #fff1f2;
   --theme-nav: #881337;
-  --theme-accent: theme('colors.rose.500');
+  --theme-accent: #fb7185;
+  --theme-text: #881337;
 }
 
 .theme-violet {
-  --theme-primary: theme('colors.violet.600');
+  --theme-primary: #7c3aed;
   --theme-bg: #f5f3ff;
   --theme-nav: #4c1d95;
-  --theme-accent: theme('colors.violet.500');
+  --theme-accent: #8b5cf6;
+  --theme-text: #4c1d95;
 }
 
 .theme-crimson {
-  --theme-primary: theme('colors.red.600');
+  --theme-primary: #dc2626;
   --theme-bg: #fef2f2;
   --theme-nav: #450a0a;
-  --theme-accent: theme('colors.red.500');
+  --theme-accent: #ef4444;
+  --theme-text: #450a0a;
 }
