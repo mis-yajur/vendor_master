@@ -6,7 +6,17 @@ import type { Vendor } from './types/vendor';
 const SCRIPT_URL = (import.meta as any).env.VITE_GOOGLE_SCRIPT_URL;
 
 export const loadVendors = createAsyncThunk('vendors/fetchAll', async () => {
+  const isGithubPages = window.location.hostname.includes('github.io');
   try {
+    // Priority: Google Script URL for Sheet Database
+    if (SCRIPT_URL) {
+      const res = await axios.get(`${SCRIPT_URL}?action=list`);
+      const data = res.data;
+      if (Array.isArray(data)) return data;
+      if (data && data.vendors && Array.isArray(data.vendors)) return data.vendors;
+      if (data && data.data && Array.isArray(data.data)) return data.data;
+    }
+
     const res = await axios.get('/api/vendors');
     const data = res.data;
     
@@ -17,7 +27,7 @@ export const loadVendors = createAsyncThunk('vendors/fetchAll', async () => {
     }
     return Array.isArray(data) ? data : DUMMY_VENDORS;
   } catch (error) {
-    if (axios.isAxiosError(error) && error.response?.status === 404) {
+    if (isGithubPages || (axios.isAxiosError(error) && (error.response?.status === 404 || error.response?.status === 405))) {
       console.warn('Synchronous server not found, falling back to client-side persistence');
       const stored = localStorage.getItem('vendor_registry');
       return stored ? JSON.parse(stored) : DUMMY_VENDORS;

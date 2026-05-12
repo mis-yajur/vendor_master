@@ -82,25 +82,43 @@ const SCRIPT_URL = (import.meta as any).env.VITE_GOOGLE_SCRIPT_URL;
 // Helper for API calls with robust static fallback
 const apiCall = async (action: string, data: any = {}) => {
   try {
-    const isDirect = window.location.hostname.includes('github.io') || window.location.hostname.includes('localhost');
-    
-    if (isDirect && SCRIPT_URL) {
+    // If SCRIPT_URL is present, always prioritize it for the sheet database
+    if (SCRIPT_URL) {
       if (action === 'health' || action === 'list') {
         const resp = await axios.get(`${SCRIPT_URL}?action=${action}`);
         return resp.data;
       }
-      const response = await axios.post(SCRIPT_URL, {
-        action, ...data
+      
+      // For POST, we use the Web App URL. 
+      // Note: Apps Script POST often works better with simple forms or plain text to avoid CORS preflight issues
+      const response = await axios.post(SCRIPT_URL, JSON.stringify({ action, ...data }), {
+        headers: {
+          'Content-Type': 'text/plain;charset=utf-8'
+        }
       });
-      return response.data;
+      
+      // Some Apps Script setups return a string if they use ContentService.createTextOutput
+      let result = response.data;
+      if (typeof result === 'string') {
+        try {
+          result = JSON.parse(result);
+        } catch (e) {
+          // If it's not JSON, it might be a success message
+          if (result.toLowerCase().includes('success')) result = { success: true };
+        }
+      }
+      
+      return result;
     }
     
+    // Default to server-side if not using SCRIPT_URL
+    const isGithubPages = window.location.hostname.includes('github.io');
     if (action === 'list') {
       try {
         const res = await axios.get('/api/vendors');
         return res.data;
       } catch (err) {
-        if (axios.isAxiosError(err) && err.response?.status === 404) {
+        if (isGithubPages || (axios.isAxiosError(err) && (err.response?.status === 404 || err.response?.status === 405))) {
           console.warn('Backend unavailable, using LocalStorage repository');
           const stored = localStorage.getItem('vendor_registry');
           return stored ? JSON.parse(stored) : DUMMY_VENDORS;
@@ -114,7 +132,8 @@ const apiCall = async (action: string, data: any = {}) => {
         const res = await axios.post('/api/vendors', data);
         return res.data;
       } catch (err) {
-        if (axios.isAxiosError(err) && err.response?.status === 404) {
+        // Fallback for missing backend or static hosts
+        if (isGithubPages || (axios.isAxiosError(err) && (err.response?.status === 404 || err.response?.status === 405))) {
           const stored = localStorage.getItem('vendor_registry');
           const current = stored ? JSON.parse(stored) : DUMMY_VENDORS;
           const updated = [data.vendor, ...current];
@@ -136,7 +155,7 @@ const apiCall = async (action: string, data: any = {}) => {
   } catch (error) {
     console.error(`apiCall ${action} error:`, error);
     if (action === 'list') return DUMMY_VENDORS;
-    if (action === 'health') return { status: 'demo', db: 'demo' };
+    if (action === 'health') return { status: 'offline', db: 'disconnected' };
     throw error;
   }
 };
@@ -1150,10 +1169,41 @@ function FileField({ label, value, onUpload, required }: any) {
 
     setUploading(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      onUpload('https://example.com/uploaded/' + file.name);
+      if (SCRIPT_URL) {
+        // Convert file to base64
+        const reader = new FileReader();
+        const base64Promise = new Promise<string>((resolve) => {
+          reader.onload = () => {
+            const base64String = (reader.result as string).split(',')[1];
+            resolve(base64String);
+          };
+          reader.readAsDataURL(file);
+        });
+
+        const base64 = await base64Promise;
+
+        const result = await apiCall('upload', {
+          file: base64,
+          filename: file.name,
+          contentType: file.type
+        });
+
+        if (result && result.url) {
+          onUpload(result.url);
+        } else if (result && result.success) {
+          // Fallback if the script doesn't return a specific URL but returns success
+          onUpload(`https://drive.google.com/drive/folders/${(import.meta as any).env.VITE_GOOGLE_DRIVE_FOLDER_ID || ''}`);
+        } else {
+          throw new Error('Upload failed');
+        }
+      } else {
+        // Mock fallback if no SCRIPT_URL
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        onUpload('https://example.com/uploaded/' + file.name);
+      }
     } catch (error) {
-      console.error('Upload failed');
+      console.error('Upload failed:', error);
+      alert('Upload failed. Please ensure your Google Script handles "upload" action.');
     } finally {
       setUploading(false);
     }
