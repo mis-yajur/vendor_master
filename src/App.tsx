@@ -472,33 +472,33 @@ function Layout({ children, systemHealth, onLogout }: { children: React.ReactNod
   return (
     <div className="min-h-screen bg-[var(--theme-bg)] font-sans flex flex-col transition-colors duration-500">
       {/* Top bar with Navigation */}
-      <header className="h-24 bg-[var(--theme-nav)] text-white flex items-center justify-between px-10 sticky top-0 z-50 border-b border-white/10 shadow-2xl transition-all duration-500">
-         <div className="flex items-center gap-20">
-            <Link to="/" className="flex items-center gap-6 group">
-              <div className="h-14 w-14 items-center justify-center rounded-2xl bg-[var(--theme-primary)] text-white shadow-xl shadow-indigo-500/20 flex transform group-hover:rotate-6 transition-all duration-300">
-                <Building2 className="h-8 w-8" />
+      <header className="h-20 bg-[var(--theme-nav)] text-white flex items-center justify-between px-8 sticky top-0 z-50 border-b border-white/10 shadow-2xl transition-all duration-500">
+         <div className="flex items-center gap-12">
+            <Link to="/" className="flex items-center gap-4 group">
+              <div className="h-11 w-11 items-center justify-center rounded-xl bg-[var(--theme-primary)] text-white shadow-xl flex transform group-hover:rotate-6 transition-all duration-300">
+                <Building2 className="h-6 w-6" />
               </div>
               <div className="flex flex-col">
-                <span className="text-4xl font-black tracking-tighter text-white leading-none font-display uppercase italic text-shadow-sm">
+                <span className="text-2xl font-black tracking-tighter text-white leading-none font-display uppercase italic">
                   YAJUR<span className="text-[var(--theme-accent)] not-italic opacity-90">PORTAL</span>
                 </span>
-                <span className="text-[11px] font-bold uppercase tracking-[0.5em] text-slate-500 mt-2">Vendor Master v2.7</span>
+                <span className="text-[9px] font-bold uppercase tracking-[0.4em] text-slate-500 mt-1">Vendor Master v2.7</span>
               </div>
             </Link>
  
-            <nav className="hidden xl:flex items-center gap-3 h-full">
+            <nav className="hidden xl:flex items-center gap-2 h-full text-[13px]">
               {navItems.map((item) => (
                 <Link
                   key={item.path}
                    to={item.path}
                    className={cn(
-                     "flex items-center gap-3.5 px-6 py-3 rounded-xl text-[14px] font-black uppercase tracking-widest transition-all duration-300 active:scale-95",
+                     "flex items-center gap-2.5 px-5 py-2.5 rounded-lg font-black uppercase tracking-widest transition-all duration-300 active:scale-95",
                      location.pathname === item.path 
-                       ? "bg-[var(--theme-primary)] text-white shadow-xl shadow-indigo-900/30 ring-1 ring-white/10" 
+                       ? "bg-[var(--theme-primary)] text-white shadow-lg ring-1 ring-white/10" 
                        : "text-slate-400 hover:text-white hover:bg-white/5 font-bold"
                    )}
                  >
-                   <item.icon className={cn("h-5 w-5", location.pathname === item.path ? "text-white" : "text-slate-500")} />
+                   <item.icon className={cn("h-4 w-4", location.pathname === item.path ? "text-white" : "text-slate-500")} />
                    <span>{item.label}</span>
                  </Link>
                ))}
@@ -1833,14 +1833,14 @@ function SettingsView({ health, currentTheme, onThemeChange }: { health: any, cu
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
 
   const themes = [
-    { id: 'theme-default', name: 'Midnight Slate', primary: '#4F46E5', secondary: '#0f172a', accent: '#6366f1', bg: '#f8fafc', icon: ShieldCheck },
-    { id: 'theme-midnight', name: 'Cyber Night', primary: '#8b5cf6', secondary: '#111827', accent: '#a78bfa', bg: '#030712', icon: Activity },
-    { id: 'theme-emerald', name: 'Corporate Green', primary: '#10b981', secondary: '#064e3b', accent: '#34d399', bg: '#f0fdf4', icon: CheckCircle2 },
-    { id: 'theme-ocean', name: 'Oceanic Blue', primary: '#0ea5e9', secondary: '#0c4a6e', accent: '#38bdf8', bg: '#f0f9ff', icon: Database },
-    { id: 'theme-amber', name: 'Golden Harvest', primary: '#f59e0b', secondary: '#78350f', accent: '#fbbf24', bg: '#fffbeb', icon: TrendingUp },
-    { id: 'theme-rose', name: 'Rose Petal', primary: '#e11d48', secondary: '#881337', accent: '#fb7185', bg: '#fff1f2', icon: Heart },
-    { id: 'theme-violet', name: 'Digital Violet', primary: '#7c3aed', secondary: '#4c1d95', accent: '#8b5cf6', bg: '#f5f3ff', icon: Zap },
-    { id: 'theme-crimson', name: 'Crimson Peak', primary: '#dc2626', secondary: '#450a0a', accent: '#ef4444', bg: '#fef2f2', icon: Flame },
+    { id: 'theme-default', name: 'Midnight Slate', colors: ['#4F46E5', '#0f172a', '#6366f1', '#f8fafc'], icon: ShieldCheck },
+    { id: 'theme-midnight', name: 'Cyber Night', colors: ['#8b5cf6', '#111827', '#a78bfa', '#030712'], icon: Activity },
+    { id: 'theme-emerald', name: 'Corporate Green', colors: ['#10b981', '#064e3b', '#34d399', '#f0fdf4'], icon: CheckCircle2 },
+    { id: 'theme-ocean', name: 'Oceanic Blue', colors: ['#0ea5e9', '#0c4a6e', '#38bdf8', '#f0f9ff'], icon: Database },
+    { id: 'theme-amber', name: 'Golden Harvest', colors: ['#f59e0b', '#78350f', '#fbbf24', '#fffbeb'], icon: TrendingUp },
+    { id: 'theme-rose', name: 'Rose Petal', colors: ['#e11d48', '#881337', '#fb7185', '#fff1f2'], icon: Heart },
+    { id: 'theme-violet', name: 'Digital Violet', colors: ['#7c3aed', '#4c1d95', '#8b5cf6', '#f5f3ff'], icon: Zap },
+    { id: 'theme-crimson', name: 'Crimson Peak', colors: ['#dc2626', '#450a0a', '#ef4444', '#fef2f2'], icon: Flame },
   ];
 
   const handleUpdateUrl = (e: React.FormEvent) => {
@@ -1862,10 +1862,15 @@ function SettingsView({ health, currentTheme, onThemeChange }: { health: any, cu
 
   return (
     <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} className="max-w-5xl mx-auto space-y-10 pb-32">
-      <div className="bg-[var(--theme-nav)] p-12 rounded-[3rem] border border-white/5 shadow-2xl relative overflow-hidden text-center">
-        <h1 className="text-5xl font-black text-white font-display tracking-tighter uppercase italic leading-none">System Terminal</h1>
-        <p className="text-[var(--theme-accent)] font-black text-sm mt-5 uppercase tracking-[0.4em] opacity-80">Infrastructure Matrix & Core Integrations</p>
-        <Building2 className="absolute -right-16 -bottom-16 h-64 w-64 text-white/5 opacity-40 blur-sm" />
+      <div className="bg-[var(--theme-nav)] p-8 rounded-[2rem] border border-white/5 shadow-2xl relative overflow-hidden transition-all duration-500 flex items-center justify-between">
+        <div className="relative z-10 text-left">
+          <h1 className="text-3xl font-black text-white font-display tracking-tighter uppercase italic leading-none">System Terminal</h1>
+          <p className="text-[var(--theme-accent)] font-black text-[10px] mt-2 uppercase tracking-[0.4em] opacity-80">Infrastructure Matrix & Core Integrations</p>
+        </div>
+        <div className="h-12 w-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
+          <Settings className="h-6 w-6 text-white/20 animate-[spin_10s_linear_infinite]" />
+        </div>
+        <Building2 className="absolute -right-8 -bottom-8 h-40 w-40 text-white/5 opacity-40 blur-sm pointer-events-none" />
       </div>
 
       <div className="bg-white rounded-[2.5rem] p-10 border border-slate-200 shadow-sm space-y-16">
@@ -1884,12 +1889,16 @@ function SettingsView({ health, currentTheme, onThemeChange }: { health: any, cu
                     className={cn(
                       "group p-6 rounded-[2rem] border-2 transition-all text-left relative overflow-hidden",
                       currentTheme === theme.id 
-                        ? "border-[var(--theme-primary)] bg-white shadow-xl ring-4 ring-[var(--theme-primary)]/10" 
+                        ? "shadow-xl ring-4 ring-[var(--theme-primary)]/10 bg-white" 
                         : "border-slate-100 bg-slate-50/30 hover:border-slate-200 hover:shadow-lg"
                     )}
+                    style={currentTheme === theme.id ? { borderColor: theme.colors[0] } : {}}
                   >
                     <div className="flex items-center justify-between mb-8">
-                      <div className={cn("h-12 w-12 rounded-2xl flex items-center justify-center text-white shadow-lg", theme.primary)}>
+                      <div 
+                        className={cn("h-12 w-12 rounded-2xl flex items-center justify-center text-white shadow-lg transition-transform group-hover:scale-110")}
+                        style={{ backgroundColor: theme.colors[0] }}
+                      >
                         <theme.icon className="h-6 w-6" />
                       </div>
                       {currentTheme === theme.id && (
@@ -1901,10 +1910,13 @@ function SettingsView({ health, currentTheme, onThemeChange }: { health: any, cu
                     <div>
                       <p className="text-[14px] font-black text-slate-900 uppercase tracking-tight italic">{theme.name}</p>
                       <div className="flex gap-2.5 mt-4">
-                        <div className={cn("h-6 w-6 rounded-lg shadow-sm border border-black/5", theme.primary)} />
-                        <div className={cn("h-6 w-6 rounded-lg shadow-sm border border-black/5", theme.secondary)} />
-                        <div className={cn("h-6 w-6 rounded-lg shadow-sm border border-black/5", theme.accent)} />
-                        <div className={cn("h-6 w-6 rounded-lg shadow-sm border border-slate-200", theme.bg)} />
+                        {theme.colors.map((color, cIdx) => (
+                          <div 
+                            key={cIdx} 
+                            style={{ backgroundColor: color }}
+                            className="h-6 w-6 rounded-lg shadow-sm border border-black/5" 
+                          />
+                        ))}
                       </div>
                     </div>
                   </button>
