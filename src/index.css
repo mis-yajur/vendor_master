@@ -31,8 +31,8 @@
   --theme-text: #1e293b;
 }
 
-/* Theme Classes */
-.theme-default {
+/* Theme Definitions */
+[data-theme='theme-default'] {
   --theme-primary: #4F46E5;
   --theme-bg: #f8fafc;
   --theme-nav: #0f172a;
@@ -40,7 +40,7 @@
   --theme-text: #1e293b;
 }
 
-.theme-midnight {
+[data-theme='theme-midnight'] {
   --theme-primary: #8b5cf6;
   --theme-bg: #030712;
   --theme-nav: #111827;
@@ -48,7 +48,7 @@
   --theme-text: #f3f4f6;
 }
 
-.theme-emerald {
+[data-theme='theme-emerald'] {
   --theme-primary: #10b981;
   --theme-bg: #f0fdf4;
   --theme-nav: #064e3b;
@@ -56,7 +56,7 @@
   --theme-text: #064e3b;
 }
 
-.theme-ocean {
+[data-theme='theme-ocean'] {
   --theme-primary: #0ea5e9;
   --theme-bg: #f0f9ff;
   --theme-nav: #0c4a6e;
@@ -64,7 +64,7 @@
   --theme-text: #0c4a6e;
 }
 
-.theme-amber {
+[data-theme='theme-amber'] {
   --theme-primary: #f59e0b;
   --theme-bg: #fffbeb;
   --theme-nav: #78350f;
@@ -72,7 +72,7 @@
   --theme-text: #78350f;
 }
 
-.theme-rose {
+[data-theme='theme-rose'] {
   --theme-primary: #e11d48;
   --theme-bg: #fff1f2;
   --theme-nav: #881337;
@@ -80,7 +80,7 @@
   --theme-text: #881337;
 }
 
-.theme-violet {
+[data-theme='theme-violet'] {
   --theme-primary: #7c3aed;
   --theme-bg: #f5f3ff;
   --theme-nav: #4c1d95;
@@ -88,7 +88,7 @@
   --theme-text: #4c1d95;
 }
 
-.theme-crimson {
+[data-theme='theme-crimson'] {
   --theme-primary: #dc2626;
   --theme-bg: #fef2f2;
   --theme-nav: #450a0a;

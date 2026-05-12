@@ -268,6 +268,10 @@ function AppContent() {
     localStorage.getItem('app_theme') || 'theme-default'
   );
 
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', currentTheme);
+  }, [currentTheme]);
+
   const handleThemeChange = (theme: string) => {
     setCurrentTheme(theme);
     localStorage.setItem('app_theme', theme);
@@ -1861,60 +1865,60 @@ function SettingsView({ health, currentTheme, onThemeChange }: { health: any, cu
   };
 
   return (
-    <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} className="max-w-5xl mx-auto space-y-10 pb-32">
-      <div className="bg-[var(--theme-nav)] p-8 rounded-[2rem] border border-white/5 shadow-2xl relative overflow-hidden transition-all duration-500 flex items-center justify-between">
+    <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} className="max-w-5xl mx-auto space-y-8 pb-32">
+      <div className="bg-[var(--theme-nav)] p-6 rounded-2xl border border-white/5 shadow-2xl relative overflow-hidden transition-all duration-500 flex items-center justify-between">
         <div className="relative z-10 text-left">
-          <h1 className="text-3xl font-black text-white font-display tracking-tighter uppercase italic leading-none">System Terminal</h1>
-          <p className="text-[var(--theme-accent)] font-black text-[10px] mt-2 uppercase tracking-[0.4em] opacity-80">Infrastructure Matrix & Core Integrations</p>
+          <h1 className="text-xl font-black text-white font-display tracking-tight uppercase italic leading-none">System Terminal</h1>
+          <p className="text-[var(--theme-accent)] font-black text-[9px] mt-1.5 uppercase tracking-[0.3em] opacity-80">Infrastructure Matrix & Core Integrations</p>
         </div>
-        <div className="h-12 w-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
-          <Settings className="h-6 w-6 text-white/20 animate-[spin_10s_linear_infinite]" />
+        <div className="h-10 w-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center">
+          <Settings className="h-5 w-5 text-white/20 animate-[spin_12s_linear_infinite]" />
         </div>
-        <Building2 className="absolute -right-8 -bottom-8 h-40 w-40 text-white/5 opacity-40 blur-sm pointer-events-none" />
+        <Building2 className="absolute -right-6 -bottom-6 h-32 w-32 text-white/5 opacity-40 blur-sm pointer-events-none" />
       </div>
 
-      <div className="bg-white rounded-[2.5rem] p-10 border border-slate-200 shadow-sm space-y-16">
+      <div className="bg-white rounded-[2rem] p-8 border border-slate-200 shadow-sm space-y-12">
           {/* Theme Palette Section */}
-          <section className="space-y-8">
-              <div className="flex items-center gap-4 pb-4 border-b border-slate-100">
-                <Palette className="h-5 w-5 text-[var(--theme-primary)]" />
-                <h3 className="text-lg font-bold text-slate-900 font-display uppercase tracking-widest italic">Aesthetic Protocols</h3>
+          <section className="space-y-6">
+              <div className="flex items-center gap-3 pb-3 border-b border-slate-100">
+                <Palette className="h-4 w-4 text-[var(--theme-primary)]" />
+                <h3 className="text-xs font-bold text-slate-900 font-display uppercase tracking-widest italic">Aesthetic Protocols</h3>
               </div>
               
-              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 {themes.map((theme) => (
                   <button
                     key={theme.id}
                     onClick={() => onThemeChange(theme.id)}
                     className={cn(
-                      "group p-6 rounded-[2rem] border-2 transition-all text-left relative overflow-hidden",
+                      "group p-4 rounded-xl border-2 transition-all text-left relative overflow-hidden flex flex-col gap-3",
                       currentTheme === theme.id 
-                        ? "shadow-xl ring-4 ring-[var(--theme-primary)]/10 bg-white" 
-                        : "border-slate-100 bg-slate-50/30 hover:border-slate-200 hover:shadow-lg"
+                        ? "shadow-lg ring-2 ring-[var(--theme-primary)]/10 bg-white" 
+                        : "border-slate-100 bg-slate-50/20 hover:border-slate-200 hover:shadow-md"
                     )}
                     style={currentTheme === theme.id ? { borderColor: theme.colors[0] } : {}}
                   >
-                    <div className="flex items-center justify-between mb-8">
+                    <div className="flex items-start justify-between w-full">
                       <div 
-                        className={cn("h-12 w-12 rounded-2xl flex items-center justify-center text-white shadow-lg transition-transform group-hover:scale-110")}
+                        className={cn("h-8 w-8 rounded-lg flex items-center justify-center text-white shadow-sm transition-transform group-hover:scale-105")}
                         style={{ backgroundColor: theme.colors[0] }}
                       >
-                        <theme.icon className="h-6 w-6" />
+                        <theme.icon className="h-4 w-4" />
                       </div>
                       {currentTheme === theme.id && (
-                        <div className="h-6 w-6 bg-[var(--theme-primary)] rounded-full flex items-center justify-center text-white">
-                          <Check className="h-3.5 w-3.5" />
+                        <div className="h-5 w-5 bg-[var(--theme-primary)] rounded-md flex items-center justify-center text-white shadow-sm">
+                          <Check className="h-3 w-3" />
                         </div>
                       )}
                     </div>
                     <div>
-                      <p className="text-[14px] font-black text-slate-900 uppercase tracking-tight italic">{theme.name}</p>
-                      <div className="flex gap-2.5 mt-4">
-                        {theme.colors.map((color, cIdx) => (
+                      <p className="text-[11px] font-black text-slate-900 uppercase tracking-tight italic truncate">{theme.name}</p>
+                      <div className="flex gap-1 mt-2">
+                        {theme.colors.slice(0, 4).map((color, cIdx) => (
                           <div 
                             key={cIdx} 
                             style={{ backgroundColor: color }}
-                            className="h-6 w-6 rounded-lg shadow-sm border border-black/5" 
+                            className="h-2.5 w-2.5 rounded-sm shadow-sm border border-black/5" 
                           />
                         ))}
                       </div>
