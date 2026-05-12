@@ -248,59 +248,59 @@ function Layout({ children, systemHealth }: { children: React.ReactNode, systemH
   return (
     <div className="min-h-screen bg-[#f1f5f9] font-sans flex flex-col">
       {/* Top bar with Navigation */}
-      <header className="h-24 bg-[#0f172a] text-white flex items-center justify-between px-10 sticky top-0 z-50 shadow-2xl">
-         <div className="flex items-center gap-12">
-            <Link to="/" className="flex items-center gap-4 group">
-              <div className="h-12 w-12 items-center justify-center rounded-2xl bg-indigo-500 text-white shadow-lg shadow-indigo-500/40 flex transform group-hover:rotate-6 transition-transform">
-                <Building2 className="h-7 w-7" />
+      <header className="h-20 bg-[#0f172a] text-white flex items-center justify-between px-8 sticky top-0 z-50 shadow-xl">
+         <div className="flex items-center gap-10">
+            <Link to="/" className="flex items-center gap-3 group">
+              <div className="h-10 w-10 items-center justify-center rounded-xl bg-indigo-500 text-white shadow-lg shadow-indigo-500/30 flex transform group-hover:rotate-6 transition-transform">
+                <Building2 className="h-6 w-6" />
               </div>
               <div className="flex flex-col">
-                <span className="text-3xl font-black tracking-tight text-white leading-none font-display uppercase">
+                <span className="text-xl font-black tracking-tight text-white leading-none font-display uppercase">
                   Yajur<span className="text-indigo-400">Portal</span>
                 </span>
-                <span className="text-[12px] font-black uppercase tracking-[0.3em] text-indigo-300 mt-1">Vendor Master v2.1</span>
+                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-indigo-300 mt-1">Vendor Master v2.1</span>
               </div>
             </Link>
 
-            <nav className="hidden md:flex items-center gap-2">
+            <nav className="hidden md:flex items-center gap-1">
               {navItems.map((item) => (
                 <Link
                   key={item.path}
                   to={item.path}
                   className={cn(
-                    "flex items-center gap-2 px-6 py-3 rounded-2xl text-[14px] font-black uppercase tracking-widest transition-all",
+                    "flex items-center gap-2 px-4 py-2.5 rounded-xl text-[12px] font-black uppercase tracking-widest transition-all",
                     location.pathname === item.path 
-                      ? "bg-indigo-600 text-white shadow-xl shadow-indigo-600/30" 
+                      ? "bg-indigo-600 text-white shadow-lg shadow-indigo-600/20" 
                       : "text-slate-400 hover:text-white hover:bg-white/5"
                   )}
                 >
-                  <item.icon className="h-4 w-4" />
+                  <item.icon className="h-3.5 w-3.5" />
                   <span>{item.label}</span>
                 </Link>
               ))}
             </nav>
          </div>
 
-         <div className="flex items-center gap-8">
-            <div className="hidden lg:flex items-center gap-6 pr-8 border-r border-white/10">
-               <div className="flex items-center gap-3 px-4 py-2 bg-white/5 rounded-2xl border border-white/5 shadow-inner">
-                  <div className={cn("h-3 w-3 rounded-full shadow-lg", systemHealth.db !== 'disconnected' ? "bg-emerald-500 animate-pulse" : "bg-rose-500")} />
-                  <span className="text-[11px] font-black uppercase tracking-[0.2em] text-indigo-300">{systemHealth.db !== 'disconnected' ? 'Cloud Live' : 'Offline'}</span>
+         <div className="flex items-center gap-6">
+            <div className="hidden lg:flex items-center gap-4 pr-6 border-r border-white/10">
+               <div className="flex items-center gap-2.5 px-3 py-1.5 bg-white/5 rounded-xl border border-white/5 shadow-inner">
+                  <div className={cn("h-2.5 w-2.5 rounded-full shadow-lg", systemHealth.db !== 'disconnected' ? "bg-emerald-500 animate-pulse" : "bg-rose-500")} />
+                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-300">{systemHealth.db !== 'disconnected' ? 'Cloud Live' : 'Offline'}</span>
                </div>
-               <button className="relative p-3 text-slate-400 hover:text-white transition-all bg-white/5 rounded-2xl hover:bg-white/10">
-                  <Bell className="h-6 w-6" />
-                  <span className="absolute top-3 right-3 h-3 w-3 bg-rose-500 rounded-full border-2 border-[#0f172a] shadow-sm" />
+               <button className="relative p-2.5 text-slate-400 hover:text-white transition-all bg-white/5 rounded-xl hover:bg-white/10">
+                  <Bell className="h-5 w-5" />
+                  <span className="absolute top-2.5 right-2.5 h-2.5 w-2.5 bg-rose-500 rounded-full border-2 border-[#0f172a] shadow-sm" />
                </button>
             </div>
             
-            <div className="flex items-center gap-6 group">
-               <div className="flex items-center gap-4 cursor-pointer p-1.5 pr-4 rounded-2xl hover:bg-white/5 transition-all">
-                  <div className="h-12 w-12 rounded-2xl bg-indigo-500 text-white flex items-center justify-center border-2 border-white shadow-xl group-hover:scale-105 transition-transform overflow-hidden">
+            <div className="flex items-center gap-4 group">
+               <div className="flex items-center gap-3 cursor-pointer p-1.5 pr-3 rounded-xl hover:bg-white/5 transition-all">
+                  <div className="h-10 w-10 rounded-xl bg-indigo-500 text-white flex items-center justify-center border-2 border-white shadow-lg group-hover:scale-105 transition-transform overflow-hidden">
                      <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=64&h=64&fit=crop&q=80" alt="Avatar" className="h-full w-full object-cover" />
                   </div>
                   <div className="hidden sm:block">
-                    <p className="text-sm font-black text-white leading-none uppercase tracking-tighter">Prosun Majhi</p>
-                    <p className="text-[10px] font-black text-indigo-400 uppercase tracking-widest mt-1">Super Admin</p>
+                    <p className="text-[13px] font-black text-white leading-none uppercase tracking-tighter">Prosun Majhi</p>
+                    <p className="text-[9px] font-black text-indigo-400 uppercase tracking-widest mt-1">Super Admin</p>
                   </div>
                </div>
                
@@ -310,9 +310,9 @@ function Layout({ children, systemHealth }: { children: React.ReactNode, systemH
                      window.location.reload();
                    }
                  }}
-                 className="flex items-center gap-2 px-5 py-3 bg-rose-600/10 hover:bg-rose-600 text-rose-500 hover:text-white rounded-2xl text-[12px] font-black uppercase tracking-widest transition-all shadow-lg border border-rose-600/20 active:scale-95"
+                 className="flex items-center gap-2 px-4 py-2.5 bg-rose-600/10 hover:bg-rose-600 text-rose-500 hover:text-white rounded-xl text-[11px] font-black uppercase tracking-widest transition-all shadow-md border border-rose-600/20 active:scale-95"
                >
-                 <LogOut className="h-4 w-4" />
+                 <LogOut className="h-3.5 w-3.5" />
                  <span>Logout</span>
                </button>
             </div>
@@ -344,11 +344,11 @@ function Dashboard({ vendors = [] }: any) {
     <div className="space-y-12 pb-20">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
         <div>
-          <h2 className="text-4xl font-black text-slate-900 font-display flex items-center gap-4 tracking-tight">
+          <h2 className="text-3xl font-black text-slate-900 font-display flex items-center gap-3 tracking-tight">
              Command Center
-             <span className="px-4 py-1.5 bg-indigo-600 text-white text-[12px] font-black uppercase rounded-2xl tracking-[0.2em] shadow-xl shadow-indigo-200">v2.1 Gold</span>
+             <span className="px-3 py-1 bg-indigo-600 text-white text-[10px] font-black uppercase rounded-lg tracking-[0.2em] shadow-lg shadow-indigo-200">v2.1 Gold</span>
           </h2>
-          <p className="text-slate-500 text-lg mt-2 font-medium">Real-time oversight of the vendor ecosystem and procurement health.</p>
+          <p className="text-slate-500 text-base mt-2 font-medium">Real-time oversight of the vendor ecosystem and procurement health.</p>
         </div>
         <div className="flex items-center gap-4">
           <button 
@@ -375,19 +375,19 @@ function Dashboard({ vendors = [] }: any) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: idx * 0.1 }}
-            className="group bg-white p-8 rounded-[2.5rem] border border-white shadow-2xl hover:shadow-indigo-500/10 hover:border-indigo-100 transition-all cursor-default relative overflow-hidden"
+            className="group bg-white p-6 rounded-3xl border border-white shadow-xl hover:shadow-indigo-500/10 hover:border-indigo-100 transition-all cursor-default relative overflow-hidden"
           >
-            <div className="flex items-center justify-between mb-8 relative z-10">
+            <div className="flex items-center justify-between mb-6 relative z-10">
               <div className={cn(
-                "h-16 w-16 rounded-[1.5rem] flex items-center justify-center transition-all group-hover:scale-110 shadow-2xl",
+                "h-12 w-12 rounded-xl flex items-center justify-center transition-all group-hover:scale-110 shadow-lg",
                 stat.color === 'indigo' ? "bg-indigo-600 text-white" :
                 stat.color === 'emerald' ? "bg-emerald-500 text-white" :
                 stat.color === 'amber' ? "bg-amber-400 text-white" : 
                 "bg-rose-500 text-white"
               )}>
-                <stat.icon className="h-8 w-8" />
+                <stat.icon className="h-6 w-6" />
               </div>
-              <TrendingUp className={cn("h-6 w-6 opacity-30", 
+              <TrendingUp className={cn("h-4 w-4 opacity-30", 
                 stat.color === 'indigo' ? "text-indigo-600" :
                 stat.color === 'emerald' ? "text-emerald-500" :
                 stat.color === 'amber' ? "text-amber-500" : 
@@ -395,9 +395,9 @@ function Dashboard({ vendors = [] }: any) {
               )} />
             </div>
             <div className="relative z-10">
-              <p className="text-[12px] font-black text-slate-400 uppercase tracking-[0.25em] mb-2 leading-none">{stat.label}</p>
-              <h3 className="text-5xl font-black text-slate-900 tracking-tighter font-display leading-none">{stat.value}</h3>
-              <p className="text-[12px] text-slate-400 mt-4 font-bold uppercase tracking-widest opacity-80">{stat.description}</p>
+              <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1 leading-none">{stat.label}</p>
+              <h3 className="text-3xl font-black text-slate-900 tracking-tight font-display leading-none">{stat.value}</h3>
+              <p className="text-[10px] text-slate-400 mt-3 font-bold uppercase tracking-widest opacity-80">{stat.description}</p>
             </div>
             
             {/* Background Accent */}
@@ -561,30 +561,30 @@ function VendorList({ vendors = [], loading }: { vendors: Vendor[], loading: boo
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-12 pb-20">
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-10 bg-white p-12 rounded-[3.5rem] border border-white shadow-2xl relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-2 h-full bg-indigo-600" />
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 bg-white p-6 rounded-3xl border border-white shadow-xl relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-1.5 h-full bg-indigo-600" />
         <div className="flex-1">
-          <h2 className="text-4xl font-black text-slate-900 font-display tracking-tight">Vendor Registry</h2>
-          <p className="text-slate-500 text-lg mt-2 font-medium">Enterprise partner database and statutory archive.</p>
+          <h2 className="text-2xl font-black text-slate-900 font-display tracking-tight">Vendor Registry</h2>
+          <p className="text-slate-500 text-base mt-1 font-medium">Enterprise partner database and statutory archive.</p>
           
-          <div className="relative mt-10 max-w-3xl group">
-            <Search className="absolute left-6 top-1/2 -translate-y-1/2 h-6 w-6 text-slate-400 group-focus-within:text-indigo-600 transition-colors" />
+          <div className="relative mt-8 max-w-2xl group">
+            <Search className="absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-indigo-600 transition-colors" />
             <input 
               type="text" 
-              placeholder="Search by Legal Name, GSTIN, PAN or System ID..."
+              placeholder="Search registry..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-slate-50 border-2 border-slate-100 rounded-[2rem] py-5 pl-16 pr-8 text-[16px] font-bold focus:ring-8 focus:ring-indigo-100 focus:bg-white focus:border-indigo-600 transition-all outline-none shadow-inner"
+              className="w-full bg-slate-50 border-2 border-slate-100 rounded-xl py-3.5 pl-14 pr-6 text-sm font-bold focus:ring-4 focus:ring-indigo-100 focus:bg-white focus:border-indigo-600 transition-all outline-none shadow-sm"
             />
           </div>
         </div>
         
-        <div className="flex items-center gap-4">
-           <button className="flex items-center gap-3 px-8 py-5 bg-white border-2 border-slate-100 rounded-[2rem] text-[14px] font-black uppercase tracking-widest text-slate-600 hover:bg-slate-50 transition-all shadow-xl hover:shadow-slate-200">
-             <Download className="h-5 w-5 text-indigo-600" /> Export CSV
+        <div className="flex items-center gap-3">
+           <button className="flex items-center gap-2.5 px-6 py-3 bg-white border-2 border-slate-100 rounded-xl text-[12px] font-black uppercase tracking-widest text-slate-600 hover:bg-slate-50 transition-all shadow-sm">
+             <Download className="h-4 w-4 text-indigo-600" /> Export
            </button>
-           <Link to="/register" className="flex items-center gap-3 px-10 py-5 bg-indigo-600 text-white rounded-[2rem] text-[14px] font-black uppercase tracking-widest hover:bg-indigo-700 shadow-2xl shadow-indigo-600/30 active:scale-95 transition-all">
-             <Plus className="h-5 w-5" /> New Vendor
+           <Link to="/register" className="flex items-center gap-2.5 px-8 py-3.5 bg-indigo-600 text-white rounded-xl text-[12px] font-black uppercase tracking-widest hover:bg-indigo-700 shadow-xl shadow-indigo-600/20 active:scale-95 transition-all">
+             <Plus className="h-4 w-4" /> New Vendor
            </Link>
         </div>
       </div>
@@ -630,42 +630,42 @@ function VendorList({ vendors = [], loading }: { vendors: Vendor[], loading: boo
 
 function VendorCard({ vendor, onSelect }: { vendor: Vendor, onSelect: () => void }) {
   return (
-    <div className="group bg-white rounded-[3rem] border border-white p-10 shadow-2xl hover:shadow-indigo-500/10 hover:border-indigo-100 transition-all duration-500 flex flex-col h-full relative overflow-hidden">
-      <div className="flex items-start justify-between mb-10">
-        <div className="h-20 w-20 rounded-[2rem] bg-indigo-600 text-white flex items-center justify-center font-black text-3xl shadow-2xl shadow-indigo-200 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500">
+    <div className="group bg-white rounded-3xl border border-white p-6 shadow-xl hover:shadow-indigo-500/10 hover:border-indigo-100 transition-all duration-500 flex flex-col h-full relative overflow-hidden">
+      <div className="flex items-start justify-between mb-6">
+        <div className="h-14 w-14 rounded-2xl bg-indigo-600 text-white flex items-center justify-center font-black text-xl shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-all duration-500">
           {vendor.name.charAt(0)}
         </div>
         <div className="flex flex-col items-end">
            <span className={cn(
-             "px-5 py-2 rounded-2xl text-[11px] font-black uppercase tracking-[0.2em] shadow-sm",
+             "px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-[0.2em] shadow-sm",
              vendor.statutory.vendorType === 'Goods' ? "bg-emerald-500 text-white" : "bg-amber-400 text-white"
            )}>
              {vendor.statutory.vendorType}
            </span>
-           <p className="text-[11px] font-black text-slate-300 mt-6 uppercase tracking-[0.3em]">{vendor.id}</p>
+           <p className="text-[9px] font-black text-slate-300 mt-4 uppercase tracking-[0.3em]">{vendor.id}</p>
         </div>
       </div>
 
       <div className="flex-1">
-        <h3 className="text-3xl font-black text-slate-900 font-display line-clamp-2 group-hover:text-indigo-600 transition-colors uppercase leading-tight tracking-tighter">{vendor.name}</h3>
-        <div className="flex items-center gap-3 mt-4 mb-10 text-slate-400">
-           <MapPin className="h-5 w-5 text-indigo-400" />
-           <p className="text-[14px] font-bold uppercase tracking-widest">{vendor.address.city}, {vendor.address.state}</p>
+        <h3 className="text-xl font-black text-slate-900 font-display line-clamp-2 group-hover:text-indigo-600 transition-colors uppercase leading-tight tracking-tight">{vendor.name}</h3>
+        <div className="flex items-center gap-2.5 mt-3 mb-6 text-slate-400">
+           <MapPin className="h-4 w-4 text-indigo-400" />
+           <p className="text-[12px] font-bold uppercase tracking-widest">{vendor.address.city}, {vendor.address.state}</p>
         </div>
 
-        <div className="grid grid-cols-2 gap-6 p-8 bg-slate-50 rounded-[2.5rem] border border-slate-100 shadow-inner">
+        <div className="grid grid-cols-2 gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100 shadow-inner">
            <div>
-              <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.25em] mb-2 leading-none">Tax ID (PAN)</p>
-              <p className="text-sm font-black text-slate-800 uppercase tracking-tight">{vendor.statutory.pan}</p>
+              <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1.5 leading-none">Tax ID (PAN)</p>
+              <p className="text-[13px] font-black text-slate-800 uppercase tracking-tight">{vendor.statutory.pan}</p>
            </div>
            <div>
-              <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.25em] mb-2 leading-none">GSTIN / TAX</p>
-              <p className="text-sm font-black text-slate-800 uppercase tracking-tight truncate">{vendor.statutory.gstin}</p>
+              <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1.5 leading-none">GSTIN / TAX</p>
+              <p className="text-[13px] font-black text-slate-800 uppercase tracking-tight truncate">{vendor.statutory.gstin}</p>
            </div>
         </div>
       </div>
 
-      <button onClick={onSelect} className="mt-10 w-full py-5 bg-white border-2 border-slate-100 text-slate-800 rounded-[2rem] text-[13px] font-black uppercase tracking-widest hover:bg-[#0f172a] hover:text-white hover:border-[#0f172a] transition-all active:scale-95 shadow-xl shadow-slate-100">
+      <button onClick={onSelect} className="mt-8 w-full py-3.5 bg-white border-2 border-slate-100 text-slate-800 rounded-xl text-[12px] font-black uppercase tracking-widest hover:bg-[#0f172a] hover:text-white hover:border-[#0f172a] transition-all active:scale-95 shadow-sm">
         Review Master Profile
       </button>
     </div>
@@ -675,25 +675,25 @@ function VendorCard({ vendor, onSelect }: { vendor: Vendor, onSelect: () => void
 function VendorDetailModal({ vendor, onClose }: { vendor: Vendor, onClose: () => void }) {
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/40 backdrop-blur-md p-4 overflow-y-auto">
-      <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="bg-white rounded-[3rem] w-full max-w-6xl shadow-2xl overflow-hidden relative my-8">
-        <div className="sticky top-0 bg-white z-10 px-10 py-8 border-b border-slate-100 flex items-center justify-between">
-            <div className="flex items-center gap-4">
-               <div className="h-14 w-14 rounded-2xl bg-indigo-600 text-white flex items-center justify-center shadow-lg"><Building2 className="h-7 w-7" /></div>
+      <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="bg-white rounded-3xl w-full max-w-5xl shadow-2xl overflow-hidden relative my-8">
+        <div className="sticky top-0 bg-white z-10 px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+               <div className="h-10 w-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-lg"><Building2 className="h-5 w-5" /></div>
                <div>
-                  <h2 className="text-2xl font-black text-slate-900 uppercase tracking-tight">{vendor.name}</h2>
-                  <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">System ID: {vendor.id} • Registered {formatDate(vendor.createdAt)}</p>
+                  <h2 className="text-lg font-black text-slate-900 uppercase tracking-tight">{vendor.name}</h2>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">System ID: {vendor.id} • Registered {formatDate(vendor.createdAt)}</p>
                </div>
             </div>
             <div className="flex items-center gap-2">
-               <button className="px-6 py-2 bg-indigo-50 text-indigo-600 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-indigo-100 transition-all flex items-center gap-2">
-                 <Download className="h-4 w-4" /> Export Profile
+               <button className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-indigo-100 transition-all flex items-center gap-2">
+                 <Download className="h-3.5 w-3.5" /> Export
                </button>
-               <button onClick={onClose} className="p-3 bg-slate-50 rounded-2xl text-slate-400 hover:text-slate-900 transition-colors"><X className="h-6 w-6" /></button>
+               <button onClick={onClose} className="p-2 bg-slate-50 rounded-xl text-slate-400 hover:text-slate-900 transition-colors"><X className="h-5 w-5" /></button>
             </div>
         </div>
 
-        <div className="p-10 grid gap-8 lg:grid-cols-4 max-h-[75vh] overflow-y-auto bg-[#F8F9FD]">
-           <div className="lg:col-span-1 space-y-8">
+        <div className="p-6 grid gap-6 lg:grid-cols-4 max-h-[75vh] overflow-y-auto bg-[#F8F9FD]">
+           <div className="lg:col-span-1 space-y-6">
               <ProfileSection title="Address Details" icon={MapPin}>
                  <ProfileItem label="Full Address" value={`${vendor.address.floorBuilding}, ${vendor.address.street}`} />
                  <ProfileItem label="Location" value={`${vendor.address.city}, ${vendor.address.district}`} />
@@ -778,27 +778,27 @@ function DocLink({ label, url }: { label: string, url?: string }) {
       href={url} 
       target="_blank" 
       rel="noopener noreferrer"
-      className="flex items-center justify-between p-4 bg-white border border-slate-100 rounded-2xl hover:border-indigo-400 hover:shadow-md transition-all group"
+      className="flex items-center justify-between p-3 bg-white border border-slate-100 rounded-xl hover:border-indigo-400 hover:shadow-sm transition-all group"
     >
-       <div className="flex items-center gap-3">
-          <div className="h-8 w-8 rounded-lg bg-slate-50 text-slate-400 group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-colors flex items-center justify-center">
-            <FileText className="h-4 w-4" />
+       <div className="flex items-center gap-2.5">
+          <div className="h-7 w-7 rounded-lg bg-slate-50 text-slate-400 group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-colors flex items-center justify-center">
+            <FileText className="h-3.5 w-3.5" />
           </div>
-          <span className="text-xs font-bold text-slate-600 group-hover:text-indigo-600 transition-colors">{label}</span>
+          <span className="text-[11px] font-bold text-slate-600 group-hover:text-indigo-600 transition-colors">{label}</span>
        </div>
-       <ExternalLink className="h-3 w-3 text-slate-300 group-hover:text-indigo-400" />
+       <ExternalLink className="h-2.5 w-2.5 text-slate-300 group-hover:text-indigo-400" />
     </a>
   );
 }
 
 function ProfileSection({ title, icon: Icon, children, className }: any) {
   return (
-    <div className={cn("bg-white p-8 rounded-[2rem] border border-slate-100 shadow-sm", className)}>
-       <div className="flex items-center gap-3 mb-6 pb-4 border-b border-slate-50">
-          <Icon className="h-5 w-5 text-indigo-600" />
-          <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">{title}</h4>
+    <div className={cn("bg-white p-5 rounded-2xl border border-slate-100 shadow-sm", className)}>
+       <div className="flex items-center gap-2 mb-4 pb-3 border-b border-slate-50">
+          <Icon className="h-4 w-4 text-indigo-600" />
+          <h4 className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">{title}</h4>
        </div>
-       <div className="space-y-4">
+       <div className="space-y-3">
           {children}
        </div>
     </div>
@@ -888,19 +888,19 @@ function RegistrationForm({ onComplete }: { onComplete: () => void }) {
 
   return (
     <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} className="max-w-full mx-auto space-y-12 pb-32">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-10 bg-white p-12 rounded-[3.5rem] border border-white shadow-2xl relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-2 h-full bg-indigo-600" />
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 bg-white p-6 rounded-3xl border border-white shadow-xl relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-1.5 h-full bg-indigo-600" />
         <div>
-          <h1 className="text-5xl font-black text-slate-900 font-display tracking-tighter uppercase">Onboarding Terminal</h1>
-          <p className="text-slate-500 text-lg mt-3 font-medium uppercase tracking-[0.1em] opacity-60">Vendor Master Registry v2.1 • Secure Entry</p>
+          <h1 className="text-3xl font-black text-slate-900 font-display tracking-tight uppercase">Onboarding Terminal</h1>
+          <p className="text-slate-500 text-base mt-2 font-medium uppercase tracking-[0.05em] opacity-60">Vendor Master Registry v2.1 • Secure Entry</p>
         </div>
-        <button onClick={() => navigate('/vendors')} className="px-10 py-5 bg-slate-100 text-slate-400 rounded-[2rem] text-[14px] font-black uppercase tracking-widest hover:bg-slate-900 hover:text-white transition-all shadow-xl active:scale-95 border border-slate-200">
+        <button onClick={() => navigate('/vendors')} className="px-8 py-3.5 bg-slate-100 text-slate-400 rounded-xl text-[12px] font-black uppercase tracking-widest hover:bg-slate-900 hover:text-white transition-all shadow-sm active:scale-95 border border-slate-200">
           Exit Terminal
         </button>
       </div>
 
-      <div className="bg-white rounded-[4rem] border border-white shadow-[0_50px_100px_-20px_rgba(0,0,0,0.15)] relative overflow-hidden">
-        <div className="absolute top-0 left-0 right-0 h-3 bg-slate-100">
+      <div className="bg-white rounded-3xl border border-white shadow-2xl relative overflow-hidden">
+        <div className="absolute top-0 left-0 right-0 h-2 bg-slate-100">
            <motion.div 
              initial={{ width: '0%' }}
              animate={{ width: '100%' }}
@@ -956,11 +956,11 @@ function RegistrationForm({ onComplete }: { onComplete: () => void }) {
                 </FormSection>
 
                 <FormSection title="B. Digital Repository (Attachments)" icon={FolderOpen}>
-                  <div className="bg-slate-50 p-10 rounded-[3rem] border-4 border-slate-100 shadow-inner mb-2 transition-all hover:border-indigo-100">
-                    <h4 className="text-[12px] font-black uppercase tracking-[0.4em] text-slate-400 mb-10 pb-4 border-b-2 border-slate-200 flex items-center gap-4">
-                      <CheckSquare className="h-6 w-6 text-indigo-500" /> Mandatory Attachment Checklist
+                  <div className="bg-slate-50 p-8 rounded-3xl border-2 border-slate-100 shadow-inner mb-2 transition-all hover:border-indigo-100">
+                    <h4 className="text-[11px] font-black uppercase tracking-[0.3em] text-slate-400 mb-8 pb-3 border-b border-slate-200 flex items-center gap-3">
+                      <CheckSquare className="h-5 w-5 text-indigo-500" /> Mandatory Attachment Checklist
                     </h4>
-                    <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-3">
+                    <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
                        <FileField 
                          label="GSTIN Copy" 
                          value={values.documents.gstinCopy} 
@@ -1080,27 +1080,27 @@ function RegistrationForm({ onComplete }: { onComplete: () => void }) {
                 </FormSection>
               </div>
 
-              <div className="pt-20 flex items-center justify-end gap-6 border-t-8 border-slate-100">
+              <div className="pt-12 flex items-center justify-end gap-4 border-t-2 border-slate-100">
                  <button 
                    type="button" 
                    onClick={() => navigate('/vendors')} 
-                   className="px-12 py-6 bg-white text-slate-400 rounded-[2rem] text-[15px] font-black uppercase tracking-widest border-4 border-slate-100 hover:bg-slate-900 hover:text-white transition-all shadow-xl"
+                   className="px-8 py-3.5 bg-white text-slate-400 rounded-xl text-[13px] font-black uppercase tracking-widest border-2 border-slate-100 hover:bg-slate-900 hover:text-white transition-all shadow-sm"
                  >
                    Discard
                  </button>
                  <button 
                    type="submit" 
                    disabled={isSubmitting} 
-                   className="px-24 py-10 bg-indigo-600 text-white rounded-[3rem] text-[20px] font-black uppercase tracking-widest shadow-[0_20px_50px_rgba(79,70,229,0.3)] hover:bg-indigo-700 active:scale-95 transition-all flex items-center gap-4 border-4 border-white"
+                   className="px-12 py-4 bg-indigo-600 text-white rounded-xl text-[14px] font-black uppercase tracking-widest shadow-xl shadow-indigo-600/20 hover:bg-indigo-700 active:scale-95 transition-all flex items-center gap-3 border-2 border-white"
                  >
                    {isSubmitting ? (
                      <>
-                       <RefreshCw className="h-6 w-6 animate-spin" />
+                       <RefreshCw className="h-4 w-4 animate-spin" />
                        Finalizing Registry...
                      </>
                    ) : (
                      <>
-                       <CheckCircle2 className="h-6 w-6" />
+                       <CheckCircle2 className="h-5 w-5" />
                        Finalize Master Record
                      </>
                    )}
@@ -1119,22 +1119,22 @@ function FormSection({ title, icon: Icon, children }: any) {
   const sectionTitle = title.split('.').slice(1).join('.');
 
   return (
-    <div className="space-y-12 group">
-      <div className="flex items-center gap-8 pb-8 border-b-[12px] border-slate-50 group-hover:border-indigo-600 transition-all duration-1000 relative">
+    <div className="space-y-8 group">
+      <div className="flex items-center gap-6 pb-6 border-b-4 border-slate-50 group-hover:border-indigo-600 transition-all duration-700 relative">
         <div className="relative">
-          <div className="h-24 w-24 rounded-[2.5rem] bg-indigo-600 flex items-center justify-center text-white shadow-[0_20px_50px_rgba(79,70,229,0.3)] group-hover:scale-110 group-hover:rotate-12 transition-all duration-700 z-10 relative">
-            <Icon className="h-12 w-12" />
+          <div className="h-16 w-16 rounded-2xl bg-indigo-600 flex items-center justify-center text-white shadow-xl group-hover:scale-105 transition-all duration-500 z-10 relative">
+            <Icon className="h-8 w-8" />
           </div>
-          <div className="absolute -top-6 -left-6 h-16 w-16 rounded-3xl bg-white text-indigo-700 flex items-center justify-center font-black text-2xl shadow-2xl border-4 border-indigo-50 z-20">
+          <div className="absolute -top-3 -left-3 h-10 w-10 rounded-xl bg-white text-indigo-700 flex items-center justify-center font-black text-sm shadow-lg border-2 border-indigo-50 z-20">
             {sectionLetter}
           </div>
         </div>
         <div className="flex flex-col">
-          <h3 className="text-5xl font-black uppercase tracking-[0.5em] text-slate-900 font-display leading-none">{sectionTitle}</h3>
-          <div className="h-3 w-40 bg-indigo-600 mt-8 rounded-full group-hover:w-full transition-all duration-1000 shadow-2xl shadow-indigo-200" />
+          <h3 className="text-2xl font-black uppercase tracking-[0.2em] text-slate-900 font-display leading-none">{sectionTitle}</h3>
+          <div className="h-1.5 w-20 bg-indigo-600 mt-3 rounded-full group-hover:w-full transition-all duration-700 shadow-lg shadow-indigo-200" />
         </div>
       </div>
-      <div className="pl-12">
+      <div className="pl-6">
         {children}
       </div>
     </div>
@@ -1174,25 +1174,25 @@ function FileField({ label, value, onUpload, required }: any) {
         )}
       </label>
       <div className={cn(
-        "relative h-44 rounded-[2.5rem] border-4 border-dashed transition-all flex flex-col items-center justify-center gap-4 overflow-hidden shadow-2xl",
-        value ? "bg-emerald-50 border-emerald-400 shadow-emerald-500/10" : "bg-slate-50 border-slate-200 hover:border-indigo-600 hover:bg-white hover:shadow-indigo-500/20"
+        "relative h-32 rounded-3xl border-2 border-dashed transition-all flex flex-col items-center justify-center gap-3 overflow-hidden shadow-lg",
+        value ? "bg-emerald-50 border-emerald-300 shadow-emerald-500/5" : "bg-slate-50 border-slate-200 hover:border-indigo-600 hover:bg-white hover:shadow-indigo-500/10"
       )}>
         {uploading ? (
-          <div className="flex flex-col items-center gap-4 text-indigo-600 animate-pulse">
-            <RefreshCw className="h-10 w-10 animate-spin mb-1 shadow-indigo-100" />
-            <span className="text-[11px] font-black uppercase tracking-[0.3em]">Synching Node...</span>
+          <div className="flex flex-col items-center gap-2 text-indigo-600 animate-pulse">
+            <RefreshCw className="h-8 w-8 animate-spin mb-1" />
+            <span className="text-[10px] font-black uppercase tracking-[0.2em]">Synching Node...</span>
           </div>
         ) : value ? (
-          <motion.div initial={{ scale: 0.8 }} animate={{ scale: 1 }} className="flex flex-col items-center gap-4 text-emerald-600">
-            <CheckCircle2 className="h-12 w-12 drop-shadow-xl" />
-            <span className="text-[12px] font-black uppercase tracking-[0.3em]">Master Authenticated</span>
+          <motion.div initial={{ scale: 0.8 }} animate={{ scale: 1 }} className="flex flex-col items-center gap-2 text-emerald-600">
+            <CheckCircle2 className="h-10 w-10 drop-shadow-lg" />
+            <span className="text-[10px] font-black uppercase tracking-[0.2em]">Master Authenticated</span>
           </motion.div>
         ) : (
           <>
-            <div className="h-14 w-14 rounded-2xl bg-white text-slate-400 flex items-center justify-center shadow-xl border-2 border-slate-100 group-hover:bg-indigo-600 group-hover:text-white transition-all">
-               <Upload className="h-7 w-7" />
+            <div className="h-10 w-10 rounded-xl bg-white text-slate-400 flex items-center justify-center shadow-md border border-slate-100 group-hover:bg-indigo-600 group-hover:text-white transition-all">
+               <Upload className="h-5 w-5" />
             </div>
-            <span className="text-[11px] font-black uppercase tracking-[0.3em] text-slate-400">Target File Path</span>
+            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Target File Path</span>
           </>
         )}
         <input 
@@ -1208,17 +1208,17 @@ function FileField({ label, value, onUpload, required }: any) {
 
 function FormInput({ label, name, type = 'text', placeholder, options, error }: any) {
   return (
-    <div className="space-y-5">
-       <label className="text-[13px] font-black text-slate-500 uppercase tracking-[0.2em] pl-1 leading-none block">{label}</label>
+    <div className="space-y-3">
+       <label className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] pl-1 leading-none block">{label}</label>
        <div className="relative group">
          {type === 'select' ? (
-           <Field as="select" name={name} className="w-full bg-white border-4 border-slate-100 rounded-[2.5rem] py-7 px-10 text-[18px] font-black text-slate-900 focus:ring-[20px] focus:ring-indigo-50 focus:border-indigo-600 hover:border-indigo-100 transition-all outline-none shadow-2xl shadow-slate-200/50 appearance-none cursor-pointer">
+           <Field as="select" name={name} className="w-full bg-white border border-slate-200 rounded-xl py-3 px-5 text-sm font-bold text-slate-900 focus:ring-4 focus:ring-indigo-50 focus:border-indigo-600 hover:border-slate-300 transition-all outline-none shadow-sm appearance-none cursor-pointer">
               {options.map((o: string) => <option key={o} value={o}>{o}</option>)}
            </Field>
          ) : (
-           <Field name={name} placeholder={placeholder} className="w-full bg-white border-4 border-slate-100 rounded-[2.5rem] py-7 px-10 text-[18px] font-black text-slate-900 focus:ring-[20px] focus:ring-indigo-50 focus:border-indigo-600 hover:border-indigo-100 transition-all outline-none shadow-2xl shadow-slate-200/50 placeholder:text-slate-200" />
+           <Field name={name} placeholder={placeholder} className="w-full bg-white border border-slate-200 rounded-xl py-3 px-5 text-sm font-bold text-slate-900 focus:ring-4 focus:ring-indigo-50 focus:border-indigo-600 hover:border-slate-300 transition-all outline-none shadow-sm placeholder:text-slate-300" />
          )}
-         <div className="absolute inset-0 rounded-[2.5rem] border-2 border-white/60 pointer-events-none" />
+         <div className="absolute inset-0 rounded-xl border border-white/40 pointer-events-none" />
        </div>
        <div className="h-6">
          <AnimatePresence>
@@ -1239,15 +1239,15 @@ function FormInput({ label, name, type = 'text', placeholder, options, error }: 
 
 function SettingsView({ health }: any) {
   return (
-    <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} className="max-w-4xl mx-auto space-y-12 pb-32">
-      <div className="bg-white p-12 rounded-[4rem] border border-white shadow-2xl relative overflow-hidden text-center">
-        <div className="absolute top-0 left-0 right-0 h-2 bg-indigo-600" />
-        <h1 className="text-4xl font-black text-slate-900 font-display tracking-tighter uppercase leading-none">System Settings</h1>
-        <p className="text-slate-500 font-bold text-lg mt-4 uppercase tracking-[0.2em] opacity-60">Platform Control & Integration Matrix</p>
+    <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} className="max-w-4xl mx-auto space-y-8 pb-32">
+      <div className="bg-white p-8 rounded-3xl border border-white shadow-xl relative overflow-hidden text-center">
+        <div className="absolute top-0 left-0 right-0 h-1.5 bg-indigo-600" />
+        <h1 className="text-3xl font-black text-slate-900 font-display tracking-tight uppercase leading-none">System Settings</h1>
+        <p className="text-slate-500 font-bold text-base mt-3 uppercase tracking-[0.1em] opacity-60">Platform Control & Integration Matrix</p>
       </div>
 
-      <div className="bg-white rounded-[4rem] p-16 border border-white shadow-[0_50px_100px_-20px_rgba(0,0,0,0.1)] space-y-16">
-          <section className="space-y-10">
+      <div className="bg-white rounded-3xl p-8 border border-white shadow-2xl space-y-12">
+          <section className="space-y-8">
               <h3 className="text-[14px] font-black uppercase tracking-[0.4em] text-slate-400 pb-4 border-b-2 border-slate-50">Integration Status</h3>
               <div className="space-y-6">
                  <div className="group flex items-center justify-between p-8 bg-slate-100 rounded-[2.5rem] border-2 border-transparent hover:border-indigo-600/20 hover:bg-white transition-all shadow-inner hover:shadow-2xl">
