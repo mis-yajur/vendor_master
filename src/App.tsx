@@ -641,23 +641,23 @@ function Dashboard({ vendors = [], health }: any) {
       </div>
 
       <div className="grid lg:grid-cols-12 gap-8">
-        <div className="lg:col-span-8 bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden min-h-[500px] flex flex-col relative">
+        <div className="lg:col-span-8 bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden flex flex-col relative min-h-[400px]">
           <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--theme-primary)]/5 blur-3xl rounded-full -mr-16 -mt-16" />
           
-          <div className="px-8 py-7 border-b border-slate-50 flex items-center justify-between relative z-10">
+          <div className="px-6 py-5 border-b border-slate-50 flex items-center justify-between relative z-10">
             <div>
-              <h3 className="text-xl font-black text-slate-900 font-display uppercase italic tracking-tight flex items-center gap-2">
-                <Activity className="h-5 w-5 text-[var(--theme-primary)]" />
+              <h3 className="text-lg font-black text-slate-900 font-display uppercase italic tracking-tight flex items-center gap-2">
+                <Activity className="h-4 w-4 text-[var(--theme-primary)]" />
                 Activity Analytics
               </h3>
-              <p className="text-[9px] font-bold text-slate-400 uppercase tracking-[0.2em] mt-1">Onboarding cycles vs Performance throughput</p>
+              <p className="text-[8px] font-bold text-slate-400 uppercase tracking-[0.2em] mt-1">Onboarding cycles vs Performance throughput</p>
             </div>
-            <div className="flex bg-slate-100/80 p-1.5 rounded-2xl border border-slate-200/50 shadow-inner">
+            <div className="flex bg-slate-100/80 p-1 rounded-xl border border-slate-200/50 shadow-inner">
                <button 
                  onClick={() => setAnalyticsTab('real-time')}
                  className={cn(
-                   "px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all",
-                   analyticsTab === 'real-time' ? "bg-white text-[var(--theme-primary)] shadow-lg ring-1 ring-slate-200/50" : "text-slate-400 hover:text-slate-600"
+                   "px-4 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all",
+                   analyticsTab === 'real-time' ? "bg-white text-[var(--theme-primary)] shadow-md ring-1 ring-slate-200/50" : "text-slate-400 hover:text-slate-600"
                  )}
                >
                  Real-time
@@ -665,8 +665,8 @@ function Dashboard({ vendors = [], health }: any) {
                <button 
                  onClick={() => setAnalyticsTab('history')}
                  className={cn(
-                   "px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all",
-                   analyticsTab === 'history' ? "bg-white text-[var(--theme-primary)] shadow-lg ring-1 ring-slate-200/50" : "text-slate-400 hover:text-slate-600"
+                   "px-4 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all",
+                   analyticsTab === 'history' ? "bg-white text-[var(--theme-primary)] shadow-md ring-1 ring-slate-200/50" : "text-slate-400 hover:text-slate-600"
                  )}
                >
                  History
@@ -674,8 +674,8 @@ function Dashboard({ vendors = [], health }: any) {
             </div>
           </div>
           
-          <div className="flex-1 p-10 bg-slate-50/30">
-             <div className="h-full w-full flex items-end justify-around gap-4 xl:gap-8 min-h-[320px] bg-white/40 rounded-[2rem] p-8 border border-white/60 shadow-inner">
+          <div className="flex-1 p-6 bg-slate-50/30">
+             <div className="h-full w-full flex items-end justify-around gap-4 xl:gap-6 min-h-[220px] bg-white/40 rounded-2xl p-6 border border-white/60 shadow-inner">
                 {(analyticsTab === 'real-time' ? [65, 45, 85, 55, 95, 75, 100] : [20, 40, 60, 50, 40, 70, 90]).map((h, i) => (
                   <div key={i + analyticsTab} className="flex-1 flex flex-col items-center gap-5 h-full justify-end group">
                      <div className="w-full max-w-[12px] relative flex flex-col justify-end h-full">
