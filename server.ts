@@ -49,10 +49,11 @@ app.post('/api/vendors', async (req, res) => {
 
 app.get('/api/health', async (req, res) => {
   try {
+    if (!SCRIPT_URL) throw new Error('Not Configured');
     const result = await axios.get(`${SCRIPT_URL}?action=health`);
-    res.json({ status: 'ok', database: 'connected', script: result.data });
+    res.json({ status: 'ok', db: 'connected', script: result.data });
   } catch (error) {
-    res.status(200).json({ status: 'error', database: 'disconnected', message: (error as Error).message });
+    res.status(200).json({ status: 'error', db: 'disconnected', message: (error as Error).message });
   }
 });
 

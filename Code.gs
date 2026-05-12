@@ -31,7 +31,14 @@ function setup() {
 }
 
 function doPost(e) {
-  const data = JSON.parse(e.postData.contents);
+  let data;
+  try {
+    data = JSON.parse(e.postData.contents);
+  } catch (err) {
+    return ContentService.createTextOutput(JSON.stringify({ error: "Invalid JSON" }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+  
   const action = data.action;
   
   if (action === "add") {
@@ -40,7 +47,16 @@ function doPost(e) {
     return updateVendor(data.vendor);
   } else if (action === "delete") {
     return deleteVendor(data.id);
+  } else if (action === "list") {
+    return ContentService.createTextOutput(JSON.stringify(listVendors()))
+      .setMimeType(ContentService.MimeType.JSON);
+  } else if (action === "health") {
+    return ContentService.createTextOutput(JSON.stringify({ status: "ok", db: "connected" }))
+      .setMimeType(ContentService.MimeType.JSON);
   }
+  
+  return ContentService.createTextOutput(JSON.stringify({ error: "Unknown action" }))
+    .setMimeType(ContentService.MimeType.JSON);
 }
 
 function doGet(e) {
