@@ -44,6 +44,7 @@ import {
   Upload,
   Check,
   Paperclip,
+  Box,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn, formatDate } from './lib/utils';
@@ -205,29 +206,32 @@ function Layout({ children, systemHealth }: { children: React.ReactNode, systemH
   ];
 
   return (
-    <div className="min-h-screen bg-[#F8F9FD]">
+    <div className="min-h-screen bg-[#F8F9FD] font-sans">
       {/* Top Header */}
       <header className="h-24 bg-white border-b border-slate-100 flex items-center justify-between px-8 md:px-16 sticky top-0 z-40 shadow-sm">
          <div className="flex items-center gap-12">
-            <Link to="/" className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-600 text-white shadow-lg">
-                <Building2 className="h-6 w-6" />
+            <Link to="/" className="flex items-center gap-3 group">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-600 text-white shadow-xl group-hover:scale-105 transition-transform">
+                <Building2 className="h-7 w-7" />
               </div>
-              <span className="text-xl font-black tracking-tight text-slate-900">
-                Materially<span className="text-indigo-600">Pro</span>
-              </span>
+              <div className="flex flex-col">
+                <span className="text-2xl font-black tracking-tighter text-slate-900 leading-none">
+                  Yajur<span className="text-indigo-600">Portal</span>
+                </span>
+                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mt-1">Vendor Onboarding</span>
+              </div>
             </Link>
 
-            <nav className="hidden xl:flex items-center gap-2">
+            <nav className="hidden xl:flex items-center gap-1">
               {navItems.map((item) => (
                 <Link
                   key={item.path}
                   to={item.path}
                   className={cn(
-                    "px-5 py-2 rounded-xl text-sm font-bold transition-all flex items-center gap-2",
+                    "px-6 py-2.5 rounded-2xl text-[13px] font-bold transition-all flex items-center gap-2.5",
                     location.pathname === item.path 
-                      ? "bg-indigo-50 text-indigo-600" 
-                      : "text-slate-500 hover:text-slate-900 hover:bg-slate-50"
+                      ? "bg-indigo-600 text-white shadow-lg shadow-indigo-200" 
+                      : "text-slate-500 hover:text-indigo-600 hover:bg-indigo-50/50"
                   )}
                 >
                   <item.icon className="h-4 w-4" />
@@ -238,48 +242,48 @@ function Layout({ children, systemHealth }: { children: React.ReactNode, systemH
          </div>
 
          <div className="flex items-center gap-6">
-            <div className="hidden md:flex items-center gap-6 mr-6">
-               <div className="flex items-center gap-2">
-                 <div className={cn("h-2 w-2 rounded-full", systemHealth.db !== 'disconnected' ? "bg-emerald-500 animate-pulse" : "bg-rose-500")} />
-                 <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{systemHealth.db !== 'disconnected' ? 'Active' : 'Offline'}</span>
+            <div className="hidden md:flex items-center gap-8 mr-8">
+               <div className="flex items-center gap-3 px-4 py-2 bg-slate-50 rounded-2xl border border-slate-100">
+                 <div className={cn("h-2.5 w-2.5 rounded-full", systemHealth.db !== 'disconnected' ? "bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]" : "bg-rose-500")} />
+                 <span className="text-[11px] font-black uppercase tracking-widest text-slate-500">{systemHealth.db !== 'disconnected' ? 'Cloud Sync Active' : 'Offline'}</span>
                </div>
-               <button className="p-2 text-slate-400 hover:text-slate-900 transition-colors relative">
+               <button className="p-2.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-2xl transition-all relative">
                  <Bell className="h-5 w-5" />
-                 <span className="absolute top-1.5 right-1.5 h-2 w-2 bg-rose-500 rounded-full border-2 border-white" />
+                 <span className="absolute top-2 right-2 h-2.5 w-2.5 bg-rose-500 rounded-full border-2 border-white" />
                </button>
             </div>
             
             <div className="h-10 w-px bg-slate-100 hidden sm:block" />
             
-            <div className="flex items-center gap-3 cursor-pointer group">
+            <div className="flex items-center gap-4 cursor-pointer group pl-2">
               <div className="text-right hidden sm:block">
-                 <p className="text-xs font-black text-slate-900 group-hover:text-indigo-600 transition-colors uppercase leading-none">Prosun Majhi</p>
-                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Platform Admin</p>
+                 <p className="text-[13px] font-black text-slate-900 group-hover:text-indigo-600 transition-colors uppercase tracking-tight">Prosun Majhi</p>
+                 <p className="text-[9px] font-bold text-slate-400 uppercase tracking-[0.15em] mt-0.5">Global Admin</p>
               </div>
-              <div className="h-11 w-11 rounded-2xl bg-slate-100 border-4 border border-white shadow-sm overflow-hidden flex items-center justify-center">
-                <User className="h-7 w-7 text-slate-400" />
+              <div className="h-12 w-12 rounded-2xl bg-indigo-50 border-2 border-white shadow-md overflow-hidden flex items-center justify-center transition-all group-hover:shadow-lg">
+                <User className="h-7 w-7 text-indigo-400" />
               </div>
             </div>
          </div>
       </header>
 
       {/* Main Content */}
-      <main className="max-w-[1440px] mx-auto p-4 md:p-12">
+      <main className="max-w-[1600px] mx-auto p-6 md:p-14">
          {children}
       </main>
 
       {/* Mobile Nav */}
-      <div className="xl:hidden fixed bottom-6 left-1/2 -translate-x-1/2 bg-white/80 backdrop-blur-xl border border-white shadow-2xl rounded-[2rem] px-4 py-3 flex items-center gap-2 z-50">
+      <div className="xl:hidden fixed bottom-8 left-1/2 -translate-x-1/2 bg-white/90 backdrop-blur-2xl border border-white/50 shadow-2xl rounded-[2.5rem] px-5 py-4 flex items-center gap-4 z-50">
         {navItems.map((item) => (
           <Link
             key={item.path}
             to={item.path}
             className={cn(
-              "p-3 rounded-2xl transition-all",
-              location.pathname === item.path ? "bg-indigo-600 text-white" : "text-slate-400 hover:bg-slate-50"
+              "p-4 rounded-2xl transition-all",
+              location.pathname === item.path ? "bg-indigo-600 text-white shadow-xl shadow-indigo-100" : "text-slate-400 hover:bg-slate-50"
             )}
           >
-            <item.icon className="h-5 w-5" />
+            <item.icon className="h-6 w-6" />
           </Link>
         ))}
       </div>
@@ -287,138 +291,148 @@ function Layout({ children, systemHealth }: { children: React.ReactNode, systemH
   );
 }
 
-function Dashboard({ vendors = [], health, onRefresh }: any) {
+function Dashboard({ vendors = [] }: any) {
+  const navigate = useNavigate();
   const vendorsArray = Array.isArray(vendors) ? vendors : [];
-  
-  const areaChartOptions: any = {
-    chart: { type: 'area', toolbar: { show: false }, sparkline: { enabled: false } },
-    dataLabels: { enabled: false },
-    stroke: { curve: 'smooth', width: 4 },
-    fill: {
-      type: 'gradient',
-      gradient: {
-        shadeIntensity: 1,
-        opacityFrom: 0.7,
-        opacityTo: 0.1,
-        stops: [0, 90, 100]
-      }
-    },
-    xaxis: {
-      categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-      axisBorder: { show: false },
-      axisTicks: { show: false },
-      labels: { style: { colors: '#94A3B8', fontWeight: 600 } }
-    },
-    yaxis: { labels: { show: false } },
-    grid: { show: false },
-    colors: ['#FFFFFF'],
-  };
 
-  const areaChartSeries = [{
-    name: 'Sales',
-    data: [31, 40, 28, 51, 42, 60]
-  }];
-
-  const donutOptions: any = {
-    chart: { type: 'donut' },
-    labels: ['YouTube', 'Facebook', 'Twitter'],
-    colors: ['#F44336', '#2196F3', '#00BCD4'],
-    legend: { position: 'bottom', markers: { radius: 12 } },
-    plotOptions: {
-      pie: {
-        donut: {
-          size: '65%',
-          labels: {
-            show: true,
-            total: {
-              show: true,
-              label: 'Total',
-              formatter: () => '2'
-            }
-          }
-        }
-      }
-    },
-    dataLabels: { enabled: false }
-  };
-
-  const donutSeries = [40, 40, 20];
+  const stats = [
+    { label: 'Total Active Vendors', value: vendorsArray.length.toString(), icon: Users, color: 'indigo', description: 'Verified registry' },
+    { label: 'Goods Suppliers', value: vendorsArray.filter(v => v.statutory?.vendorType === 'Goods').length.toString(), icon: Box, color: 'emerald', description: 'Material partners' },
+    { label: 'Service Providers', value: vendorsArray.filter(v => v.statutory?.vendorType === 'Services').length.toString(), icon: Activity, color: 'amber', description: 'Service contracts' },
+    { label: 'New Requests', value: vendorsArray.filter(v => v.requestType === 'New').length.toString(), icon: Plus, color: 'rose', description: 'Pending review' },
+    { label: 'Address Changes', value: vendorsArray.filter(v => v.requestType === 'Change').length.toString(), icon: RefreshCw, color: 'blue', description: 'Details update' },
+    { label: 'Recent Onboarding', value: vendorsArray.filter(v => new Date(v.createdAt).getTime() > Date.now() - 86400000 * 7).length.toString(), icon: Clock, color: 'purple', description: 'Last 7 days' },
+  ];
 
   return (
-    <div className="space-y-6">
-      {/* KPI Cards */}
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard title="All Earnings" value="$30,200" icon={CircleDollarSign} trend="10% changes on profit" color="amber" />
-        <StatCard title="Task" value="145" icon={Calendar} trend="28% task performance" color="rose" />
-        <StatCard title="Page Views" value="290+" icon={FileText} trend="10k daily views" color="emerald" />
-        <StatCard title="Downloads" value="500" icon={ThumbsUp} trend="1k download in App store" color="indigo" />
+    <div className="space-y-12">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-2">
+        <div>
+          <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-indigo-600 mb-3 ml-1">Platform Overview</h2>
+          <h1 className="text-5xl font-black text-slate-900 tracking-tighter">Vendor Command <span className="text-slate-300">Center</span></h1>
+        </div>
+        <div className="flex items-center gap-4">
+          <button 
+            onClick={() => navigate('/vendors')}
+            className="px-8 py-5 bg-white text-slate-600 rounded-[2rem] text-[13px] font-black uppercase tracking-widest hover:bg-slate-50 border border-slate-100 shadow-xl shadow-slate-100/50 transition-all"
+          >
+            Manage Registry
+          </button>
+          <button 
+            onClick={() => navigate('/register')}
+            className="px-10 py-5 bg-indigo-600 text-white rounded-[2rem] text-[13px] font-black uppercase tracking-widest hover:bg-indigo-700 shadow-2xl shadow-indigo-200 active:scale-95 transition-all flex items-center gap-4"
+          >
+            <div className="h-6 w-6 rounded-lg bg-white/20 flex items-center justify-center">
+              <Plus className="h-4 w-4" />
+            </div>
+            Initiate Onboarding
+          </button>
+        </div>
       </div>
 
-      {/* Charts Section */}
-      <div className="grid gap-6 lg:grid-cols-3">
-        <div className="lg:col-span-1 bg-[#2C5EFF] rounded-xl p-0 overflow-hidden shadow-sm flex flex-col">
-          <div className="p-6 text-white">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-bold opacity-80">Sales Per Day</h3>
-              <div className="flex items-center gap-1 text-xs">
-                <TrendingUp className="h-3 w-3" />
-                <span>3%</span>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
+        {stats.map((stat, idx) => (
+          <motion.div 
+            key={idx}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: idx * 0.05 }}
+            className="group bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all"
+          >
+            <div className={cn(
+              "h-12 w-12 mb-6 rounded-2xl flex items-center justify-center transition-all group-hover:scale-110 shadow-md",
+              stat.color === 'indigo' ? "bg-indigo-600 text-white" :
+              stat.color === 'emerald' ? "bg-emerald-500 text-white" :
+              stat.color === 'amber' ? "bg-amber-400 text-white" : 
+              stat.color === 'rose' ? "bg-rose-500 text-white" :
+              stat.color === 'blue' ? "bg-blue-500 text-white" : "bg-purple-500 text-white"
+            )}>
+              <stat.icon className="h-6 w-6" />
+            </div>
+            <div>
+              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{stat.label}</p>
+              <h3 className="text-3xl font-black text-slate-900 tracking-tighter">{stat.value}</h3>
+              <p className="text-[9px] font-bold text-slate-400 mt-2">{stat.description}</p>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+
+      <div className="grid lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-2 bg-white rounded-[3rem] border border-slate-100 shadow-xl overflow-hidden p-10">
+          <div className="flex items-center justify-between mb-10">
+            <div>
+              <h3 className="text-2xl font-black text-slate-900 tracking-tight">Onboarding Activity</h3>
+              <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Vendor registration distribution by category</p>
+            </div>
+            <div className="flex items-center gap-6">
+               <div className="flex items-center gap-2">
+                 <span className="h-3 w-3 rounded-full bg-indigo-600" />
+                 <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Goods</span>
+               </div>
+               <div className="flex items-center gap-2">
+                 <span className="h-3 w-3 rounded-full bg-slate-200" />
+                 <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Services</span>
+               </div>
+            </div>
+          </div>
+          
+          <div className="h-[400px] w-full bg-slate-50/30 rounded-[2.5rem] flex items-end justify-center gap-8 p-10 pb-16 relative overflow-hidden">
+             {[
+               { h: 45, s: 20 }, { h: 60, s: 35 }, { h: 35, s: 15 }, 
+               { h: 80, s: 45 }, { h: 55, s: 25 }, { h: 95, s: 60 }
+             ].map((val, i) => (
+               <div key={i} className="flex flex-col items-center justify-end h-full gap-2 relative">
+                 <motion.div 
+                   initial={{ height: 0 }}
+                   animate={{ height: `${val.h}%` }}
+                   className="w-16 bg-indigo-600 rounded-t-2xl shadow-xl shadow-indigo-100"
+                 />
+                 <motion.div 
+                   initial={{ height: 0 }}
+                   animate={{ height: `${val.s}%` }}
+                   className="w-16 bg-slate-200 rounded-t-xl absolute bottom-0 z-10"
+                 />
+                 <span className="text-[9px] font-black text-slate-400 uppercase absolute -bottom-8">Batch {i+1}</span>
+               </div>
+             ))}
+             <div className="absolute inset-x-0 top-0 bottom-0 pointer-events-none p-10 flex flex-col justify-between">
+                <div className="h-px w-full bg-slate-100" />
+                <div className="h-px w-full bg-slate-100" />
+                <div className="h-px w-full bg-slate-100" />
+                <div className="h-px w-full bg-slate-100" />
+             </div>
+          </div>
+        </div>
+
+        <div className="bg-slate-900 rounded-[3rem] shadow-2xl p-10 text-white relative overflow-hidden group">
+           <div className="relative z-10 h-full flex flex-col">
+              <div className="h-16 w-16 rounded-[1.5rem] bg-indigo-600 flex items-center justify-center mb-10 shadow-2xl shadow-indigo-500/20 group-hover:scale-110 transition-transform">
+                 <ShieldCheck className="h-8 w-8" />
               </div>
-            </div>
-            <div className="h-[200px] -mx-4 -mb-4">
-              <Chart options={areaChartOptions} series={areaChartSeries} type="area" height="100%" />
-            </div>
-          </div>
-          <div className="bg-white p-6 grid grid-cols-2 gap-4 border-t border-slate-100 flex-1">
-             <div>
-                <p className="text-2xl font-black text-slate-900">$4230</p>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Total Revenue</p>
-             </div>
-             <div>
-                <p className="text-2xl font-black text-slate-900">321</p>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Today Sales</p>
-             </div>
-             <div className="col-span-1 pt-4 border-t border-slate-50">
-               <p className="text-xs font-bold text-slate-400">REALTY</p>
-               <p className="text-lg font-black text-rose-500">-0.99</p>
-             </div>
-             <div className="col-span-1 pt-4 border-t border-slate-50">
-               <p className="text-xs font-bold text-slate-400">INFRA</p>
-               <p className="text-lg font-black text-emerald-500">-7.66</p>
-             </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-xl border border-slate-100 shadow-sm p-6">
-          <h3 className="text-sm font-bold text-slate-900 mb-8 pb-4 border-b">Total Revenue</h3>
-          <div className="h-[250px] flex items-center justify-center">
-            <Chart options={donutOptions} series={donutSeries} type="donut" height="100%" />
-          </div>
-          <div className="grid grid-cols-3 gap-2 mt-8 py-4 border-t">
-             <div className="text-center">
-                <p className="text-[10px] font-bold text-slate-400">Youtube</p>
-                <p className="text-sm font-bold text-indigo-600">+16.85%</p>
-             </div>
-             <div className="text-center">
-                <p className="text-[10px] font-bold text-slate-400">Facebook</p>
-                <p className="text-sm font-bold text-emerald-600">+45.36%</p>
-             </div>
-             <div className="text-center">
-                <p className="text-[10px] font-bold text-slate-400">Twitter</p>
-                <p className="text-sm font-bold text-amber-600">-50.69%</p>
-             </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-xl border border-slate-100 shadow-sm p-6 overflow-hidden">
-          <h3 className="text-sm font-bold text-slate-900 mb-8 pb-4 border-b">Traffic Sources</h3>
-          <div className="space-y-6">
-             <TrafficItem label="Direct" value={80} color="bg-[#4069FF]" />
-             <TrafficItem label="Social" value={50} color="bg-slate-400" />
-             <TrafficItem label="Referral" value={20} color="bg-[#4069FF]" />
-             <TrafficItem label="Bounce" value={60} color="bg-slate-400" />
-             <TrafficItem label="Internet" value={40} color="bg-[#4069FF]" />
-          </div>
+              <h3 className="text-3xl font-black tracking-tight mb-4 leading-tight">Master Compliance Assurance</h3>
+              <p className="text-slate-400 text-sm font-medium leading-relaxed mb-10">
+                All vendors undergo rigorous validation. Data is synchronized with Google Drive and Sheets in real-time.
+              </p>
+              
+              <div className="mt-auto space-y-4">
+                 <div className="flex items-center gap-4 p-5 bg-white/5 rounded-[1.5rem] border border-white/10 hover:bg-white/10 transition-colors">
+                    <CheckCircle2 className="h-5 w-5 text-emerald-400" />
+                    <div>
+                      <p className="text-[10px] font-black uppercase tracking-widest text-white">Statutory Check</p>
+                      <p className="text-[9px] text-slate-500 font-bold uppercase mt-1">Real-time GSTN Validation</p>
+                    </div>
+                 </div>
+                 <div className="flex items-center gap-4 p-5 bg-white/5 rounded-[1.5rem] border border-white/10 hover:bg-white/10 transition-colors">
+                    <CheckCircle2 className="h-5 w-5 text-emerald-400" />
+                    <div>
+                      <p className="text-[10px] font-black uppercase tracking-widest text-white">Identity Audit</p>
+                      <p className="text-[9px] text-slate-500 font-bold uppercase mt-1">256-bit Document Encryption</p>
+                    </div>
+                 </div>
+              </div>
+           </div>
+           <Building2 className="absolute -right-20 -bottom-20 h-80 w-80 text-white/5 group-hover:rotate-12 transition-transform duration-1000" />
         </div>
       </div>
     </div>
@@ -485,85 +499,116 @@ function VendorList({ vendors = [], loading }: { vendors: Vendor[], loading: boo
 
   const filteredVendors = vendorsArray.filter(v => 
     v.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    v.statutory.gstin.toLowerCase().includes(searchQuery.toLowerCase())
+    v.statutory.gstin.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    v.id.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
-    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-3xl font-black text-slate-900 tracking-tight">Vendor Registry</h1>
-          <p className="text-slate-500 font-medium text-sm mt-1">Manage and monitor all onboarded business partners.</p>
+    <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} className="space-y-10 pb-20">
+      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 bg-white p-10 rounded-[3rem] border border-slate-100 shadow-xl">
+        <div className="flex-1">
+          <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-indigo-600 mb-3 ml-1">Registry Management</h2>
+          <h1 className="text-4xl font-black text-slate-900 tracking-tighter">Vendor <span className="text-slate-300">Database</span></h1>
+          
+          <div className="relative mt-8 group">
+            <Search className="absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-indigo-600 transition-colors" />
+            <input 
+              type="text" 
+              placeholder="Search by legal name, GSTIN, PAN or System ID..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full bg-slate-50 border-none rounded-3xl py-5 pl-14 pr-6 text-sm font-bold focus:ring-4 focus:ring-indigo-100 transition-all outline-none"
+            />
+          </div>
         </div>
-        <div className="flex items-center gap-3">
-           <button className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-100 rounded-xl text-xs font-black uppercase tracking-widest text-slate-600 hover:bg-slate-50 transition-all shadow-sm">
+        
+        <div className="flex items-center gap-4">
+           <button className="flex items-center gap-2.5 px-8 py-5 bg-white border border-slate-100 rounded-[2rem] text-[11px] font-black uppercase tracking-widest text-slate-500 hover:bg-slate-50 transition-all shadow-sm">
              <Download className="h-4 w-4" /> Export CSV
            </button>
-           <Link to="/register" className="flex items-center gap-2 px-6 py-2 bg-indigo-600 text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-indigo-700 transition-all shadow-lg active:scale-95">
-             <Plus className="h-4 w-4" /> Add Vendor
+           <Link to="/register" className="flex items-center gap-3 px-10 py-5 bg-indigo-600 text-white rounded-[2rem] text-[11px] font-black uppercase tracking-widest hover:bg-indigo-700 shadow-2xl shadow-indigo-100 active:scale-95 transition-all">
+             <Plus className="h-4 w-4" /> Register New
            </Link>
         </div>
       </div>
 
-      <div className="relative mb-8">
-        <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
-        <input 
-          type="text" 
-          placeholder="Search by legal name, GSTIN, PAN or location..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full bg-white border border-slate-100 rounded-2xl py-4 pl-12 pr-4 text-sm font-medium focus:ring-4 focus:ring-indigo-100 hover:border-indigo-200 transition-all outline-none shadow-sm"
-        />
-      </div>
-
-      <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-        {filteredVendors.map((vendor) => (
-          <VendorCard key={vendor.id} vendor={vendor} onSelect={() => setSelectedVendor(vendor)} />
+      <div className="grid gap-10 md:grid-cols-2 xl:grid-cols-3">
+        {filteredVendors.map((vendor, idx) => (
+          <motion.div
+            key={vendor.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: idx * 0.05 }}
+          >
+            <VendorCard vendor={vendor} onSelect={() => setSelectedVendor(vendor)} />
+          </motion.div>
         ))}
+        {loading && (
+          <div className="col-span-full py-40 flex flex-col items-center justify-center gap-4">
+             <div className="h-12 w-12 border-4 border-indigo-600/20 border-t-indigo-600 rounded-full animate-spin" />
+             <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Syncing Master Data...</p>
+          </div>
+        )}
         {!loading && filteredVendors.length === 0 && (
-          <div className="col-span-full py-20 text-center bg-white rounded-[2.5rem] border border-slate-100 border-dashed">
-            <Users className="h-12 w-12 text-slate-200 mx-auto mb-4" />
-            <p className="text-slate-400 font-bold">No registered vendors found matching your query.</p>
+          <div className="col-span-full py-40 text-center bg-white rounded-[4rem] border border-slate-100 border-dashed">
+            <div className="h-24 w-24 bg-slate-50 rounded-[2.5rem] flex items-center justify-center mx-auto mb-8 text-slate-200">
+               <Users className="h-12 w-12" />
+            </div>
+            <h3 className="text-xl font-black text-slate-900 tracking-tight">No Match Found</h3>
+            <p className="text-slate-400 font-bold text-xs uppercase tracking-widest mt-2">Try a different search query or filter</p>
           </div>
         )}
       </div>
 
-      {selectedVendor && <VendorDetailModal vendor={selectedVendor} onClose={() => setSelectedVendor(null)} />}
+      <AnimatePresence>
+        {selectedVendor && <VendorDetailModal vendor={selectedVendor} onClose={() => setSelectedVendor(null)} />}
+      </AnimatePresence>
     </motion.div>
   );
 }
 
 function VendorCard({ vendor, onSelect }: { vendor: Vendor, onSelect: () => void }) {
   return (
-    <div className="group bg-white rounded-[2rem] border border-slate-50 p-6 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-      <div className="flex items-start justify-between mb-6">
-        <div className="h-14 w-14 rounded-[1.25rem] bg-indigo-50 text-indigo-600 flex items-center justify-center font-black text-xl shadow-sm group-hover:scale-110 transition-transform">
+    <div className="group bg-white rounded-[3rem] border border-slate-100 p-8 shadow-xl hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 overflow-hidden relative">
+      <div className="absolute top-0 right-0 h-40 w-40 bg-indigo-50/50 rounded-full -mr-20 -mt-20 blur-3xl group-hover:scale-150 transition-transform duration-1000" />
+      
+      <div className="flex items-start justify-between relative z-10 mb-8">
+        <div className="h-16 w-16 rounded-[1.5rem] bg-indigo-600 text-white flex items-center justify-center font-black text-2xl shadow-xl shadow-indigo-100 group-hover:scale-110 transition-transform">
           {vendor.name.charAt(0)}
         </div>
         <div className="text-right">
-           <span className="px-3 py-1 rounded-full bg-indigo-50 text-indigo-600 text-[10px] font-black uppercase tracking-widest">{vendor.requestType}</span>
-           <p className="text-[10px] font-bold text-slate-300 mt-2 uppercase tracking-widest">{vendor.statutory.vendorType}</p>
+           <span className={cn(
+             "px-4 py-2 rounded-2xl text-[9px] font-black uppercase tracking-[0.15em]",
+             vendor.statutory.vendorType === 'Goods' ? "bg-emerald-50 text-emerald-600" : "bg-amber-50 text-amber-600"
+           )}>
+             {vendor.statutory.vendorType}
+           </span>
+           <p className="text-[10px] font-black text-slate-300 mt-4 uppercase tracking-[0.2em]">{vendor.id}</p>
         </div>
       </div>
 
-      <h3 className="text-xl font-black text-slate-900 truncate uppercase tracking-tight group-hover:text-indigo-600 transition-colors uppercase">{vendor.name}</h3>
-      <div className="flex items-center gap-2 mt-2 text-xs font-bold text-slate-400">
-         <MapPin className="h-3 w-3" />
-         <span>{vendor.address.city}, {vendor.address.state}</span>
+      <div className="relative z-10">
+        <h3 className="text-2xl font-black text-slate-900 truncate tracking-tighter group-hover:text-indigo-600 transition-colors uppercase leading-tight">{vendor.name}</h3>
+        <div className="flex items-center gap-2 mt-2">
+           <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+           <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{vendor.address.city}, {vendor.address.state}</p>
+        </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 mt-6 pt-6 border-t border-slate-50">
+      <div className="grid grid-cols-2 gap-8 mt-10 p-6 bg-slate-50/50 rounded-3xl relative z-10 border border-slate-50">
          <div>
-            <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest mb-1">GSTIN</p>
-            <p className="text-xs font-bold text-slate-700 truncate uppercase">{vendor.statutory.gstin}</p>
+            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 opacity-50">Tax ID (PAN)</p>
+            <p className="text-sm font-black text-slate-700 tracking-tight uppercase">{vendor.statutory.pan}</p>
          </div>
          <div>
-            <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest mb-1">PAN</p>
-            <p className="text-xs font-bold text-slate-700 truncate uppercase">{vendor.statutory.pan}</p>
+            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 opacity-50">Business Model</p>
+            <p className="text-sm font-black text-slate-700 tracking-tight uppercase">{vendor.statutory.constitution}</p>
          </div>
       </div>
 
-      <button onClick={onSelect} className="mt-8 w-full py-3 bg-slate-50 text-slate-600 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-indigo-600 hover:text-white transition-all shadow-sm">View Full Profile</button>
+      <button onClick={onSelect} className="mt-10 w-full py-5 bg-white border border-slate-100 text-slate-500 rounded-[2rem] text-[11px] font-black uppercase tracking-widest hover:bg-slate-900 hover:text-white hover:border-slate-900 transition-all shadow-sm active:scale-95 relative z-10">
+        Review Master Profile
+      </button>
     </div>
   );
 }

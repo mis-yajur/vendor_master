@@ -1,6 +1,7 @@
 import { configureStore, createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { DUMMY_VENDORS } from './dummyData';
 import axios from 'axios';
+import type { Vendor } from './types/vendor';
 
 const SCRIPT_URL = (import.meta as any).env.VITE_GOOGLE_SCRIPT_URL;
 

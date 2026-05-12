@@ -102,5 +102,146 @@ export const DUMMY_VENDORS: Vendor[] = [
       cancelledChequeCopy: '#',
       signedDeclaration: '#'
     }
+  },
+  {
+    id: 'V003',
+    name: 'Zenith Consultancy Services',
+    requestType: 'New',
+    createdAt: new Date(Date.now() - 86400000 * 5).toISOString(),
+    updatedAt: new Date().toISOString(),
+    currency: 'USD',
+    creditTerms: 'NET 15',
+    address: {
+      floorBuilding: 'High Street Mall',
+      street: '3rd Floor, Wing A',
+      city: 'Pune',
+      district: 'Pune',
+      pinCode: '411001',
+      state: 'Maharashtra',
+      country: 'India',
+      phone: '020-22334455',
+      mobile: '+91 77777 66666',
+      email: 'info@zenithcon.com'
+    },
+    contact: {
+      name: 'Priya Nair',
+      designation: 'HR Head',
+      phone: '77777 66666',
+      email: 'priya@zenithcon.com'
+    },
+    statutory: {
+      vendorType: 'Services',
+      constitution: 'Public Limited',
+      yearOfEstablishment: '2005',
+      pan: 'MNPQR9012M',
+      gstin: '27MNPQR9012M1Z2',
+      compoundingDealer: 'NO'
+    },
+    bank: {
+      beneficiaryName: 'Zenith Consultancy Services',
+      bankName: 'Axis Bank',
+      accountNumber: '91200344556677',
+      branchName: 'Baner',
+      branchAddress: 'Baner Main Road',
+      accountType: 'Current',
+      ifscCode: 'UTIB0000001'
+    },
+    documents: {
+      gstinCopy: '#',
+      panCopy: '#'
+    }
+  },
+  {
+    id: 'V004',
+    name: 'Bajaj Power & Equipment',
+    requestType: 'New',
+    createdAt: new Date(Date.now() - 86400000 * 10).toISOString(),
+    updatedAt: new Date().toISOString(),
+    currency: 'INR',
+    creditTerms: 'NET 30',
+    address: {
+      floorBuilding: 'A/4-5',
+      street: 'MIDC Phase II',
+      city: 'Nashik',
+      district: 'Nashik',
+      pinCode: '422010',
+      state: 'Maharashtra',
+      country: 'India',
+      phone: '0253-223344',
+      mobile: '+91 90000 11111',
+      email: 'sales@bajajpower.com'
+    },
+    contact: {
+      name: 'Suresh Patil',
+      designation: 'Partner',
+      phone: '90000 11111',
+      email: 'suresh@bajajpower.com'
+    },
+    statutory: {
+      vendorType: 'Goods',
+      constitution: 'Partnership',
+      yearOfEstablishment: '1998',
+      pan: 'STUVW3456T',
+      gstin: '27STUVW3456T1Z9',
+      compoundingDealer: 'YES'
+    },
+    bank: {
+      beneficiaryName: 'Bajaj Power & Equipment',
+      bankName: 'State Bank of India',
+      accountNumber: '33344455566',
+      branchName: 'Nashik Industrial',
+      branchAddress: 'MIDC Road Nashik',
+      accountType: 'CC/OD',
+      ifscCode: 'SBIN0000001'
+    },
+    documents: {
+      gstinCopy: '#',
+      panCopy: '#',
+      cancelledChequeCopy: '#'
+    }
+  },
+  {
+    id: 'V005',
+    name: 'Swift IT Solutions',
+    requestType: 'New',
+    createdAt: new Date(Date.now() - 86400000 * 1).toISOString(),
+    updatedAt: new Date().toISOString(),
+    currency: 'INR',
+    creditTerms: 'NET 30',
+    address: {
+      floorBuilding: 'Tower B',
+      street: 'IT Park',
+      city: 'Hyderabad',
+      district: 'Hyderabad',
+      pinCode: '500081',
+      state: 'Telangana',
+      country: 'India',
+      mobile: '+91 91111 22222',
+      email: 'contact@swiftit.com'
+    },
+    contact: {
+      name: 'Kiran Kumar',
+      designation: 'CEO',
+      phone: '91111 22222',
+      email: 'kiran@swiftit.com'
+    },
+    statutory: {
+      vendorType: 'Services',
+      constitution: 'Private Limited',
+      yearOfEstablishment: '2020',
+      pan: 'GHYUK1234H',
+      gstin: '36GHYUK1234H1Z0',
+      compoundingDealer: 'NO'
+    },
+    bank: {
+      beneficiaryName: 'Swift IT Solutions',
+      bankName: 'Axis Bank',
+      accountNumber: '912000011122233',
+      branchName: 'Hitech City',
+      branchAddress: 'Hitech City Road',
+      accountType: 'Current',
+      ifscCode: 'UTIB0001234'
+    },
+    documents: {}
   }
 ];
