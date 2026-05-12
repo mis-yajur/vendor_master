@@ -358,11 +358,11 @@ function LoginTerminal({ onLogin }: { onLogin: () => void }) {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 flex items-center justify-center p-6 relative overflow-hidden font-sans">
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6 relative overflow-hidden font-sans">
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-[-10%] left-[-10%] h-[40%] w-[40%] bg-indigo-600/20 blur-[120px] rounded-full animate-pulse" />
-        <div className="absolute bottom-[-10%] right-[-10%] h-[40%] w-[40%] bg-blue-600/10 blur-[120px] rounded-full" />
-        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-100 contrast-150" />
+        <div className="absolute top-[-10%] left-[-10%] h-[40%] w-[40%] bg-indigo-100/50 blur-[120px] rounded-full animate-pulse" />
+        <div className="absolute bottom-[-10%] right-[-10%] h-[40%] w-[40%] bg-blue-100/30 blur-[120px] rounded-full" />
+        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.05] brightness-100 contrast-150" />
       </div>
 
       <motion.div 
@@ -374,41 +374,41 @@ function LoginTerminal({ onLogin }: { onLogin: () => void }) {
           <div className="h-16 w-16 bg-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-2xl shadow-indigo-500/20 border border-indigo-400/30">
             <ShieldCheck className="h-8 w-8 text-white" />
           </div>
-          <h1 className="text-3xl font-black text-white tracking-tight uppercase italic leading-none">
-            YAJUR<span className="text-indigo-400 not-italic">PORTAL</span>
+          <h1 className="text-3xl font-black text-slate-900 tracking-tight uppercase italic leading-none">
+            YAJUR<span className="text-indigo-600 not-italic">PORTAL</span>
           </h1>
-          <p className="text-slate-500 text-[10px] font-bold uppercase tracking-[0.4em] mt-3">Identity Verification Protocol</p>
+          <p className="text-slate-400 text-[10px] font-bold uppercase tracking-[0.4em] mt-3">Identity Verification Protocol</p>
         </div>
 
-        <div className="bg-slate-900/50 backdrop-blur-xl p-8 rounded-[2.5rem] border border-white/5 shadow-2xl space-y-8 relative overflow-hidden">
+        <div className="bg-white p-8 rounded-[2.5rem] border border-slate-200 shadow-2xl shadow-slate-200/50 space-y-8 relative overflow-hidden">
           <form onSubmit={handleLogin} className="space-y-6">
             <div className="space-y-4">
               <div className="space-y-2">
-                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest pl-1">Command Node ID</label>
+                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-1">Command Node ID</label>
                 <div className="relative">
-                  <User className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-600" />
+                  <User className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                   <input 
                     type="text" 
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     placeholder="Enter Username"
                     disabled={isProcessing}
-                    className="w-full bg-slate-950/50 border border-slate-800 rounded-xl py-3.5 pl-12 pr-4 text-white text-sm font-bold focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500/50 transition-all outline-none"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl py-3.5 pl-12 pr-4 text-slate-900 text-sm font-bold focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500/50 transition-all outline-none"
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest pl-1">Authorization Code</label>
+                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-1">Authorization Code</label>
                 <div className="relative">
-                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-600" />
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                   <input 
                     type="password" 
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••"
                     disabled={isProcessing}
-                    className="w-full bg-slate-950/50 border border-slate-800 rounded-xl py-3.5 pl-12 pr-4 text-white text-sm font-bold tracking-widest focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500/50 transition-all outline-none"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl py-3.5 pl-12 pr-4 text-slate-900 text-sm font-bold tracking-widest focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500/50 transition-all outline-none"
                   />
                 </div>
               </div>
@@ -420,7 +420,7 @@ function LoginTerminal({ onLogin }: { onLogin: () => void }) {
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}
                   exit={{ opacity: 0, height: 0 }}
-                  className="bg-rose-500/10 border border-rose-500/20 text-rose-500 p-3 rounded-xl text-[10px] font-bold uppercase tracking-widest flex items-center justify-center gap-2"
+                  className="bg-rose-50 border border-rose-100 text-rose-500 p-3 rounded-xl text-[10px] font-bold uppercase tracking-widest flex items-center justify-center gap-2"
                 >
                   <AlertCircle className="h-4 w-4" /> 
                   Authentication Failed: Access Denied
@@ -433,7 +433,7 @@ function LoginTerminal({ onLogin }: { onLogin: () => void }) {
               disabled={isProcessing}
               className={cn(
                 "w-full py-4 rounded-xl text-[12px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-3 active:scale-95",
-                isProcessing ? "bg-slate-800 text-slate-500 cursor-wait" : "bg-indigo-600 text-white hover:bg-indigo-500 shadow-xl shadow-indigo-600/20"
+                isProcessing ? "bg-slate-100 text-slate-400 cursor-wait" : "bg-indigo-600 text-white hover:bg-indigo-700 shadow-xl shadow-indigo-600/20"
               )}
             >
               {isProcessing ? (
@@ -447,7 +447,7 @@ function LoginTerminal({ onLogin }: { onLogin: () => void }) {
             </button>
           </form>
 
-          <div className="pt-6 border-t border-white/5 flex items-center justify-between">
+          <div className="pt-6 border-t border-slate-50 flex items-center justify-between">
             <span className="text-[9px] font-bold text-slate-600 uppercase tracking-widest flex items-center gap-2">
               <div className="h-1.5 w-1.5 rounded-full bg-emerald-500/50" /> System Active
             </span>
