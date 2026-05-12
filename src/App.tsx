@@ -207,56 +207,56 @@ function Layout({ children, systemHealth }: { children: React.ReactNode, systemH
   ];
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] font-sans flex overflow-hidden">
-      {/* Sidebar */}
+    <div className="min-h-screen bg-[#f1f5f9] font-sans flex overflow-hidden">
+      {/* Sidebar - Dark Glassy Effect */}
       <motion.aside 
         initial={false}
-        animate={{ width: isSidebarOpen ? 280 : 80 }}
-        className="bg-[#0f172a] text-slate-400 flex flex-col relative z-50 border-r border-slate-800"
+        animate={{ width: isSidebarOpen ? 260 : 88 }}
+        className="bg-[#0f172a] text-slate-400 flex flex-col relative z-50 shadow-2xl"
       >
-        <div className="h-20 flex items-center px-6 mb-8 border-b border-slate-800/50">
-          <Link to="/" className="flex items-center gap-3 overflow-hidden whitespace-nowrap">
-            <div className="flex-shrink-0 h-10 w-10 items-center justify-center rounded-xl bg-indigo-500 text-white shadow-lg shadow-indigo-500/20 flex">
-              <Building2 className="h-6 w-6" />
+        <div className="h-24 flex items-center px-6 mb-4 border-b border-white/5">
+          <Link to="/" className="flex items-center gap-4 overflow-hidden whitespace-nowrap">
+            <div className="flex-shrink-0 h-12 w-12 items-center justify-center rounded-2xl bg-indigo-500 text-white shadow-lg shadow-indigo-500/40 flex transform hover:rotate-3 transition-transform">
+              <Building2 className="h-7 w-7" />
             </div>
             {isSidebarOpen && (
               <div className="flex flex-col">
-                <span className="text-xl font-bold tracking-tight text-white leading-none font-display">
+                <span className="text-2xl font-black tracking-tight text-white leading-none font-display">
                   Yajur<span className="text-indigo-400">Portal</span>
                 </span>
-                <span className="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 mt-1">Vendor Master</span>
+                <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-indigo-300 ml-0.5 mt-1">Vendor Master</span>
               </div>
             )}
           </Link>
         </div>
 
-        <nav className="flex-1 px-4 space-y-2">
+        <nav className="flex-1 px-4 py-6 space-y-4">
           {navItems.map((item) => (
             <Link
               key={item.path}
               to={item.path}
               className={cn(
-                "group flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all overflow-hidden whitespace-nowrap",
+                "group flex items-center gap-4 px-4 py-4 rounded-2xl text-[15px] font-bold transition-all overflow-hidden whitespace-nowrap",
                 location.pathname === item.path 
-                  ? "bg-indigo-600 text-white shadow-lg shadow-indigo-600/20" 
-                  : "hover:bg-slate-800 hover:text-slate-200"
+                  ? "bg-gradient-to-r from-indigo-600 to-indigo-500 text-white shadow-xl shadow-indigo-600/30 scale-[1.02]" 
+                  : "hover:bg-slate-800/50 hover:text-slate-100"
               )}
             >
-              <item.icon className={cn("h-5 w-5 flex-shrink-0", location.pathname === item.path ? "text-white" : "group-hover:text-indigo-400")} />
+              <item.icon className={cn("h-6 w-6 flex-shrink-0", location.pathname === item.path ? "text-white" : "group-hover:text-indigo-400")} />
               {isSidebarOpen && <span>{item.label}</span>}
             </Link>
           ))}
         </nav>
 
-        <div className="p-4 border-t border-slate-800/50">
-          <div className="bg-slate-800/40 rounded-2xl p-4 flex items-center gap-3 overflow-hidden">
-             <div className="h-10 w-10 rounded-xl bg-indigo-500/20 flex items-center justify-center flex-shrink-0">
-               <User className="h-5 w-5 text-indigo-400" />
+        <div className="p-6 border-t border-white/5">
+          <div className="bg-slate-800/50 rounded-2xl p-4 flex items-center gap-3 overflow-hidden border border-white/5 shadow-inner">
+             <div className="h-12 w-12 rounded-xl bg-indigo-500 text-white flex items-center justify-center flex-shrink-0 shadow-lg">
+               <User className="h-6 w-6" />
              </div>
              {isSidebarOpen && (
                <div className="overflow-hidden">
-                 <p className="text-xs font-bold text-white truncate">Prosun Majhi</p>
-                 <p className="text-[10px] text-slate-500 truncate">Global Admin</p>
+                 <p className="text-sm font-black text-white truncate">Prosun Majhi</p>
+                 <p className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest truncate">Global Admin</p>
                </div>
              )}
           </div>
@@ -264,49 +264,54 @@ function Layout({ children, systemHealth }: { children: React.ReactNode, systemH
 
         <button 
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          className="absolute -right-3 top-24 h-6 w-6 bg-indigo-600 text-white rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-all border-4 border-[#f8fafc] z-[60]"
+          className="absolute -right-4 top-28 h-8 w-8 bg-indigo-600 text-white rounded-xl flex items-center justify-center shadow-xl hover:scale-110 active:scale-95 transition-all border-4 border-[#f1f5f9] z-[60]"
         >
-          {isSidebarOpen ? <ChevronRight className="h-3 w-3 rotate-180" /> : <ChevronRight className="h-3 w-3" />}
+          {isSidebarOpen ? <ChevronRight className="h-4 w-4 rotate-180" /> : <ChevronRight className="h-4 w-4" />}
         </button>
       </motion.aside>
 
       {/* Main Container */}
       <div className="flex-1 flex flex-col h-screen overflow-hidden">
         {/* Top bar */}
-        <header className="h-20 bg-white/80 backdrop-blur-md border-b border-slate-200 flex items-center justify-between px-8 sticky top-0 z-40">
+        <header className="h-24 bg-white/90 backdrop-blur-xl border-b border-slate-200 flex items-center justify-between px-10 sticky top-0 z-40 shadow-sm">
            <div className="flex items-center gap-4">
-              <h1 className="text-lg font-bold text-slate-800 font-display">
+              <h1 className="text-2xl font-black text-slate-800 font-display tracking-tight">
                 {navItems.find(i => i.path === location.pathname)?.label || 'Page'}
               </h1>
            </div>
 
-           <div className="flex items-center gap-6">
-              <div className="flex items-center gap-6 pr-6 border-r border-slate-100">
-                 <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 rounded-full">
-                    <div className={cn("h-2 w-2 rounded-full", systemHealth.db !== 'disconnected' ? "bg-emerald-500" : "bg-rose-500")} />
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">{systemHealth.db !== 'disconnected' ? 'Cloud Live' : 'Offline'}</span>
+           <div className="flex items-center gap-8">
+              <div className="flex items-center gap-8 pr-8 border-r border-slate-100">
+                 <div className="flex items-center gap-3 px-4 py-2 bg-slate-50 rounded-2xl border border-slate-100 shadow-inner">
+                    <div className={cn("h-3 w-3 rounded-full shadow-lg", systemHealth.db !== 'disconnected' ? "bg-emerald-500 animate-pulse" : "bg-rose-500")} />
+                    <span className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-600">{systemHealth.db !== 'disconnected' ? 'Cloud Sync Active' : 'Offline'}</span>
                  </div>
-                 <button className="relative p-2 text-slate-400 hover:text-indigo-600 transition-colors">
-                    <Bell className="h-5 w-5" />
-                    <span className="absolute top-1.5 right-1.5 h-2 w-2 bg-rose-500 rounded-full border-2 border-white" />
+                 <button className="relative p-3 text-slate-400 hover:text-indigo-600 transition-all hover:bg-slate-50 rounded-2xl">
+                    <Bell className="h-6 w-6" />
+                    <span className="absolute top-3 right-3 h-3 w-3 bg-rose-500 rounded-full border-2 border-white shadow-sm" />
                  </button>
               </div>
-              <div className="flex items-center gap-3">
-                 <div className="h-10 w-10 rounded-full bg-slate-100 flex items-center justify-center border-2 border-white shadow-sm overflow-hidden">
-                    <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop&q=80" alt="Avatar" className="h-full w-full object-cover" />
+              <div className="flex items-center gap-4 group cursor-pointer">
+                 <div className="h-12 w-12 rounded-2xl bg-slate-100 flex items-center justify-center border-2 border-white shadow-lg overflow-hidden group-hover:scale-105 transition-transform">
+                    <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=64&h=64&fit=crop&q=80" alt="Avatar" className="h-full w-full object-cover" />
+                 </div>
+                 <div className="hidden xl:block">
+                   <p className="text-sm font-black text-slate-800 leading-none">Prosun Majhi</p>
+                   <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Super Admin</p>
                  </div>
               </div>
            </div>
         </header>
 
         {/* Content Area */}
-        <main className="flex-1 overflow-y-auto p-8 relative">
-           <div className="w-full max-w-full">
+        <main className="flex-1 overflow-y-auto p-12 relative bg-[#f1f5f9]">
+           <div className="w-full h-full">
              {children}
            </div>
         </main>
       </div>
     </div>
+
   );
 }
 
@@ -315,149 +320,164 @@ function Dashboard({ vendors = [] }: any) {
   const vendorsArray = Array.isArray(vendors) ? vendors : [];
 
   const stats = [
-    { label: 'Active Registry', value: vendorsArray.length.toString(), icon: Users, color: 'indigo', description: 'Verified partners' },
-    { label: 'Material Supply', value: vendorsArray.filter(v => v.statutory?.vendorType === 'Goods').length.toString(), icon: Box, color: 'emerald', description: 'Goods vendors' },
-    { label: 'Key Services', value: vendorsArray.filter(v => v.statutory?.vendorType === 'Services').length.toString(), icon: Activity, color: 'amber', description: 'Service providers' },
-    { label: 'Pending Review', value: vendorsArray.filter(v => v.requestType === 'New').length.toString(), icon: Clock, color: 'rose', description: 'Queue' },
+    { label: 'Active Registry', value: vendorsArray.length.toString(), icon: Users, color: 'indigo', description: 'Certified partners', gradient: 'from-indigo-600 to-blue-600' },
+    { label: 'Material Supply', value: vendorsArray.filter(v => v.statutory?.vendorType === 'Goods').length.toString(), icon: Box, color: 'emerald', description: 'Goods vendors', gradient: 'from-emerald-600 to-teal-600' },
+    { label: 'Key Services', value: vendorsArray.filter(v => v.statutory?.vendorType === 'Services').length.toString(), icon: Activity, color: 'amber', description: 'Service providers', gradient: 'from-amber-500 to-orange-500' },
+    { label: 'Pending Review', value: vendorsArray.filter(v => v.requestType === 'New').length.toString(), icon: Clock, color: 'rose', description: 'Action queue', gradient: 'from-rose-600 to-pink-600' },
   ];
 
   return (
-    <div className="space-y-8">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+    <div className="space-y-12 pb-20">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
         <div>
-          <h2 className="text-3xl font-bold text-slate-800 font-display flex items-center gap-3">
+          <h2 className="text-4xl font-black text-slate-900 font-display flex items-center gap-4 tracking-tight">
              Command Center
-             <span className="px-2 py-0.5 bg-indigo-100 text-indigo-600 text-[10px] font-black uppercase rounded-lg tracking-widest">v2.0</span>
+             <span className="px-4 py-1.5 bg-indigo-600 text-white text-[12px] font-black uppercase rounded-2xl tracking-[0.2em] shadow-xl shadow-indigo-200">v2.1 Gold</span>
           </h2>
-          <p className="text-slate-500 text-sm mt-1">Monitor vendor health and onboarding performance in real-time.</p>
+          <p className="text-slate-500 text-lg mt-2 font-medium">Real-time oversight of the vendor ecosystem and procurement health.</p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4">
           <button 
             onClick={() => navigate('/vendors')}
-            className="px-5 py-2.5 bg-white text-slate-700 rounded-xl text-sm font-bold border border-slate-200 shadow-sm hover:bg-slate-50 transition-all active:scale-95"
+            className="px-8 py-4 bg-white text-slate-800 rounded-2xl text-[15px] font-black uppercase tracking-widest border-2 border-slate-200 shadow-xl shadow-slate-200/50 hover:bg-slate-50 transition-all active:scale-95 flex items-center gap-3"
           >
-            Manage Fleet
+            <Database className="h-5 w-5 text-indigo-600" />
+            Registry
           </button>
           <button 
             onClick={() => navigate('/register')}
-            className="px-6 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-bold shadow-lg shadow-indigo-600/20 hover:bg-indigo-700 transition-all flex items-center gap-2 active:scale-95"
+            className="px-10 py-4 bg-indigo-600 text-white rounded-2xl text-[15px] font-black uppercase tracking-widest shadow-2xl shadow-indigo-600/40 hover:bg-indigo-700 transition-all flex items-center gap-3 active:scale-95"
           >
-            <Plus className="h-4 w-4" />
+            <Plus className="h-6 w-6" />
             New Onboarding
           </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
         {stats.map((stat, idx) => (
           <motion.div 
             key={idx}
-            initial={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: idx * 0.1 }}
-            className="group bg-white p-6 rounded-3xl border border-slate-200/60 shadow-sm hover:shadow-xl hover:shadow-slate-200/50 hover:border-indigo-100 transition-all cursor-default"
+            className="group bg-white p-8 rounded-[2.5rem] border border-white shadow-2xl hover:shadow-indigo-500/10 hover:border-indigo-100 transition-all cursor-default relative overflow-hidden"
           >
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between mb-8 relative z-10">
               <div className={cn(
-                "h-12 w-12 rounded-2xl flex items-center justify-center transition-all group-hover:scale-110",
-                stat.color === 'indigo' ? "bg-indigo-50 text-indigo-600" :
-                stat.color === 'emerald' ? "bg-emerald-50 text-emerald-600" :
-                stat.color === 'amber' ? "bg-amber-50 text-amber-600" : 
-                "bg-rose-50 text-rose-600"
+                "h-16 w-16 rounded-[1.5rem] flex items-center justify-center transition-all group-hover:scale-110 shadow-2xl",
+                stat.color === 'indigo' ? "bg-indigo-600 text-white" :
+                stat.color === 'emerald' ? "bg-emerald-500 text-white" :
+                stat.color === 'amber' ? "bg-amber-400 text-white" : 
+                "bg-rose-500 text-white"
               )}>
-                <stat.icon className="h-6 w-6" />
+                <stat.icon className="h-8 w-8" />
               </div>
-              <TrendingUp className="h-4 w-4 text-slate-200" />
+              <TrendingUp className={cn("h-6 w-6 opacity-30", 
+                stat.color === 'indigo' ? "text-indigo-600" :
+                stat.color === 'emerald' ? "text-emerald-500" :
+                stat.color === 'amber' ? "text-amber-500" : 
+                "text-rose-500"
+              )} />
             </div>
-            <div>
-              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{stat.label}</p>
-              <h3 className="text-3xl font-bold text-slate-900 tracking-tight font-display">{stat.value}</h3>
-              <p className="text-[10px] text-slate-400 mt-2 font-medium">{stat.description}</p>
+            <div className="relative z-10">
+              <p className="text-[12px] font-black text-slate-400 uppercase tracking-[0.25em] mb-2 leading-none">{stat.label}</p>
+              <h3 className="text-5xl font-black text-slate-900 tracking-tighter font-display leading-none">{stat.value}</h3>
+              <p className="text-[12px] text-slate-400 mt-4 font-bold uppercase tracking-widest opacity-80">{stat.description}</p>
             </div>
+            
+            {/* Background Accent */}
+            <div className={cn("absolute -right-10 -bottom-10 h-32 w-32 rounded-full blur-3xl opacity-0 group-hover:opacity-20 transition-opacity", 
+                stat.color === 'indigo' ? "bg-indigo-600" :
+                stat.color === 'emerald' ? "bg-emerald-500" :
+                stat.color === 'amber' ? "bg-amber-500" : 
+                "bg-rose-500"
+            )} />
           </motion.div>
         ))}
       </div>
 
-      <div className="grid lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 bg-white rounded-3xl border border-slate-200/60 shadow-sm overflow-hidden flex flex-col">
-          <div className="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+      <div className="grid lg:grid-cols-3 gap-12">
+        <div className="lg:col-span-2 bg-white rounded-[3rem] border border-white shadow-2xl overflow-hidden flex flex-col">
+          <div className="px-10 py-10 border-b border-slate-100 flex items-center justify-between bg-slate-50/20">
             <div>
-              <h3 className="text-lg font-bold text-slate-800 font-display">Performance Metrics</h3>
-              <p className="text-xs text-slate-400 mt-0.5">Distribution of vendor batches by classification</p>
+              <h3 className="text-3xl font-black text-slate-900 font-display tracking-tight">Performance Analytics</h3>
+              <p className="text-[13px] font-bold text-slate-400 uppercase tracking-widest mt-2">Vendor distribution and cycle efficiency</p>
             </div>
-            <select className="bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-slate-600 outline-none focus:ring-2 focus:ring-indigo-100">
-               <option>Last 30 Days</option>
-               <option>Last Quarter</option>
+            <select className="bg-white border-2 border-slate-100 rounded-2xl px-6 py-3 text-[12px] font-black uppercase tracking-widest text-slate-600 shadow-sm focus:border-indigo-600 outline-none transition-colors">
+               <option>Real-time Feed</option>
+               <option>Historical Data</option>
             </select>
           </div>
           
-          <div className="flex-1 p-8">
-            <div className="h-[300px] w-full flex items-end justify-around gap-4 group/chart">
-              {[65, 40, 85, 30, 55, 90, 45].map((h, i) => (
-                <div key={i} className="flex-1 flex flex-col items-center gap-3 h-full justify-end">
-                   <div className="w-full max-w-[40px] relative group flex flex-col justify-end h-full">
+          <div className="flex-1 p-12">
+            <div className="h-[400px] w-full flex items-end justify-around gap-8">
+              {[85, 45, 95, 35, 65, 100, 55].map((h, i) => (
+                <div key={i} className="flex-1 flex flex-col items-center gap-6 h-full justify-end group">
+                   <div className="w-full max-w-[60px] relative flex flex-col justify-end h-full">
                       <motion.div 
                         initial={{ height: 0 }}
                         animate={{ height: `${h}%` }}
-                        transition={{ delay: i * 0.1, type: 'spring' }}
-                        className="bg-indigo-500 rounded-t-xl group-hover:bg-indigo-600 transition-colors cursor-pointer relative"
+                        transition={{ delay: i * 0.1, type: 'spring', damping: 15 }}
+                        className="bg-gradient-to-t from-indigo-700 to-indigo-400 rounded-t-3xl shadow-2xl group-hover:shadow-indigo-500/50 transition-all cursor-pointer relative"
                       >
-                         <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-2 py-1 rounded text-[10px] opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                           Batch {i+1}: {h} units
+                         <div className="absolute -top-14 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-4 py-2 rounded-2xl text-[11px] font-black uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all scale-75 group-hover:scale-100 shadow-xl whitespace-nowrap z-20">
+                           Batch {i+1}: {h}% Sync
                          </div>
                       </motion.div>
                       <motion.div 
                         initial={{ height: 0 }}
-                        animate={{ height: `${h/2}%` }}
+                        animate={{ height: `${h/2.5}%` }}
                         transition={{ delay: i * 0.1 + 0.2 }}
-                        className="bg-slate-200 rounded-t-lg absolute bottom-0 w-full"
+                        className="bg-white/40 rounded-t-2xl absolute bottom-0 w-full z-10"
                       />
                    </div>
-                   <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Q{i+1}</span>
+                   <span className="text-[12px] font-black text-slate-400 uppercase tracking-widest">Q{i+1}</span>
                 </div>
               ))}
             </div>
           </div>
         </div>
 
-        <div className="bg-[#0f172a] rounded-3xl shadow-xl p-8 text-white flex flex-col relative overflow-hidden group">
+        <div className="bg-[#0f172a] rounded-[3rem] shadow-2xl shadow-indigo-900/20 p-12 text-white flex flex-col relative overflow-hidden group border-r-8 border-indigo-600">
            <div className="relative z-10 flex-1">
-              <div className="h-14 w-14 rounded-2xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center mb-8 border border-indigo-500/30 group-hover:scale-110 transition-transform">
-                 <ShieldCheck className="h-8 w-8" />
+              <div className="h-20 w-20 rounded-[2rem] bg-indigo-500 text-white flex items-center justify-center mb-12 shadow-2xl shadow-indigo-500/40 group-hover:rotate-6 transition-transform">
+                 <ShieldCheck className="h-10 w-10" />
               </div>
-              <h3 className="text-2xl font-bold font-display mb-3 text-white leading-tight">Identity & Trust</h3>
-              <p className="text-slate-400 text-sm font-medium leading-relaxed mb-8">
-                Enterprise-grade validation for every vendor. Automated KYC and statutory checks ensured.
+              <h3 className="text-4xl font-black font-display mb-6 tracking-tight">Security & Identity</h3>
+              <p className="text-slate-400 text-lg font-medium leading-relaxed mb-12">
+                Mission-critical validation protocols active. All vendor data encrypted and synchronized with secure master nodes.
               </p>
               
-              <div className="space-y-3">
+              <div className="space-y-4">
                  {[
-                   { label: 'GSTIN Verified', val: '98%' },
-                   { label: 'PAN Validated', val: '100%' },
-                   { label: 'Bank Sync', val: 'Live' }
+                   { label: 'KYC Verification', val: '99.9%', color: 'emerald' },
+                   { label: 'Data Encryption', val: 'AES-256', color: 'indigo' },
+                   { label: 'Real-time Sync', val: 'Active', color: 'indigo' }
                  ].map((item, i) => (
-                   <div key={i} className="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/5 hover:bg-white/10 transition-colors">
-                      <div className="flex items-center gap-2">
-                        <CheckCircle2 className="h-4 w-4 text-emerald-400" />
-                        <span className="text-[10px] font-bold uppercase tracking-widest text-slate-300">{item.label}</span>
+                   <div key={i} className="flex items-center justify-between p-5 bg-white/5 rounded-2xl border border-white/5 hover:bg-white/10 transition-all hover:translate-x-2">
+                      <div className="flex items-center gap-4">
+                        <CheckCircle2 className="h-6 w-6 text-emerald-400" />
+                        <span className="text-[13px] font-black uppercase tracking-[0.2em] text-slate-200">{item.label}</span>
                       </div>
-                      <span className="text-[10px] font-black text-indigo-400">{item.val}</span>
+                      <span className="text-[12px] font-black text-indigo-400 bg-indigo-400/10 px-3 py-1 rounded-lg">{item.val}</span>
                    </div>
                  ))}
               </div>
            </div>
            
-           <div className="mt-8 relative z-10">
-              <button className="w-full py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 group">
+           <div className="mt-12 relative z-10">
+              <button className="w-full py-5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-[2rem] text-[14px] font-black uppercase tracking-widest shadow-2xl shadow-indigo-600/30 transition-all flex items-center justify-center gap-4 group">
                  Security Audit
-                 <ChevronRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                 <ChevronRight className="h-5 w-5 group-hover:translate-x-2 transition-transform" />
               </button>
            </div>
            
-           <Building2 className="absolute -right-16 -bottom-16 h-64 w-64 text-white/5 group-hover:rotate-6 transition-transform duration-1000" />
+           <Building2 className="absolute -left-20 -bottom-20 h-96 w-96 text-white/5 group-hover:rotate-12 transition-all duration-1000 blur-sm" />
         </div>
       </div>
     </div>
+
   );
 }
 
@@ -526,35 +546,36 @@ function VendorList({ vendors = [], loading }: { vendors: Vendor[], loading: boo
   );
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8">
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 bg-white p-8 rounded-3xl border border-slate-200 shadow-sm">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-12 pb-20">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-10 bg-white p-12 rounded-[3.5rem] border border-white shadow-2xl relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-2 h-full bg-indigo-600" />
         <div className="flex-1">
-          <h2 className="text-2xl font-bold text-slate-800 font-display">Vendor Registry</h2>
-          <p className="text-slate-500 text-sm mt-1">Search and manage verified business partners.</p>
+          <h2 className="text-4xl font-black text-slate-900 font-display tracking-tight">Vendor Registry</h2>
+          <p className="text-slate-500 text-lg mt-2 font-medium">Enterprise partner database and statutory archive.</p>
           
-          <div className="relative mt-6 max-w-2xl">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+          <div className="relative mt-10 max-w-3xl group">
+            <Search className="absolute left-6 top-1/2 -translate-y-1/2 h-6 w-6 text-slate-400 group-focus-within:text-indigo-600 transition-colors" />
             <input 
               type="text" 
-              placeholder="Filter by name, GSTIN, PAN or ID..."
+              placeholder="Search by Legal Name, GSTIN, PAN or System ID..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 pl-11 pr-4 text-sm font-medium focus:ring-4 focus:ring-indigo-100 focus:bg-white transition-all outline-none"
+              className="w-full bg-slate-50 border-2 border-slate-100 rounded-[2rem] py-5 pl-16 pr-8 text-[16px] font-bold focus:ring-8 focus:ring-indigo-100 focus:bg-white focus:border-indigo-600 transition-all outline-none shadow-inner"
             />
           </div>
         </div>
         
-        <div className="flex items-center gap-3">
-           <button className="flex items-center gap-2 px-5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-50 transition-all">
-             <Download className="h-4 w-4" /> Export
+        <div className="flex items-center gap-4">
+           <button className="flex items-center gap-3 px-8 py-5 bg-white border-2 border-slate-100 rounded-[2rem] text-[14px] font-black uppercase tracking-widest text-slate-600 hover:bg-slate-50 transition-all shadow-xl hover:shadow-slate-200">
+             <Download className="h-5 w-5 text-indigo-600" /> Export CSV
            </button>
-           <Link to="/register" className="flex items-center gap-2 px-6 py-2.5 bg-indigo-600 text-white rounded-xl text-xs font-bold hover:bg-indigo-700 shadow-lg shadow-indigo-600/10 active:scale-95 transition-all">
-             <Plus className="h-4 w-4" /> Register
+           <Link to="/register" className="flex items-center gap-3 px-10 py-5 bg-indigo-600 text-white rounded-[2rem] text-[14px] font-black uppercase tracking-widest hover:bg-indigo-700 shadow-2xl shadow-indigo-600/30 active:scale-95 transition-all">
+             <Plus className="h-5 w-5" /> New Vendor
            </Link>
         </div>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 2xl:grid-cols-3">
+      <div className="grid gap-10 md:grid-cols-2 2xl:grid-cols-3">
         <AnimatePresence mode="popLayout">
           {filteredVendors.map((vendor, idx) => (
             <motion.div
@@ -595,43 +616,43 @@ function VendorList({ vendors = [], loading }: { vendors: Vendor[], loading: boo
 
 function VendorCard({ vendor, onSelect }: { vendor: Vendor, onSelect: () => void }) {
   return (
-    <div className="group bg-white rounded-3xl border border-slate-200/60 p-6 shadow-sm hover:shadow-xl hover:shadow-slate-200/40 hover:border-indigo-200 transition-all duration-300 flex flex-col h-full relative overflow-hidden">
-      <div className="flex items-start justify-between mb-6">
-        <div className="h-14 w-14 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold text-xl border border-indigo-100 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300">
+    <div className="group bg-white rounded-[3rem] border border-white p-10 shadow-2xl hover:shadow-indigo-500/10 hover:border-indigo-100 transition-all duration-500 flex flex-col h-full relative overflow-hidden">
+      <div className="flex items-start justify-between mb-10">
+        <div className="h-20 w-20 rounded-[2rem] bg-indigo-600 text-white flex items-center justify-center font-black text-3xl shadow-2xl shadow-indigo-200 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500">
           {vendor.name.charAt(0)}
         </div>
         <div className="flex flex-col items-end">
            <span className={cn(
-             "px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider",
-             vendor.statutory.vendorType === 'Goods' ? "bg-emerald-50 text-emerald-600" : "bg-amber-50 text-amber-600"
+             "px-5 py-2 rounded-2xl text-[11px] font-black uppercase tracking-[0.2em] shadow-sm",
+             vendor.statutory.vendorType === 'Goods' ? "bg-emerald-500 text-white" : "bg-amber-400 text-white"
            )}>
              {vendor.statutory.vendorType}
            </span>
-           <p className="text-[10px] font-bold text-slate-300 mt-3 uppercase tracking-widest">{vendor.id}</p>
+           <p className="text-[11px] font-black text-slate-300 mt-6 uppercase tracking-[0.3em]">{vendor.id}</p>
         </div>
       </div>
 
       <div className="flex-1">
-        <h3 className="text-xl font-bold text-slate-800 font-display line-clamp-1 group-hover:text-indigo-600 transition-colors uppercase">{vendor.name}</h3>
-        <div className="flex items-center gap-2 mt-1.5 mb-6 text-slate-400">
-           <MapPin className="h-3 w-3" />
-           <p className="text-xs font-medium">{vendor.address.city}, {vendor.address.state}</p>
+        <h3 className="text-3xl font-black text-slate-900 font-display line-clamp-2 group-hover:text-indigo-600 transition-colors uppercase leading-tight tracking-tighter">{vendor.name}</h3>
+        <div className="flex items-center gap-3 mt-4 mb-10 text-slate-400">
+           <MapPin className="h-5 w-5 text-indigo-400" />
+           <p className="text-[14px] font-bold uppercase tracking-widest">{vendor.address.city}, {vendor.address.state}</p>
         </div>
 
-        <div className="grid grid-cols-2 gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100">
+        <div className="grid grid-cols-2 gap-6 p-8 bg-slate-50 rounded-[2.5rem] border border-slate-100 shadow-inner">
            <div>
-              <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Tax ID</p>
-              <p className="text-xs font-bold text-slate-700 uppercase tracking-tight">{vendor.statutory.pan}</p>
+              <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.25em] mb-2 leading-none">Tax ID (PAN)</p>
+              <p className="text-sm font-black text-slate-800 uppercase tracking-tight">{vendor.statutory.pan}</p>
            </div>
            <div>
-              <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">GSTIN</p>
-              <p className="text-xs font-bold text-slate-700 uppercase tracking-tight truncate">{vendor.statutory.gstin}</p>
+              <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.25em] mb-2 leading-none">GSTIN / TAX</p>
+              <p className="text-sm font-black text-slate-800 uppercase tracking-tight truncate">{vendor.statutory.gstin}</p>
            </div>
         </div>
       </div>
 
-      <button onClick={onSelect} className="mt-6 w-full py-3 bg-white border border-slate-200 text-slate-600 rounded-xl text-xs font-bold hover:bg-[#0f172a] hover:text-white hover:border-[#0f172a] transition-all active:scale-95">
-        View Profile
+      <button onClick={onSelect} className="mt-10 w-full py-5 bg-white border-2 border-slate-100 text-slate-800 rounded-[2rem] text-[13px] font-black uppercase tracking-widest hover:bg-[#0f172a] hover:text-white hover:border-[#0f172a] transition-all active:scale-95 shadow-xl shadow-slate-100">
+        Review Master Profile
       </button>
     </div>
   );
@@ -815,23 +836,24 @@ function RegistrationForm({ onComplete }: { onComplete: () => void }) {
   const navigate = useNavigate();
 
   return (
-    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="max-w-6xl mx-auto space-y-8 pb-20">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white p-8 rounded-3xl border border-slate-200 shadow-sm">
+    <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} className="max-w-full mx-auto space-y-12 pb-32">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-10 bg-white p-12 rounded-[3.5rem] border border-white shadow-2xl relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-2 h-full bg-indigo-600" />
         <div>
-          <h1 className="text-3xl font-bold text-slate-800 font-display">Onboarding Terminal</h1>
-          <p className="text-slate-500 text-sm mt-1 font-medium">Complete the vendor master information to initiate partnership.</p>
+          <h1 className="text-5xl font-black text-slate-900 font-display tracking-tighter uppercase">Onboarding Terminal</h1>
+          <p className="text-slate-500 text-lg mt-3 font-medium">Initiate statutory master record creation for new supply partners.</p>
         </div>
-        <button onClick={() => navigate('/vendors')} className="px-5 py-2.5 bg-slate-100 text-slate-600 rounded-xl text-sm font-bold hover:bg-slate-200 transition-all">
-          Exit Wizard
+        <button onClick={() => navigate('/vendors')} className="px-10 py-5 bg-slate-100 text-slate-800 rounded-[2rem] text-[14px] font-black uppercase tracking-widest hover:bg-slate-900 hover:text-white transition-all shadow-xl active:scale-95">
+          Exit Terminal
         </button>
       </div>
 
-      <div className="bg-white rounded-[2.5rem] border border-slate-200 shadow-xl shadow-slate-200/40 relative overflow-hidden">
-        <div className="absolute top-0 left-0 right-0 h-1.5 bg-slate-100">
+      <div className="bg-white rounded-[4rem] border border-white shadow-[0_50px_100px_-20px_rgba(0,0,0,0.15)] relative overflow-hidden">
+        <div className="absolute top-0 left-0 right-0 h-3 bg-slate-100">
            <motion.div 
              initial={{ width: '0%' }}
              animate={{ width: '100%' }}
-             transition={{ duration: 1 }}
+             transition={{ duration: 2, ease: "easeInOut" }}
              className="h-full bg-indigo-600" 
            />
         </div>
@@ -966,12 +988,12 @@ function RegistrationForm({ onComplete }: { onComplete: () => void }) {
 
 function FormSection({ title, icon: Icon, children }: any) {
   return (
-    <div className="space-y-6">
-      <div className="flex items-center gap-3 pb-3 border-b border-slate-100">
-        <div className="h-8 w-8 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-600">
-          <Icon className="h-4 w-4" />
+    <div className="space-y-10 group">
+      <div className="flex items-center gap-6 pb-6 border-b-4 border-slate-100 group-hover:border-indigo-600 transition-colors">
+        <div className="h-16 w-16 rounded-[1.5rem] bg-indigo-50 flex items-center justify-center text-indigo-600 shadow-xl border-2 border-indigo-100 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-500">
+          <Icon className="h-8 w-8" />
         </div>
-        <h3 className="text-xs font-black uppercase tracking-[0.2em] text-slate-800 font-display">{title}</h3>
+        <h3 className="text-[16px] font-black uppercase tracking-[0.35em] text-slate-900 font-display leading-none">{title}</h3>
       </div>
       <div className="pl-0">
         {children}
@@ -999,28 +1021,30 @@ function FileField({ label, value, onUpload, required }: any) {
   };
 
   return (
-    <div className="space-y-2">
-      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">
+    <div className="space-y-4">
+      <label className="text-[12px] font-black text-slate-400 uppercase tracking-[0.2em] pl-1 leading-none">
         {label} {required && <span className="text-rose-500">*</span>}
       </label>
       <div className={cn(
-        "relative h-32 rounded-2xl border-2 border-dashed transition-all flex flex-col items-center justify-center gap-2 overflow-hidden",
-        value ? "bg-emerald-50 border-emerald-200" : "bg-slate-50 border-slate-200 hover:border-indigo-400 hover:bg-white"
+        "relative h-44 rounded-[2.5rem] border-4 border-dashed transition-all flex flex-col items-center justify-center gap-4 overflow-hidden shadow-2xl",
+        value ? "bg-emerald-50 border-emerald-400 shadow-emerald-500/10" : "bg-slate-50 border-slate-200 hover:border-indigo-600 hover:bg-white hover:shadow-indigo-500/20"
       )}>
         {uploading ? (
-          <div className="flex flex-col items-center gap-1 text-indigo-600 animate-pulse">
-            <RefreshCw className="h-5 w-5 animate-spin mb-1" />
-            <span className="text-[9px] font-bold uppercase">Processing...</span>
+          <div className="flex flex-col items-center gap-4 text-indigo-600 animate-pulse">
+            <RefreshCw className="h-10 w-10 animate-spin mb-1 shadow-indigo-100" />
+            <span className="text-[11px] font-black uppercase tracking-[0.3em]">Synching Node...</span>
           </div>
         ) : value ? (
-          <div className="flex flex-col items-center gap-1 text-emerald-600">
-            <CheckCircle2 className="h-5 w-5" />
-            <span className="text-[9px] font-bold uppercase tracking-widest">Verified</span>
-          </div>
+          <motion.div initial={{ scale: 0.8 }} animate={{ scale: 1 }} className="flex flex-col items-center gap-4 text-emerald-600">
+            <CheckCircle2 className="h-12 w-12 drop-shadow-xl" />
+            <span className="text-[12px] font-black uppercase tracking-[0.3em]">Master Authenticated</span>
+          </motion.div>
         ) : (
           <>
-            <Upload className="h-4 w-4 text-slate-300" />
-            <span className="text-[9px] font-bold uppercase tracking-widest text-slate-400">Target File</span>
+            <div className="h-14 w-14 rounded-2xl bg-white text-slate-400 flex items-center justify-center shadow-xl border-2 border-slate-100 group-hover:bg-indigo-600 group-hover:text-white transition-all">
+               <Upload className="h-7 w-7" />
+            </div>
+            <span className="text-[11px] font-black uppercase tracking-[0.3em] text-slate-400">Target File Path</span>
           </>
         )}
         <input 
@@ -1036,22 +1060,22 @@ function FileField({ label, value, onUpload, required }: any) {
 
 function FormInput({ label, name, type = 'text', placeholder, options, error }: any) {
   return (
-    <div className="space-y-2">
-       <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">{label}</label>
+    <div className="space-y-4">
+       <label className="text-[12px] font-black text-slate-400 uppercase tracking-[0.2em] pl-2 leading-none">{label}</label>
        {type === 'select' ? (
-         <Field as="select" name={name} className="w-full bg-white border border-slate-200 rounded-xl py-2.5 px-4 text-sm font-bold focus:ring-[3px] focus:ring-indigo-100 focus:border-indigo-400 transition-all outline-none">
+         <Field as="select" name={name} className="w-full bg-white border-4 border-slate-100 rounded-[2rem] py-6 px-8 text-[16px] font-bold focus:ring-[14px] focus:ring-indigo-100 focus:border-indigo-600 transition-all outline-none shadow-2xl shadow-slate-200/50">
             {options.map((o: string) => <option key={o} value={o}>{o}</option>)}
          </Field>
        ) : (
-         <Field name={name} placeholder={placeholder} className="w-full bg-white border border-slate-200 rounded-xl py-2.5 px-4 text-sm font-bold focus:ring-[3px] focus:ring-indigo-100 focus:border-indigo-400 transition-all outline-none placeholder:text-slate-300" />
+         <Field name={name} placeholder={placeholder} className="w-full bg-white border-4 border-slate-100 rounded-[2rem] py-6 px-8 text-[16px] font-bold focus:ring-[14px] focus:ring-indigo-100 focus:border-indigo-600 transition-all outline-none shadow-2xl shadow-slate-200/50 placeholder:text-slate-200" />
        )}
-       <div className="h-4">
+       <div className="h-6">
          <AnimatePresence>
            {error && (
              <motion.p 
-               initial={{ opacity: 0, y: -5 }}
-               animate={{ opacity: 1, y: 0 }}
-               className="text-[9px] font-bold text-rose-500 uppercase tracking-widest pl-1"
+               initial={{ opacity: 0, x: -10 }}
+               animate={{ opacity: 1, x: 0 }}
+               className="text-[11px] font-black text-rose-500 uppercase tracking-[0.2em] pl-2"
              >
                {error}
              </motion.p>
@@ -1064,50 +1088,50 @@ function FormInput({ label, name, type = 'text', placeholder, options, error }: 
 
 function SettingsView({ health }: any) {
   return (
-    <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} className="max-w-2xl mx-auto space-y-8">
-      <div className="text-center mb-10">
-        <h1 className="text-3xl font-black text-slate-900 tracking-tight leading-none">System Settings</h1>
-        <p className="text-slate-500 font-medium text-sm mt-3">Platform configuration and integration status.</p>
+    <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} className="max-w-4xl mx-auto space-y-12 pb-32">
+      <div className="bg-white p-12 rounded-[4rem] border border-white shadow-2xl relative overflow-hidden text-center">
+        <div className="absolute top-0 left-0 right-0 h-2 bg-indigo-600" />
+        <h1 className="text-4xl font-black text-slate-900 font-display tracking-tighter uppercase leading-none">System Settings</h1>
+        <p className="text-slate-500 font-bold text-lg mt-4 uppercase tracking-[0.2em] opacity-60">Platform Control & Integration Matrix</p>
       </div>
 
-      <div className="bg-white rounded-[3rem] p-12 border border-slate-100 shadow-xl space-y-10">
-          <section className="space-y-6">
-              <h3 className="text-xs font-black uppercase tracking-[0.2em] text-slate-400 pb-2 border-b border-slate-50">Integration Status</h3>
-              <div className="space-y-4">
-                 <div className="flex items-center justify-between p-5 bg-[#F8F9FD] rounded-[1.5rem]">
-                    <div className="flex items-center gap-4">
-                       <div className="h-10 w-10 rounded-xl bg-white flex items-center justify-center shadow-sm"><Database className="h-5 w-5 text-indigo-600" /></div>
+      <div className="bg-white rounded-[4rem] p-16 border border-white shadow-[0_50px_100px_-20px_rgba(0,0,0,0.1)] space-y-16">
+          <section className="space-y-10">
+              <h3 className="text-[14px] font-black uppercase tracking-[0.4em] text-slate-400 pb-4 border-b-2 border-slate-50">Integration Status</h3>
+              <div className="space-y-6">
+                 <div className="group flex items-center justify-between p-8 bg-slate-100 rounded-[2.5rem] border-2 border-transparent hover:border-indigo-600/20 hover:bg-white transition-all shadow-inner hover:shadow-2xl">
+                    <div className="flex items-center gap-6">
+                       <div className="h-16 w-16 rounded-2xl bg-white flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform"><Database className="h-8 w-8 text-indigo-600" /></div>
                        <div>
-                          <p className="text-xs font-black text-slate-900 uppercase">Google Sheets API</p>
-                          <p className="text-[10px] font-bold text-slate-400 mt-0.5 uppercase tracking-widest">{health.db === 'demo' ? 'DEMO MODE (Simulation)' : 'PRODUCTION (Connected)'}</p>
+                          <p className="text-lg font-black text-slate-900 uppercase tracking-tight">Google Sheets Master</p>
+                          <p className="text-[11px] font-black text-indigo-400 mt-1 uppercase tracking-[0.2em]">{health.db === 'demo' ? 'DEMO MODE (Simulation)' : 'PRODUCTION (Connected)'}</p>
                        </div>
                     </div>
-                    <div className={cn("h-3 w-3 rounded-full shadow-sm", health.db === 'disconnected' ? "bg-rose-500" : "bg-emerald-500")} />
+                    <div className={cn("h-4 w-4 rounded-full shadow-lg ring-8", health.db === 'disconnected' ? "bg-rose-500 ring-rose-100" : "bg-emerald-500 ring-emerald-100 animate-pulse")} />
                  </div>
-                 <div className="flex items-center justify-between p-5 bg-[#F8F9FD] rounded-[1.5rem]">
-                    <div className="flex items-center gap-4">
-                       <div className="h-10 w-10 rounded-xl bg-white flex items-center justify-center shadow-sm"><Globe className="h-5 w-5 text-indigo-600" /></div>
+                 <div className="group flex items-center justify-between p-8 bg-slate-100 rounded-[2.5rem] border-2 border-transparent hover:border-indigo-600/20 hover:bg-white transition-all shadow-inner hover:shadow-2xl">
+                    <div className="flex items-center gap-6">
+                       <div className="h-16 w-16 rounded-2xl bg-white flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform"><Globe className="h-8 w-8 text-indigo-600" /></div>
                        <div>
-                          <p className="text-xs font-black text-slate-900 uppercase">Email Dispatcher</p>
-                          <p className="text-[10px] font-bold text-slate-400 mt-0.5 uppercase tracking-widest">v2.1 SES Gateway</p>
+                          <p className="text-lg font-black text-slate-900 uppercase tracking-tight">Enterprise SES Dispatcher</p>
+                          <p className="text-[11px] font-black text-slate-400 mt-1 uppercase tracking-[0.2em]">v2.1 SES Gateway • Secure</p>
                        </div>
                     </div>
-                    <div className="h-3 w-3 rounded-full bg-emerald-500 shadow-sm" />
+                    <div className="h-4 w-4 rounded-full bg-emerald-500 shadow-lg ring-8 ring-emerald-100" />
                  </div>
               </div>
           </section>
 
-          <section className="space-y-6">
-              <h3 className="text-xs font-black uppercase tracking-[0.2em] text-slate-400 pb-2 border-b border-slate-50">Experimental Features</h3>
-              <div className="flex items-center justify-between p-5 bg-[#F8F9FD] rounded-[1.5rem] opacity-50 grayscale transition-all hover:grayscale-0 hover:opacity-100">
-                  <div className="flex items-center gap-4">
-                     <div className="h-10 w-10 rounded-xl bg-white flex items-center justify-center shadow-sm"><Plus className="h-5 w-5 text-slate-400" /></div>
+          <section className="space-y-10">
+              <h3 className="text-[14px] font-black uppercase tracking-[0.4em] text-slate-400 pb-4 border-b-2 border-slate-50">Experimental Features</h3>
+              <div className="flex items-center justify-between p-8 bg-slate-100 rounded-[2.5rem] opacity-40 grayscale pointer-events-none">
+                  <div className="flex items-center gap-6">
+                     <div className="h-16 w-16 rounded-2xl bg-white flex items-center justify-center shadow-md"><Plus className="h-8 w-8 text-slate-400" /></div>
                      <div>
-                        <p className="text-xs font-black text-slate-900 uppercase">Dark Mode (Beta)</p>
-                        <p className="text-[10px] font-bold text-slate-400 mt-0.5 uppercase tracking-widest">Locked: Evaluation needed</p>
+                        <p className="text-lg font-black text-slate-900 uppercase tracking-tight">Neural Dark Mode (Beta)</p>
+                        <p className="text-[11px] font-black text-slate-400 mt-1 uppercase tracking-[0.2em]">Locked: Security evaluation pending</p>
                      </div>
                   </div>
-                  <Settings className="h-5 w-5 text-slate-400" />
               </div>
           </section>
       </div>
