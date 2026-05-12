@@ -22,7 +22,20 @@ function doGet(e) {
   const sheet = ss.getSheetByName('Vendors') || ss.insertSheet('Vendors');
   
   if (action === 'health' || action === 'test') {
-    return ContentService.createTextOutput(JSON.stringify({ status: 'live', db: 'google_sheets', timestamp: new Date().toISOString() }))
+    let folderStatus = 'unknown';
+    try {
+      const folder = DriveApp.getFolderById(FOLDER_ID);
+      folderStatus = 'accessible';
+    } catch (e) {
+      folderStatus = 'error: ' + e.toString();
+    }
+    
+    return ContentService.createTextOutput(JSON.stringify({ 
+      status: 'live', 
+      db: 'google_sheets', 
+      folderStatus: folderStatus,
+      timestamp: new Date().toISOString() 
+    }))
       .setMimeType(ContentService.MimeType.JSON);
   }
   
@@ -59,6 +72,9 @@ function doGet(e) {
 
 function doPost(e) {
   try {
+    if (!e.postData || !e.postData.contents) {
+      throw new Error('Missing post data');
+    }
     const params = JSON.parse(e.postData.contents);
     const action = params.action;
     const ss = SpreadsheetApp.openById(SHEET_ID);

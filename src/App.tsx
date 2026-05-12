@@ -104,12 +104,19 @@ const apiCall = async (action: string, data: any = {}) => {
       });
       
       let result = response.data;
+      
+      // Handle potential Google error pages or redirects returned as strings
       if (typeof result === 'string') {
+        if (result.includes('<html') || result.includes('<!DOCTYPE html')) {
+          throw new Error('Google Script returned an HTML page instead of JSON. Check if your Script is deployed as a Web App with access "Anyone".');
+        }
         try {
           result = JSON.parse(result);
         } catch (e) {
+          console.warn('Response parsing failed, attempting fuzzy success/error check');
           if (result.toLowerCase().includes('success')) result = { success: true };
           else if (result.toLowerCase().includes('error')) result = { success: false, error: result };
+          else throw new Error(`Invalid response format from script: ${result.substring(0, 100)}...`);
         }
       }
 
@@ -332,8 +339,8 @@ function Layout({ children, systemHealth }: { children: React.ReactNode, systemH
             
             <div className="flex items-center gap-4">
                <div className="flex items-center gap-3 cursor-pointer group p-1 rounded-xl transition-all">
-                  <div className="h-10 w-10 rounded-xl bg-slate-800 border border-slate-700 shadow-lg group-hover:scale-105 transition-transform overflow-hidden relative">
-                     <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=64&h=64&fit=crop&q=80" alt="Avatar" className="h-full w-full object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500" />
+                  <div className="h-10 w-10 rounded-xl bg-slate-800 border border-slate-700 shadow-lg group-hover:scale-105 transition-all duration-300 flex items-center justify-center text-slate-400 group-hover:text-white group-hover:bg-indigo-600 group-hover:border-indigo-500">
+                     <User className="h-5 w-5" />
                   </div>
                   <div className="hidden sm:block">
                     <p className="text-[13px] font-bold text-white leading-none tracking-wide text-right">P. Majhi</p>
@@ -1286,9 +1293,10 @@ function FileField({ label, value, onUpload, required }: any) {
         await new Promise(resolve => setTimeout(resolve, 1500));
         onUpload('https://example.com/uploaded/' + file.name);
       }
-    } catch (error) {
-      console.error('Upload failed:', error);
-      alert('Upload failed. Please ensure your Google Script handles "upload" action.');
+    } catch (error: any) {
+      console.error('Upload failure details:', error);
+      const errorMsg = error.message || 'Unknown network error';
+      alert(`Critical Upload Failure: ${errorMsg}\n\nTroubleshooting:\n1. Ensure the Google Script is correctly deployed as a Web App.\n2. Verify the FOLDER_ID in Code.gs is correct and accessible.\n3. Large files may hit Google Apps Script execution limits.`);
     } finally {
       setUploading(false);
     }
