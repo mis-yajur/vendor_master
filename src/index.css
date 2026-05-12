@@ -16,3 +16,35 @@
     @apply antialiased bg-slate-50 text-slate-900 selection:bg-indigo-100 selection:text-indigo-900;
   }
 }
+
+/* Layered Background Utilities */
+.layer-0 { @apply bg-slate-100/50; }
+.layer-1 { @apply bg-white shadow-sm border border-slate-200/60; }
+.layer-2 { @apply bg-slate-50 shadow-inner border border-slate-100; }
+.layer-card { @apply bg-white shadow-xl shadow-slate-200/50 border border-slate-100; }
+
+/* Theme Classes */
+.theme-default {
+  --theme-primary: theme('colors.indigo.600');
+  --theme-bg: theme('colors.slate.50');
+  --theme-nav: theme('colors.slate.900');
+}
+
+.theme-midnight {
+  --theme-primary: theme('colors.violet.500');
+  --theme-bg: #030712;
+  --theme-nav: #111827;
+  & body { background-color: #030712; color: #f3f4f6; }
+}
+
+.theme-emerald {
+  --theme-primary: theme('colors.emerald.600');
+  --theme-bg: #f0fdf4;
+  --theme-nav: #064e3b;
+}
+
+.theme-ocean {
+  --theme-primary: theme('colors.sky.600');
+  --theme-bg: #f0f9ff;
+  --theme-nav: #0c4a6e;
+}
