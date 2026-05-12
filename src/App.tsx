@@ -55,7 +55,7 @@ import Chart from 'react-apexcharts';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { 
-  BrowserRouter as Router, 
+  HashRouter as Router, 
   Routes, 
   Route, 
   Link, 
@@ -197,7 +197,6 @@ export default function App() {
 
 function Layout({ children, systemHealth }: { children: React.ReactNode, systemHealth: any }) {
   const location = useLocation();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   const navItems = [
     { path: '/', label: 'Overview', icon: LayoutDashboard },
@@ -207,111 +206,71 @@ function Layout({ children, systemHealth }: { children: React.ReactNode, systemH
   ];
 
   return (
-    <div className="min-h-screen bg-[#f1f5f9] font-sans flex overflow-hidden">
-      {/* Sidebar - Dark Glassy Effect */}
-      <motion.aside 
-        initial={false}
-        animate={{ width: isSidebarOpen ? 260 : 88 }}
-        className="bg-[#0f172a] text-slate-400 flex flex-col relative z-50 shadow-2xl"
-      >
-        <div className="h-24 flex items-center px-6 mb-4 border-b border-white/5">
-          <Link to="/" className="flex items-center gap-4 overflow-hidden whitespace-nowrap">
-            <div className="flex-shrink-0 h-12 w-12 items-center justify-center rounded-2xl bg-indigo-500 text-white shadow-lg shadow-indigo-500/40 flex transform hover:rotate-3 transition-transform">
-              <Building2 className="h-7 w-7" />
-            </div>
-            {isSidebarOpen && (
+    <div className="min-h-screen bg-[#f1f5f9] font-sans flex flex-col">
+      {/* Top bar with Navigation */}
+      <header className="h-24 bg-[#0f172a] text-white flex items-center justify-between px-10 sticky top-0 z-50 shadow-2xl">
+         <div className="flex items-center gap-12">
+            <Link to="/" className="flex items-center gap-4 group">
+              <div className="h-12 w-12 items-center justify-center rounded-2xl bg-indigo-500 text-white shadow-lg shadow-indigo-500/40 flex transform group-hover:rotate-6 transition-transform">
+                <Building2 className="h-7 w-7" />
+              </div>
               <div className="flex flex-col">
-                <span className="text-2xl font-black tracking-tight text-white leading-none font-display">
+                <span className="text-3xl font-black tracking-tight text-white leading-none font-display uppercase">
                   Yajur<span className="text-indigo-400">Portal</span>
                 </span>
-                <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-indigo-300 ml-0.5 mt-1">Vendor Master</span>
+                <span className="text-[12px] font-black uppercase tracking-[0.3em] text-indigo-300 mt-1">Vendor Master v2.1</span>
               </div>
-            )}
-          </Link>
-        </div>
-
-        <nav className="flex-1 px-4 py-6 space-y-4">
-          {navItems.map((item) => (
-            <Link
-              key={item.path}
-              to={item.path}
-              className={cn(
-                "group flex items-center gap-4 px-4 py-4 rounded-2xl text-[15px] font-bold transition-all overflow-hidden whitespace-nowrap",
-                location.pathname === item.path 
-                  ? "bg-gradient-to-r from-indigo-600 to-indigo-500 text-white shadow-xl shadow-indigo-600/30 scale-[1.02]" 
-                  : "hover:bg-slate-800/50 hover:text-slate-100"
-              )}
-            >
-              <item.icon className={cn("h-6 w-6 flex-shrink-0", location.pathname === item.path ? "text-white" : "group-hover:text-indigo-400")} />
-              {isSidebarOpen && <span>{item.label}</span>}
             </Link>
-          ))}
-        </nav>
 
-        <div className="p-6 border-t border-white/5">
-          <div className="bg-slate-800/50 rounded-2xl p-4 flex items-center gap-3 overflow-hidden border border-white/5 shadow-inner">
-             <div className="h-12 w-12 rounded-xl bg-indigo-500 text-white flex items-center justify-center flex-shrink-0 shadow-lg">
-               <User className="h-6 w-6" />
-             </div>
-             {isSidebarOpen && (
-               <div className="overflow-hidden">
-                 <p className="text-sm font-black text-white truncate">Prosun Majhi</p>
-                 <p className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest truncate">Global Admin</p>
+            <nav className="hidden md:flex items-center gap-2">
+              {navItems.map((item) => (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  className={cn(
+                    "flex items-center gap-2 px-6 py-3 rounded-2xl text-[14px] font-black uppercase tracking-widest transition-all",
+                    location.pathname === item.path 
+                      ? "bg-indigo-600 text-white shadow-xl shadow-indigo-600/30" 
+                      : "text-slate-400 hover:text-white hover:bg-white/5"
+                  )}
+                >
+                  <item.icon className="h-4 w-4" />
+                  <span>{item.label}</span>
+                </Link>
+              ))}
+            </nav>
+         </div>
+
+         <div className="flex items-center gap-8">
+            <div className="hidden lg:flex items-center gap-6 pr-8 border-r border-white/10">
+               <div className="flex items-center gap-3 px-4 py-2 bg-white/5 rounded-2xl border border-white/5 shadow-inner">
+                  <div className={cn("h-3 w-3 rounded-full shadow-lg", systemHealth.db !== 'disconnected' ? "bg-emerald-500 animate-pulse" : "bg-rose-500")} />
+                  <span className="text-[11px] font-black uppercase tracking-[0.2em] text-indigo-300">{systemHealth.db !== 'disconnected' ? 'Cloud Live' : 'Offline'}</span>
                </div>
-             )}
-          </div>
-        </div>
+               <button className="relative p-2 text-slate-400 hover:text-white transition-all">
+                  <Bell className="h-6 w-6" />
+                  <span className="absolute top-1 right-1 h-3 w-3 bg-rose-500 rounded-full border-2 border-[#0f172a] shadow-sm" />
+               </button>
+            </div>
+            <div className="flex items-center gap-4 group cursor-pointer">
+               <div className="flex flex-col items-end hidden sm:block">
+                 <p className="text-sm font-black text-white leading-none uppercase tracking-tighter">Prosun Majhi</p>
+                 <p className="text-[10px] font-black text-indigo-400 uppercase tracking-widest mt-1">Super Admin</p>
+               </div>
+               <div className="h-12 w-12 rounded-2xl bg-indigo-500 text-white flex items-center justify-center border-2 border-white shadow-xl group-hover:scale-105 transition-transform overflow-hidden">
+                  <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=64&h=64&fit=crop&q=80" alt="Avatar" className="h-full w-full object-cover" />
+               </div>
+            </div>
+         </div>
+      </header>
 
-        <button 
-          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          className="absolute -right-4 top-28 h-8 w-8 bg-indigo-600 text-white rounded-xl flex items-center justify-center shadow-xl hover:scale-110 active:scale-95 transition-all border-4 border-[#f1f5f9] z-[60]"
-        >
-          {isSidebarOpen ? <ChevronRight className="h-4 w-4 rotate-180" /> : <ChevronRight className="h-4 w-4" />}
-        </button>
-      </motion.aside>
-
-      {/* Main Container */}
-      <div className="flex-1 flex flex-col h-screen overflow-hidden">
-        {/* Top bar */}
-        <header className="h-24 bg-white/90 backdrop-blur-xl border-b border-slate-200 flex items-center justify-between px-10 sticky top-0 z-40 shadow-sm">
-           <div className="flex items-center gap-4">
-              <h1 className="text-2xl font-black text-slate-800 font-display tracking-tight">
-                {navItems.find(i => i.path === location.pathname)?.label || 'Page'}
-              </h1>
-           </div>
-
-           <div className="flex items-center gap-8">
-              <div className="flex items-center gap-8 pr-8 border-r border-slate-100">
-                 <div className="flex items-center gap-3 px-4 py-2 bg-slate-50 rounded-2xl border border-slate-100 shadow-inner">
-                    <div className={cn("h-3 w-3 rounded-full shadow-lg", systemHealth.db !== 'disconnected' ? "bg-emerald-500 animate-pulse" : "bg-rose-500")} />
-                    <span className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-600">{systemHealth.db !== 'disconnected' ? 'Cloud Sync Active' : 'Offline'}</span>
-                 </div>
-                 <button className="relative p-3 text-slate-400 hover:text-indigo-600 transition-all hover:bg-slate-50 rounded-2xl">
-                    <Bell className="h-6 w-6" />
-                    <span className="absolute top-3 right-3 h-3 w-3 bg-rose-500 rounded-full border-2 border-white shadow-sm" />
-                 </button>
-              </div>
-              <div className="flex items-center gap-4 group cursor-pointer">
-                 <div className="h-12 w-12 rounded-2xl bg-slate-100 flex items-center justify-center border-2 border-white shadow-lg overflow-hidden group-hover:scale-105 transition-transform">
-                    <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=64&h=64&fit=crop&q=80" alt="Avatar" className="h-full w-full object-cover" />
-                 </div>
-                 <div className="hidden xl:block">
-                   <p className="text-sm font-black text-slate-800 leading-none">Prosun Majhi</p>
-                   <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Super Admin</p>
-                 </div>
-              </div>
-           </div>
-        </header>
-
-        {/* Content Area */}
-        <main className="flex-1 overflow-y-auto p-12 relative bg-[#f1f5f9]">
-           <div className="w-full h-full">
-             {children}
-           </div>
-        </main>
-      </div>
+      {/* Content Area */}
+      <main className="flex-1 p-8 md:p-16 bg-[#f1f5f9]">
+         <div className="w-full max-w-[1600px] mx-auto">
+           {children}
+         </div>
+      </main>
     </div>
-
   );
 }
 
@@ -993,7 +952,7 @@ function FormSection({ title, icon: Icon, children }: any) {
         <div className="h-16 w-16 rounded-[1.5rem] bg-indigo-50 flex items-center justify-center text-indigo-600 shadow-xl border-2 border-indigo-100 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-500">
           <Icon className="h-8 w-8" />
         </div>
-        <h3 className="text-[16px] font-black uppercase tracking-[0.35em] text-slate-900 font-display leading-none">{title}</h3>
+        <h3 className="text-[18px] font-black uppercase tracking-[0.4em] text-slate-900 font-display leading-none">{title}</h3>
       </div>
       <div className="pl-0">
         {children}
@@ -1061,13 +1020,13 @@ function FileField({ label, value, onUpload, required }: any) {
 function FormInput({ label, name, type = 'text', placeholder, options, error }: any) {
   return (
     <div className="space-y-4">
-       <label className="text-[12px] font-black text-slate-400 uppercase tracking-[0.2em] pl-2 leading-none">{label}</label>
+       <label className="text-[14px] font-black text-slate-500 uppercase tracking-[0.25em] pl-2 leading-none">{label}</label>
        {type === 'select' ? (
-         <Field as="select" name={name} className="w-full bg-white border-4 border-slate-100 rounded-[2rem] py-6 px-8 text-[16px] font-bold focus:ring-[14px] focus:ring-indigo-100 focus:border-indigo-600 transition-all outline-none shadow-2xl shadow-slate-200/50">
+         <Field as="select" name={name} className="w-full bg-white border-4 border-slate-100 rounded-[2.5rem] py-7 px-10 text-[18px] font-black text-slate-900 focus:ring-[16px] focus:ring-indigo-100 focus:border-indigo-600 transition-all outline-none shadow-2xl shadow-slate-200/50">
             {options.map((o: string) => <option key={o} value={o}>{o}</option>)}
          </Field>
        ) : (
-         <Field name={name} placeholder={placeholder} className="w-full bg-white border-4 border-slate-100 rounded-[2rem] py-6 px-8 text-[16px] font-bold focus:ring-[14px] focus:ring-indigo-100 focus:border-indigo-600 transition-all outline-none shadow-2xl shadow-slate-200/50 placeholder:text-slate-200" />
+         <Field name={name} placeholder={placeholder} className="w-full bg-white border-4 border-slate-100 rounded-[2.5rem] py-7 px-10 text-[18px] font-black text-slate-900 focus:ring-[16px] focus:ring-indigo-100 focus:border-indigo-600 transition-all outline-none shadow-2xl shadow-slate-200/50 placeholder:text-slate-200" />
        )}
        <div className="h-6">
          <AnimatePresence>
