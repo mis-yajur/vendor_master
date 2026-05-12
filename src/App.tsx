@@ -247,19 +247,34 @@ function Layout({ children, systemHealth }: { children: React.ReactNode, systemH
                   <div className={cn("h-3 w-3 rounded-full shadow-lg", systemHealth.db !== 'disconnected' ? "bg-emerald-500 animate-pulse" : "bg-rose-500")} />
                   <span className="text-[11px] font-black uppercase tracking-[0.2em] text-indigo-300">{systemHealth.db !== 'disconnected' ? 'Cloud Live' : 'Offline'}</span>
                </div>
-               <button className="relative p-2 text-slate-400 hover:text-white transition-all">
+               <button className="relative p-3 text-slate-400 hover:text-white transition-all bg-white/5 rounded-2xl hover:bg-white/10">
                   <Bell className="h-6 w-6" />
-                  <span className="absolute top-1 right-1 h-3 w-3 bg-rose-500 rounded-full border-2 border-[#0f172a] shadow-sm" />
+                  <span className="absolute top-3 right-3 h-3 w-3 bg-rose-500 rounded-full border-2 border-[#0f172a] shadow-sm" />
                </button>
             </div>
-            <div className="flex items-center gap-4 group cursor-pointer">
-               <div className="flex flex-col items-end hidden sm:block">
-                 <p className="text-sm font-black text-white leading-none uppercase tracking-tighter">Prosun Majhi</p>
-                 <p className="text-[10px] font-black text-indigo-400 uppercase tracking-widest mt-1">Super Admin</p>
+            
+            <div className="flex items-center gap-6 group">
+               <div className="flex items-center gap-4 cursor-pointer p-1.5 pr-4 rounded-2xl hover:bg-white/5 transition-all">
+                  <div className="h-12 w-12 rounded-2xl bg-indigo-500 text-white flex items-center justify-center border-2 border-white shadow-xl group-hover:scale-105 transition-transform overflow-hidden">
+                     <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=64&h=64&fit=crop&q=80" alt="Avatar" className="h-full w-full object-cover" />
+                  </div>
+                  <div className="hidden sm:block">
+                    <p className="text-sm font-black text-white leading-none uppercase tracking-tighter">Prosun Majhi</p>
+                    <p className="text-[10px] font-black text-indigo-400 uppercase tracking-widest mt-1">Super Admin</p>
+                  </div>
                </div>
-               <div className="h-12 w-12 rounded-2xl bg-indigo-500 text-white flex items-center justify-center border-2 border-white shadow-xl group-hover:scale-105 transition-transform overflow-hidden">
-                  <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=64&h=64&fit=crop&q=80" alt="Avatar" className="h-full w-full object-cover" />
-               </div>
+               
+               <button 
+                 onClick={() => {
+                   if(confirm('Are you sure you want to logout?')) {
+                     window.location.reload();
+                   }
+                 }}
+                 className="flex items-center gap-2 px-5 py-3 bg-rose-600/10 hover:bg-rose-600 text-rose-500 hover:text-white rounded-2xl text-[12px] font-black uppercase tracking-widest transition-all shadow-lg border border-rose-600/20 active:scale-95"
+               >
+                 <LogOut className="h-4 w-4" />
+                 <span>Logout</span>
+               </button>
             </div>
          </div>
       </header>
@@ -863,13 +878,13 @@ function RegistrationForm({ onComplete }: { onComplete: () => void }) {
           {({ isSubmitting, errors, touched, setFieldValue, values }) => (
             <Form className="p-10 md:p-14 space-y-12">
               <div className="grid gap-12">
-                <FormSection title="Master Details" icon={Settings}>
+                <FormSection title="A. Master Configuration" icon={Settings}>
                   <div className="grid gap-6 sm:grid-cols-2 max-w-lg">
                      <FormInput label="Request Action" name="requestType" type="select" options={['New', 'Change']} />
                   </div>
                 </FormSection>
 
-                <FormSection title="Legal & Presence" icon={MapPin}>
+                <FormSection title="B. Identity & Presence" icon={MapPin}>
                   <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                      <FormInput label="Official Legal Name" name="name" placeholder="E.g. Acme Corp Private Ltd" error={touched.name && errors.name} />
                      <FormInput label="Floor/Building" name="address.floorBuilding" placeholder="Unit, Level" error={touched.address?.floorBuilding && (errors as any).address?.floorBuilding} />
@@ -882,16 +897,18 @@ function RegistrationForm({ onComplete }: { onComplete: () => void }) {
                   </div>
                 </FormSection>
 
-                <FormSection title="Statutory & Tax" icon={ShieldCheck}>
+                <FormSection title="C. Statutory Registry" icon={ShieldCheck}>
                   <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                     <FormInput label="PAN" name="statutory.pan" placeholder="10 Digit PAN" error={touched.statutory?.pan && (errors as any).statutory?.pan} />
-                     <FormInput label="GSTIN" name="statutory.gstin" placeholder="15 Digit GSTIN" error={touched.statutory?.gstin && (errors as any).statutory?.gstin} />
+                     <FormInput label="PAN (10 Digit)" name="statutory.pan" placeholder="XXXXX0000X" error={touched.statutory?.pan && (errors as any).statutory?.pan} />
+                     <FormInput label="GSTIN (15 Digit)" name="statutory.gstin" placeholder="00XXXXX0000X0Z0" error={touched.statutory?.gstin && (errors as any).statutory?.gstin} />
+                     <FormInput label="MSMED Reg No" name="statutory.msmedRegNo" placeholder="UDYAM-XX-00-0000000" error={touched.statutory?.msmedRegNo && (errors as any).statutory?.msmedRegNo} />
+                     <FormInput label="TDS Exemption ID" name="statutory.tdsExemptionDetails" placeholder="Certificate No" error={touched.statutory?.tdsExemptionDetails && (errors as any).statutory?.tdsExemptionDetails} />
                      <FormInput label="Year Estd." name="statutory.yearOfEstablishment" placeholder="YYYY" error={touched.statutory?.yearOfEstablishment && (errors as any).statutory?.yearOfEstablishment} />
                      <FormInput label="Legal Entity" name="statutory.constitution" type="select" options={['Proprietary', 'Private Limited', 'LLP', 'Partnership', 'Public Limited', 'Trust']} />
                   </div>
                 </FormSection>
 
-                <FormSection title="Financial Nexus" icon={CreditCard}>
+                <FormSection title="D. Financial Nexus" icon={CreditCard}>
                   <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                      <FormInput label="Beneficiary" name="bank.beneficiaryName" placeholder="Account Name" error={touched.bank?.beneficiaryName && (errors as any).bank?.beneficiaryName} />
                      <FormInput label="Bank Name" name="bank.bankName" placeholder="E.g. HDFC Bank" error={touched.bank?.bankName && (errors as any).bank?.bankName} />
@@ -902,11 +919,42 @@ function RegistrationForm({ onComplete }: { onComplete: () => void }) {
                   </div>
                 </FormSection>
 
-                <FormSection title="Digital Repository" icon={Paperclip}>
-                  <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                     <FileField label="GSTIN Authority" value={values.documents.gstinCopy} onUpload={(url) => setFieldValue('documents.gstinCopy', url)} required />
-                     <FileField label="PAN Authority" value={values.documents.panCopy} onUpload={(url) => setFieldValue('documents.panCopy', url)} required />
-                     <FileField label="Bank Evidence" value={values.documents.cancelledChequeCopy} onUpload={(url) => setFieldValue('documents.cancelledChequeCopy', url)} required />
+                <FormSection title="E. Digital Repository" icon={Paperclip}>
+                  <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+                     <FileField 
+                       label="GSTIN Copy" 
+                       value={values.documents.gstinCopy} 
+                       onUpload={(url) => setFieldValue('documents.gstinCopy', url)} 
+                       required 
+                     />
+                     <FileField 
+                       label="PAN Copy" 
+                       value={values.documents.panCopy} 
+                       onUpload={(url) => setFieldValue('documents.panCopy', url)} 
+                       required 
+                     />
+                     <FileField 
+                       label="MSMED Copy" 
+                       value={values.documents.msmedCopy} 
+                       onUpload={(url) => setFieldValue('documents.msmedCopy', url)} 
+                       required 
+                     />
+                     <FileField 
+                       label="Cancelled Cheque Copy" 
+                       value={values.documents.cancelledChequeCopy} 
+                       onUpload={(url) => setFieldValue('documents.cancelledChequeCopy', url)} 
+                       required 
+                     />
+                     <FileField 
+                       label="TDS Exemption Certificate Copy" 
+                       value={values.documents.tdsExemptionCopy} 
+                       onUpload={(url) => setFieldValue('documents.tdsExemptionCopy', url)} 
+                     />
+                     <FileField 
+                       label="Signed Declaration Authority" 
+                       value={values.documents.signedDeclaration} 
+                       onUpload={(url) => setFieldValue('documents.signedDeclaration', url)} 
+                     />
                   </div>
                 </FormSection>
               </div>
@@ -946,13 +994,24 @@ function RegistrationForm({ onComplete }: { onComplete: () => void }) {
 }
 
 function FormSection({ title, icon: Icon, children }: any) {
+  const sectionLetter = title.split('.')[0];
+  const sectionTitle = title.split('.').slice(1).join('.');
+
   return (
     <div className="space-y-10 group">
-      <div className="flex items-center gap-6 pb-6 border-b-4 border-slate-100 group-hover:border-indigo-600 transition-colors">
-        <div className="h-16 w-16 rounded-[1.5rem] bg-indigo-50 flex items-center justify-center text-indigo-600 shadow-xl border-2 border-indigo-100 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-500">
-          <Icon className="h-8 w-8" />
+      <div className="flex items-center gap-6 pb-6 border-b-8 border-slate-100 group-hover:border-indigo-600 transition-all duration-700 relative">
+        <div className="relative">
+          <div className="h-20 w-20 rounded-[2rem] bg-indigo-600 flex items-center justify-center text-white shadow-2xl shadow-indigo-200 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 z-10 relative">
+            <Icon className="h-10 w-10" />
+          </div>
+          <div className="absolute -top-4 -left-4 h-12 w-12 rounded-2xl bg-indigo-100 text-indigo-700 flex items-center justify-center font-black text-xl shadow-lg border-4 border-white z-20">
+            {sectionLetter}
+          </div>
         </div>
-        <h3 className="text-[18px] font-black uppercase tracking-[0.4em] text-slate-900 font-display leading-none">{title}</h3>
+        <div className="flex flex-col">
+          <h3 className="text-2xl font-black uppercase tracking-[0.4em] text-slate-900 font-display leading-none">{sectionTitle}</h3>
+          <div className="h-1.5 w-24 bg-indigo-600 mt-4 rounded-full group-hover:w-48 transition-all duration-700 shadow-lg shadow-indigo-200" />
+        </div>
       </div>
       <div className="pl-0">
         {children}
@@ -981,8 +1040,17 @@ function FileField({ label, value, onUpload, required }: any) {
 
   return (
     <div className="space-y-4">
-      <label className="text-[12px] font-black text-slate-400 uppercase tracking-[0.2em] pl-1 leading-none">
-        {label} {required && <span className="text-rose-500">*</span>}
+      <label className="text-[12px] font-black text-slate-400 uppercase tracking-[0.2em] pl-1 leading-none flex items-center justify-between">
+        <span>{label} {required && <span className="text-rose-500">*</span>}</span>
+        {value ? (
+          <span className="text-emerald-500 font-bold text-[10px] bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100 flex items-center gap-1.5 animate-in fade-in slide-in-from-right-2">
+            ✅ ATTACHED
+          </span>
+        ) : required ? (
+          <span className="text-slate-300 font-bold text-[9px] border border-slate-100 px-2 py-0.5 rounded-md">
+            REQUIRED
+          </span>
+        ) : null}
       </label>
       <div className={cn(
         "relative h-44 rounded-[2.5rem] border-4 border-dashed transition-all flex flex-col items-center justify-center gap-4 overflow-hidden shadow-2xl",
