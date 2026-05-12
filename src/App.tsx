@@ -79,7 +79,7 @@ const SCRIPT_URL = (import.meta as any).env.VITE_GOOGLE_SCRIPT_URL;
 
 // axios.defaults.baseURL = window.location.origin;
 
-// Helper for API calls with dummy data fallback
+// Helper for API calls with robust static fallback
 const apiCall = async (action: string, data: any = {}) => {
   try {
     const isDirect = window.location.hostname.includes('github.io') || window.location.hostname.includes('localhost');
@@ -96,18 +96,42 @@ const apiCall = async (action: string, data: any = {}) => {
     }
     
     if (action === 'list') {
-      const res = await axios.get('/api/vendors');
-      return res.data;
+      try {
+        const res = await axios.get('/api/vendors');
+        return res.data;
+      } catch (err) {
+        if (axios.isAxiosError(err) && err.response?.status === 404) {
+          console.warn('Backend unavailable, using LocalStorage repository');
+          const stored = localStorage.getItem('vendor_registry');
+          return stored ? JSON.parse(stored) : DUMMY_VENDORS;
+        }
+        throw err;
+      }
     }
     
     if (action === 'add') {
-      const res = await axios.post('/api/vendors', data);
-      return res.data;
+      try {
+        const res = await axios.post('/api/vendors', data);
+        return res.data;
+      } catch (err) {
+        if (axios.isAxiosError(err) && err.response?.status === 404) {
+          const stored = localStorage.getItem('vendor_registry');
+          const current = stored ? JSON.parse(stored) : DUMMY_VENDORS;
+          const updated = [data.vendor, ...current];
+          localStorage.setItem('vendor_registry', JSON.stringify(updated));
+          return { success: true, mode: 'local_persistence' };
+        }
+        throw err;
+      }
     }
     
     if (action === 'health') {
-      const res = await axios.get('/api/health');
-      return res.data;
+      try {
+        const res = await axios.get('/api/health');
+        return res.data;
+      } catch (err) {
+        return { status: 'static_mode', db: 'local_persistence', message: 'Running without active backend' };
+      }
     }
   } catch (error) {
     console.error(`apiCall ${action} error:`, error);
@@ -1095,22 +1119,22 @@ function FormSection({ title, icon: Icon, children }: any) {
   const sectionTitle = title.split('.').slice(1).join('.');
 
   return (
-    <div className="space-y-10 group">
-      <div className="flex items-center gap-6 pb-6 border-b-8 border-slate-100 group-hover:border-indigo-600 transition-all duration-700 relative">
+    <div className="space-y-12 group">
+      <div className="flex items-center gap-8 pb-8 border-b-[12px] border-slate-50 group-hover:border-indigo-600 transition-all duration-1000 relative">
         <div className="relative">
-          <div className="h-20 w-20 rounded-[2rem] bg-indigo-600 flex items-center justify-center text-white shadow-2xl shadow-indigo-200 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 z-10 relative">
-            <Icon className="h-10 w-10" />
+          <div className="h-24 w-24 rounded-[2.5rem] bg-indigo-600 flex items-center justify-center text-white shadow-[0_20px_50px_rgba(79,70,229,0.3)] group-hover:scale-110 group-hover:rotate-12 transition-all duration-700 z-10 relative">
+            <Icon className="h-12 w-12" />
           </div>
-          <div className="absolute -top-4 -left-4 h-12 w-12 rounded-2xl bg-indigo-100 text-indigo-700 flex items-center justify-center font-black text-xl shadow-lg border-4 border-white z-20">
+          <div className="absolute -top-6 -left-6 h-16 w-16 rounded-3xl bg-white text-indigo-700 flex items-center justify-center font-black text-2xl shadow-2xl border-4 border-indigo-50 z-20">
             {sectionLetter}
           </div>
         </div>
         <div className="flex flex-col">
-          <h3 className="text-2xl font-black uppercase tracking-[0.4em] text-slate-900 font-display leading-none">{sectionTitle}</h3>
-          <div className="h-1.5 w-24 bg-indigo-600 mt-4 rounded-full group-hover:w-48 transition-all duration-700 shadow-lg shadow-indigo-200" />
+          <h3 className="text-3xl font-black uppercase tracking-[0.5em] text-slate-900 font-display leading-none">{sectionTitle}</h3>
+          <div className="h-2 w-32 bg-indigo-600 mt-6 rounded-full group-hover:w-64 transition-all duration-1000 shadow-xl shadow-indigo-200" />
         </div>
       </div>
-      <div className="pl-0">
+      <div className="pl-4">
         {children}
       </div>
     </div>
@@ -1184,27 +1208,27 @@ function FileField({ label, value, onUpload, required }: any) {
 
 function FormInput({ label, name, type = 'text', placeholder, options, error }: any) {
   return (
-    <div className="space-y-4">
-       <label className="text-[12px] font-extrabold text-slate-500 uppercase tracking-[0.15em] pl-1 leading-none block">{label}</label>
+    <div className="space-y-5">
+       <label className="text-[13px] font-black text-slate-500 uppercase tracking-[0.2em] pl-1 leading-none block">{label}</label>
        <div className="relative group">
          {type === 'select' ? (
-           <Field as="select" name={name} className="w-full bg-slate-50 border-2 border-slate-200 rounded-2xl py-5 px-8 text-[16px] font-semibold text-slate-900 focus:ring-8 focus:ring-indigo-50 focus:border-indigo-500 hover:border-slate-300 transition-all outline-none shadow-sm appearance-none cursor-pointer">
+           <Field as="select" name={name} className="w-full bg-white border-4 border-slate-100 rounded-[2.5rem] py-7 px-10 text-[18px] font-black text-slate-900 focus:ring-[20px] focus:ring-indigo-50 focus:border-indigo-600 hover:border-indigo-100 transition-all outline-none shadow-2xl shadow-slate-200/50 appearance-none cursor-pointer">
               {options.map((o: string) => <option key={o} value={o}>{o}</option>)}
            </Field>
          ) : (
-           <Field name={name} placeholder={placeholder} className="w-full bg-slate-50 border-2 border-slate-200 rounded-2xl py-5 px-8 text-[16px] font-semibold text-slate-900 focus:ring-8 focus:ring-indigo-50 focus:border-indigo-500 hover:border-slate-300 transition-all outline-none shadow-sm placeholder:text-slate-400" />
+           <Field name={name} placeholder={placeholder} className="w-full bg-white border-4 border-slate-100 rounded-[2.5rem] py-7 px-10 text-[18px] font-black text-slate-900 focus:ring-[20px] focus:ring-indigo-50 focus:border-indigo-600 hover:border-indigo-100 transition-all outline-none shadow-2xl shadow-slate-200/50 placeholder:text-slate-200" />
          )}
-         <div className="absolute inset-0 rounded-2xl border border-white/40 pointer-events-none" />
+         <div className="absolute inset-0 rounded-[2.5rem] border-2 border-white/60 pointer-events-none" />
        </div>
-       <div className="h-5">
+       <div className="h-6">
          <AnimatePresence>
            {error && (
              <motion.p 
                initial={{ opacity: 0, x: -10 }}
                animate={{ opacity: 1, x: 0 }}
-               className="text-[11px] font-black text-rose-500 uppercase tracking-[0.2em] pl-2"
+               className="text-[12px] font-black text-rose-500 uppercase tracking-[0.2em] pl-4 flex items-center gap-2"
              >
-               {error}
+               <AlertCircle className="h-4 w-4" /> {error}
              </motion.p>
            )}
          </AnimatePresence>

@@ -17,6 +17,11 @@ export const loadVendors = createAsyncThunk('vendors/fetchAll', async () => {
     }
     return Array.isArray(data) ? data : DUMMY_VENDORS;
   } catch (error) {
+    if (axios.isAxiosError(error) && error.response?.status === 404) {
+      console.warn('Synchronous server not found, falling back to client-side persistence');
+      const stored = localStorage.getItem('vendor_registry');
+      return stored ? JSON.parse(stored) : DUMMY_VENDORS;
+    }
     console.error('Fetch error in store:', error);
     return DUMMY_VENDORS;
   }
