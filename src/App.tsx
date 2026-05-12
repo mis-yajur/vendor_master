@@ -568,7 +568,7 @@ function Dashboard({ vendors = [], health }: any) {
 
   return (
     <div className="space-y-10 pb-20">
-      <div className="bg-white p-6 md:p-8 rounded-[2rem] border border-slate-200 shadow-sm relative overflow-hidden">
+      <div className="bg-white p-4 md:p-5 rounded-[2rem] border border-slate-200 shadow-sm relative overflow-hidden">
         <div className="absolute top-0 left-0 w-1.5 h-full bg-[var(--theme-primary)]" />
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
           <div>
@@ -597,14 +597,14 @@ function Dashboard({ vendors = [], health }: any) {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
         {stats.map((stat, idx) => (
           <motion.div 
             key={idx}
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: idx * 0.05 }}
-            className="group bg-white p-4 rounded-xl border border-slate-100 shadow-sm hover:shadow-xl hover:border-[var(--theme-primary)]/20 transition-all cursor-default relative overflow-hidden"
+            className="group bg-white p-3 rounded-xl border border-slate-100 shadow-sm hover:shadow-xl hover:border-[var(--theme-primary)]/20 transition-all cursor-default relative overflow-hidden"
           >
             <div className={cn(
               "absolute top-0 right-0 h-16 w-16 -mr-4 -mt-4 rounded-full blur-3xl opacity-0 group-hover:opacity-20 transition-opacity",
@@ -640,10 +640,10 @@ function Dashboard({ vendors = [], health }: any) {
       </div>
 
       <div className="grid lg:grid-cols-12 gap-8">
-        <div className="lg:col-span-8 bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden flex flex-col relative min-h-[350px]">
+        <div className="lg:col-span-12 bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden flex flex-col relative min-h-[350px]">
           <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--theme-primary)]/5 blur-3xl rounded-full -mr-16 -mt-16" />
           
-          <div className="px-6 py-4 border-b border-slate-50 flex items-center justify-between relative z-10">
+          <div className="px-4 py-3 border-b border-slate-50 flex items-center justify-between relative z-10">
             <div>
               <h3 className="text-base font-black text-slate-900 font-display uppercase italic tracking-tight flex items-center gap-2">
                 <Activity className="h-4 w-4 text-[var(--theme-primary)]" />
@@ -673,7 +673,7 @@ function Dashboard({ vendors = [], health }: any) {
             </div>
           </div>
           
-          <div className="flex-1 p-4 bg-slate-50/30">
+          <div className="flex-1 p-3 bg-slate-50/30">
              <div className="h-full w-full flex items-end justify-around gap-2 xl:gap-4 min-h-[180px] bg-white/40 rounded-xl p-4 border border-white/60 shadow-inner">
                 {(analyticsTab === 'real-time' ? [65, 45, 85, 55, 95, 75, 100] : [20, 40, 60, 50, 40, 70, 90]).map((h, i) => (
                   <div key={i + analyticsTab} className="flex-1 flex flex-col items-center gap-5 h-full justify-end group">
@@ -698,54 +698,7 @@ function Dashboard({ vendors = [], health }: any) {
                 ))}
              </div>
           </div>
-                <div className="lg:col-span-4 grid gap-4 flex flex-col">
-           <div className="bg-slate-950 rounded-2xl p-6 text-white relative overflow-hidden group border border-white/5 shadow-2xl flex-1 flex flex-col">
-              <div className="absolute top-0 left-0 w-full h-full bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 pointer-events-none" />
-              <div className="absolute top-0 left-0 w-1 h-full bg-[var(--theme-primary)]" />
-              
-              <div className="relative z-10 flex-1">
-                 <div className="h-10 w-10 rounded-xl bg-[var(--theme-primary)]/20 border border-[var(--theme-primary)]/30 text-[var(--theme-accent)] flex items-center justify-center mb-4 shadow-2xl group-hover:rotate-6 transition-transform">
-                    <ShieldCheck className="h-5 w-5" />
-                 </div>
-                 <h3 className="text-lg font-black font-display mb-2 tracking-tighter uppercase italic leading-none">Security Protocol</h3>
-                 <p className="text-slate-400 text-[11px] font-medium leading-relaxed mb-6">
-                   Proprietary encryption layer for statutory records and procurement audit logs.
-                 </p>
-                 
-                 <div className="space-y-2">
-                    {['Identity Biometrics', 'SHA-512 Matrix', 'Neural Audit'].map((label, i) => (
-                      <div key={i} className="flex items-center gap-3 p-3 bg-white/5 rounded-xl border border-white/5 hover:bg-white/10 transition-all group/item">
-                         <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 group-hover/item:scale-125 transition-transform" />
-                         <span className="text-[8px] font-bold uppercase tracking-[0.2em] text-slate-300">{label}</span>
-                      </div>
-                    ))}
-                 </div>
-              </div>
-              <Building2 className="absolute -right-12 -bottom-12 h-40 w-40 text-white/5 group-hover:rotate-12 transition-all duration-1000 blur-sm" />
-           </div>
- 
-           <div className="bg-[var(--theme-primary)] rounded-2xl p-6 text-white shadow-2xl relative overflow-hidden group border border-white/20">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 blur-3xl rounded-full -mr-12 -mt-12" />
-              
-              <div className="relative z-10 flex flex-col justify-between h-full">
-                 <div>
-                    <div className="h-10 w-10 rounded-xl bg-white/10 backdrop-blur-xl border border-white/20 text-white flex items-center justify-center mb-4 shadow-xl">
-                       <Plus className="h-5 w-5" />
-                    </div>
-                    <h3 className="text-lg font-black font-display mb-2 tracking-tighter italic uppercase">Terminal Entry</h3>
-                    <p className="text-white/80 text-[11px] font-medium mb-6">Initialize secure onboarding protocol for new enterprise entity.</p>
-                 </div>
-                 <button 
-                  onClick={() => navigate('/register')}
-                  className="w-full py-3 bg-white text-[var(--theme-primary)] rounded-xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-white/90 transition-all flex items-center justify-center gap-2 group shadow-2xl active:scale-95"
-                 >
-                    Launch protocol
-                    <ArrowRight className="h-3 w-3 group-hover:translate-x-1 transition-transform" />
-                 </button>
-              </div>
-           </div>
         </div>
- </div>
       </div>
     </div>
   );
