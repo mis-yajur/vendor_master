@@ -41,6 +41,9 @@ import {
   CircleDollarSign,
   Calendar,
   ThumbsUp,
+  Upload,
+  Check,
+  Paperclip,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn, formatDate } from './lib/utils';
@@ -193,7 +196,6 @@ export default function App() {
 
 function Layout({ children, systemHealth }: { children: React.ReactNode, systemHealth: any }) {
   const location = useLocation();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   const navItems = [
     { path: '/', label: 'Dashboard', icon: LayoutDashboard },
@@ -203,97 +205,83 @@ function Layout({ children, systemHealth }: { children: React.ReactNode, systemH
   ];
 
   return (
-    <div className="flex min-h-screen bg-[#F8F9FD]">
-      {/* Sidebar */}
-      <aside className={cn(
-        "fixed inset-y-0 left-0 z-50 w-72 bg-white border-r border-slate-100 transition-transform duration-300 lg:translate-x-0 lg:static",
-        !isSidebarOpen && "-translate-x-full lg:w-20"
-      )}>
-        <div className="flex flex-col h-full">
-          <div className="flex h-20 items-center px-6 border-b border-slate-50 gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-600 text-white shadow-lg">
-              <Building2 className="h-6 w-6" />
-            </div>
-            {isSidebarOpen && (
-              <span className="text-lg font-black tracking-tight text-slate-900">
+    <div className="min-h-screen bg-[#F8F9FD]">
+      {/* Top Header */}
+      <header className="h-24 bg-white border-b border-slate-100 flex items-center justify-between px-8 md:px-16 sticky top-0 z-40 shadow-sm">
+         <div className="flex items-center gap-12">
+            <Link to="/" className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-600 text-white shadow-lg">
+                <Building2 className="h-6 w-6" />
+              </div>
+              <span className="text-xl font-black tracking-tight text-slate-900">
                 Materially<span className="text-indigo-600">Pro</span>
               </span>
-            )}
-          </div>
+            </Link>
 
-          <nav className="flex-1 p-4 space-y-1">
-            {navItems.map((item) => (
-              <Link
-                key={item.path}
-                to={item.path}
-                className={cn(
-                  "flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-bold transition-all",
-                  location.pathname === item.path 
-                    ? "bg-indigo-50 text-indigo-600 shadow-sm" 
-                    : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
-                )}
-              >
-                <item.icon className={cn("h-5 w-5", location.pathname === item.path ? "text-indigo-600" : "text-slate-400")} />
-                {isSidebarOpen && <span>{item.label}</span>}
-              </Link>
-            ))}
-          </nav>
+            <nav className="hidden xl:flex items-center gap-2">
+              {navItems.map((item) => (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  className={cn(
+                    "px-5 py-2 rounded-xl text-sm font-bold transition-all flex items-center gap-2",
+                    location.pathname === item.path 
+                      ? "bg-indigo-50 text-indigo-600" 
+                      : "text-slate-500 hover:text-slate-900 hover:bg-slate-50"
+                  )}
+                >
+                  <item.icon className="h-4 w-4" />
+                  <span>{item.label}</span>
+                </Link>
+              ))}
+            </nav>
+         </div>
 
-          <div className="p-4 border-t border-slate-50">
-            <div className="p-4 bg-indigo-600 rounded-[2rem] text-white overflow-hidden relative group">
-              <div className="relative z-10">
-                <p className="text-xs font-bold opacity-80 uppercase tracking-widest">Support</p>
-                <p className="text-sm font-black mt-1">Need help with onboarding?</p>
-                <button className="mt-4 w-full py-2 bg-white text-indigo-600 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-indigo-50 transition-colors">Contact MIS</button>
-              </div>
-              <Activity className="absolute -right-4 -bottom-4 h-24 w-24 opacity-10 group-hover:scale-110 transition-transform" />
+         <div className="flex items-center gap-6">
+            <div className="hidden md:flex items-center gap-6 mr-6">
+               <div className="flex items-center gap-2">
+                 <div className={cn("h-2 w-2 rounded-full", systemHealth.db !== 'disconnected' ? "bg-emerald-500 animate-pulse" : "bg-rose-500")} />
+                 <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{systemHealth.db !== 'disconnected' ? 'Active' : 'Offline'}</span>
+               </div>
+               <button className="p-2 text-slate-400 hover:text-slate-900 transition-colors relative">
+                 <Bell className="h-5 w-5" />
+                 <span className="absolute top-1.5 right-1.5 h-2 w-2 bg-rose-500 rounded-full border-2 border-white" />
+               </button>
             </div>
-          </div>
-        </div>
-      </aside>
+            
+            <div className="h-10 w-px bg-slate-100 hidden sm:block" />
+            
+            <div className="flex items-center gap-3 cursor-pointer group">
+              <div className="text-right hidden sm:block">
+                 <p className="text-xs font-black text-slate-900 group-hover:text-indigo-600 transition-colors uppercase leading-none">Prosun Majhi</p>
+                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Platform Admin</p>
+              </div>
+              <div className="h-11 w-11 rounded-2xl bg-slate-100 border-4 border border-white shadow-sm overflow-hidden flex items-center justify-center">
+                <User className="h-7 w-7 text-slate-400" />
+              </div>
+            </div>
+         </div>
+      </header>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col min-w-0">
-        <header className="h-20 bg-white border-b border-slate-100 flex items-center justify-between px-8 sticky top-0 z-40">
-           <div className="flex items-center gap-4">
-              <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="p-2 hover:bg-slate-50 rounded-xl text-slate-500">
-                <Menu className="h-5 w-5" />
-              </button>
-              <div className="relative hidden md:block">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-                <input 
-                  type="text" 
-                  placeholder="Universal Search..." 
-                  className="bg-slate-50 border-transparent pl-10 pr-4 py-2 rounded-xl text-xs font-bold w-64 focus:bg-white focus:ring-2 focus:ring-indigo-100 transition-all outline-none"
-                />
-              </div>
-           </div>
+      <main className="max-w-[1440px] mx-auto p-4 md:p-12">
+         {children}
+      </main>
 
-           <div className="flex items-center gap-6">
-              <div className="flex items-center gap-2">
-                <div className={cn("h-2 w-2 rounded-full", systemHealth.db !== 'disconnected' ? "bg-emerald-500 animate-pulse" : "bg-rose-500")} />
-                <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{systemHealth.db !== 'disconnected' ? 'Active' : 'Offline'}</span>
-              </div>
-              <button className="p-2 text-slate-400 hover:text-slate-900 transition-colors relative">
-                <Bell className="h-5 w-5" />
-                <span className="absolute top-1.5 right-1.5 h-2 w-2 bg-rose-500 rounded-full border-2 border-white" />
-              </button>
-              <div className="h-8 w-px bg-slate-100 mx-2" />
-              <div className="flex items-center gap-3 cursor-pointer group">
-                <div className="text-right hidden sm:block">
-                   <p className="text-xs font-black text-slate-900 group-hover:text-indigo-600 transition-colors uppercase leading-none">Prosun Majhi</p>
-                   <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Platform Admin</p>
-                </div>
-                <div className="h-10 w-10 rounded-xl bg-slate-100 border-2 border-white shadow-sm overflow-hidden flex items-center justify-center">
-                  <User className="h-6 w-6 text-slate-400" />
-                </div>
-              </div>
-           </div>
-        </header>
-
-        <main className="p-8">
-           {children}
-        </main>
+      {/* Mobile Nav */}
+      <div className="xl:hidden fixed bottom-6 left-1/2 -translate-x-1/2 bg-white/80 backdrop-blur-xl border border-white shadow-2xl rounded-[2rem] px-4 py-3 flex items-center gap-2 z-50">
+        {navItems.map((item) => (
+          <Link
+            key={item.path}
+            to={item.path}
+            className={cn(
+              "p-3 rounded-2xl transition-all",
+              location.pathname === item.path ? "bg-indigo-600 text-white" : "text-slate-400 hover:bg-slate-50"
+            )}
+          >
+            <item.icon className="h-5 w-5" />
+          </Link>
+        ))}
       </div>
     </div>
   );
@@ -583,7 +571,7 @@ function VendorCard({ vendor, onSelect }: { vendor: Vendor, onSelect: () => void
 function VendorDetailModal({ vendor, onClose }: { vendor: Vendor, onClose: () => void }) {
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/40 backdrop-blur-md p-4 overflow-y-auto">
-      <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="bg-white rounded-[3rem] w-full max-w-5xl shadow-2xl overflow-hidden relative my-8">
+      <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="bg-white rounded-[3rem] w-full max-w-6xl shadow-2xl overflow-hidden relative my-8">
         <div className="sticky top-0 bg-white z-10 px-10 py-8 border-b border-slate-100 flex items-center justify-between">
             <div className="flex items-center gap-4">
                <div className="h-14 w-14 rounded-2xl bg-indigo-600 text-white flex items-center justify-center shadow-lg"><Building2 className="h-7 w-7" /></div>
@@ -592,48 +580,99 @@ function VendorDetailModal({ vendor, onClose }: { vendor: Vendor, onClose: () =>
                   <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">System ID: {vendor.id} • Registered {formatDate(vendor.createdAt)}</p>
                </div>
             </div>
-            <button onClick={onClose} className="p-3 bg-slate-50 rounded-2xl text-slate-400 hover:text-slate-900 transition-colors"><X className="h-6 w-6" /></button>
+            <div className="flex items-center gap-2">
+               <button className="px-6 py-2 bg-indigo-50 text-indigo-600 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-indigo-100 transition-all flex items-center gap-2">
+                 <Download className="h-4 w-4" /> Export Profile
+               </button>
+               <button onClick={onClose} className="p-3 bg-slate-50 rounded-2xl text-slate-400 hover:text-slate-900 transition-colors"><X className="h-6 w-6" /></button>
+            </div>
         </div>
 
-        <div className="p-10 grid gap-10 lg:grid-cols-3 max-h-[70vh] overflow-y-auto bg-[#F8F9FD]">
-           <ProfileSection title="Address" icon={MapPin}>
-              <ProfileItem label="Street" value={vendor.address.street} />
-              <ProfileItem label="Location" value={`${vendor.address.city}, ${vendor.address.state}`} />
-              <ProfileItem label="Pin Code" value={vendor.address.pinCode} />
-              <ProfileItem label="Mobile" value={vendor.address.mobile} />
-              <ProfileItem label="Email" value={vendor.address.email} />
-           </ProfileSection>
+        <div className="p-10 grid gap-8 lg:grid-cols-4 max-h-[75vh] overflow-y-auto bg-[#F8F9FD]">
+           <div className="lg:col-span-1 space-y-8">
+              <ProfileSection title="Address Details" icon={MapPin}>
+                 <ProfileItem label="Full Address" value={`${vendor.address.floorBuilding}, ${vendor.address.street}`} />
+                 <ProfileItem label="Location" value={`${vendor.address.city}, ${vendor.address.district}`} />
+                 <ProfileItem label="Region" value={`${vendor.address.state}, ${vendor.address.country}`} />
+                 <ProfileItem label="Pin Code" value={vendor.address.pinCode} />
+                 <ProfileItem label="Mobile" value={vendor.address.mobile} highlighted />
+                 <ProfileItem label="Email" value={vendor.address.email} />
+              </ProfileSection>
 
-           <ProfileSection title="Statutory" icon={ShieldCheck}>
-              <ProfileItem label="GSTIN" value={vendor.statutory.gstin} highlighted />
-              <ProfileItem label="PAN" value={vendor.statutory.pan} highlighted />
-              <ProfileItem label="Business Type" value={vendor.statutory.constitution} />
-              <ProfileItem label="Vendor Type" value={vendor.statutory.vendorType} />
-           </ProfileSection>
+              <ProfileSection title="Currency & Credit" icon={CircleDollarSign}>
+                 <ProfileItem label="Currency" value={vendor.currency} highlighted />
+                 <ProfileItem label="Credit Terms" value={vendor.creditTerms} />
+              </ProfileSection>
+           </div>
 
-           <ProfileSection title="Banking" icon={CreditCard}>
-              <ProfileItem label="Account Name" value={vendor.bank.beneficiaryName} />
-              <ProfileItem label="Bank" value={vendor.bank.bankName} />
-              <ProfileItem label="A/C No" value={vendor.bank.accountNumber} highlighted />
-              <ProfileItem label="IFSC Code" value={vendor.bank.ifscCode} highlighted />
-           </ProfileSection>
+           <div className="lg:col-span-1 space-y-8">
+              <ProfileSection title="Contact Person" icon={User}>
+                 <ProfileItem label="Name" value={vendor.contact.name} />
+                 <ProfileItem label="Designation" value={vendor.contact.designation} />
+                 <ProfileItem label="Phone" value={vendor.contact.phone} highlighted />
+                 <ProfileItem label="Email" value={vendor.contact.email} />
+              </ProfileSection>
 
-           <ProfileSection title="Attachments" icon={Plus} className="lg:col-span-3">
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 mt-4">
-                 <DocLink label="GSTIN Copy" url={vendor.documents.gstinCopy} />
-                 <DocLink label="PAN Copy" url={vendor.documents.panCopy} />
+              <ProfileSection title="Classification" icon={Briefcase}>
+                 <ProfileItem label="Vendor Type" value={vendor.statutory.vendorType} highlighted />
+                 <ProfileItem label="Established" value={vendor.statutory.yearOfEstablishment} />
+                 <ProfileItem label="Constitution" value={vendor.statutory.constitution} />
+              </ProfileSection>
+           </div>
+
+           <div className="lg:col-span-1 space-y-8">
+              <ProfileSection title="Statutory Details" icon={ShieldCheck}>
+                 <ProfileItem label="PAN" value={vendor.statutory.pan} highlighted />
+                 <ProfileItem label="GSTIN" value={vendor.statutory.gstin} highlighted />
+                 <ProfileItem label="CIN" value={vendor.statutory.cin} />
+                 <ProfileItem label="MSMED No" value={vendor.statutory.msmedRegNo} />
+                 <ProfileItem label="IEC Code" value={vendor.statutory.iecNo} />
+              </ProfileSection>
+
+              <ProfileSection title="Bank Details" icon={CreditCard}>
+                 <ProfileItem label="Bank Name" value={vendor.bank.bankName} />
+                 <ProfileItem label="Account No" value={vendor.bank.accountNumber} highlighted />
+                 <ProfileItem label="IFSC Code" value={vendor.bank.ifscCode} />
+                 <ProfileItem label="Branch" value={vendor.bank.branchName} />
+              </ProfileSection>
+           </div>
+
+           <div className="lg:col-span-1 space-y-6">
+              <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 flex items-center gap-2 mb-4">
+                <Paperclip className="h-4 w-4" /> Attachments
+              </h3>
+              <div className="space-y-3">
+                 <DocLink label="GSTIN Certificate" url={vendor.documents.gstinCopy} />
+                 <DocLink label="PAN Card Copy" url={vendor.documents.panCopy} />
+                 <DocLink label="MSMED Registration" url={vendor.documents.msmedCopy} />
                  <DocLink label="Cancelled Cheque" url={vendor.documents.cancelledChequeCopy} />
-                 <DocLink label="Declaration" url={vendor.documents.signedDeclaration} />
+                 <DocLink label="TDS Certificate" url={vendor.documents.tdsExemptionCopy} />
+                 <DocLink label="Signed Declaration" url={vendor.documents.signedDeclaration} />
               </div>
-           </ProfileSection>
-        </div>
-
-        <div className="px-10 py-8 border-t border-slate-100 flex justify-end gap-3">
-           <button onClick={onClose} className="px-8 py-3 rounded-2xl border border-slate-200 text-slate-600 font-black text-xs uppercase tracking-widest hover:bg-slate-50 transition-colors">Close Profile</button>
-           <button className="px-8 py-3 rounded-2xl bg-indigo-600 text-white font-black text-xs uppercase tracking-widest hover:bg-indigo-700 shadow-lg active:scale-95 transition-all">Download Dossier</button>
+           </div>
         </div>
       </motion.div>
     </div>
+  );
+}
+
+function DocLink({ label, url }: { label: string, url?: string }) {
+  if (!url || url === '' || url === '#') return null;
+  return (
+    <a 
+      href={url} 
+      target="_blank" 
+      rel="noopener noreferrer"
+      className="flex items-center justify-between p-4 bg-white border border-slate-100 rounded-2xl hover:border-indigo-400 hover:shadow-md transition-all group"
+    >
+       <div className="flex items-center gap-3">
+          <div className="h-8 w-8 rounded-lg bg-slate-50 text-slate-400 group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-colors flex items-center justify-center">
+            <FileText className="h-4 w-4" />
+          </div>
+          <span className="text-xs font-bold text-slate-600 group-hover:text-indigo-600 transition-colors">{label}</span>
+       </div>
+       <ExternalLink className="h-3 w-3 text-slate-300 group-hover:text-indigo-400" />
+    </a>
   );
 }
 
@@ -660,52 +699,89 @@ function ProfileItem({ label, value, highlighted }: any) {
   );
 }
 
-function DocLink({ label, url }: any) {
-  return (
-    <a href={url} target="_blank" rel="noreferrer" className="flex items-center justify-between p-4 bg-slate-50 rounded-xl hover:bg-indigo-50 border border-transparent hover:border-indigo-100 transition-all group">
-       <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 group-hover:text-indigo-600">{label}</span>
-       <ExternalLink className="h-4 w-4 text-slate-300 group-hover:text-indigo-600" />
-    </a>
-  );
-}
 
 const REGISTRATION_SCHEMA = Yup.object().shape({
   name: Yup.string().required('Legal name is required'),
   requestType: Yup.string().oneOf(['New', 'Change']).required(),
   address: Yup.object().shape({
+    floorBuilding: Yup.string().required('Required'),
+    street: Yup.string().required('Required'),
     city: Yup.string().required('Required'),
+    district: Yup.string().required('Required'),
+    pinCode: Yup.string().required('Required'),
     state: Yup.string().required('Required'),
+    country: Yup.string().required('Required'),
+    mobile: Yup.string().required('Required'),
+    email: Yup.string().email('Invalid email').required('Required'),
+  }),
+  contact: Yup.object().shape({
+    name: Yup.string().required('Required'),
+    designation: Yup.string().required('Required'),
+    phone: Yup.string().required('Required'),
     email: Yup.string().email('Invalid email').required('Required'),
   }),
   statutory: Yup.object().shape({
+    vendorType: Yup.string().oneOf(['Goods', 'Services']).required(),
+    yearOfEstablishment: Yup.string().required('Required'),
+    constitution: Yup.string().required('Required'),
     pan: Yup.string().required('Required'),
     gstin: Yup.string().required('Required'),
+    compoundingDealer: Yup.string().oneOf(['YES', 'NO']).required(),
   }),
   bank: Yup.object().shape({
+    beneficiaryName: Yup.string().required('Required'),
     bankName: Yup.string().required('Required'),
     accountNumber: Yup.string().required('Required'),
+    branchName: Yup.string().required('Required'),
+    branchAddress: Yup.string().required('Required'),
+    accountType: Yup.string().required('Required'),
     ifscCode: Yup.string().required('Required'),
-  })
+    bankEmail: Yup.string().email('Invalid email'),
+  }),
+  currency: Yup.string().required('Required'),
+  creditTerms: Yup.string().required('Required'),
 });
 
 function RegistrationForm({ onComplete }: { onComplete: () => void }) {
   const navigate = useNavigate();
 
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-4xl mx-auto">
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-5xl mx-auto pb-20">
       <div className="mb-10 text-center">
-        <h1 className="text-3xl font-black text-slate-900 tracking-tight">Onboarding Request</h1>
-        <p className="text-slate-500 font-medium text-sm mt-1">Please fill in the legal and financial details of the vendor.</p>
+        <h1 className="text-4xl font-black text-slate-900 tracking-tight">Onboarding Request</h1>
+        <p className="text-slate-500 font-medium text-sm mt-2 uppercase tracking-widest">Complete the vendor master information form</p>
       </div>
 
-      <div className="bg-white rounded-[3rem] p-12 border border-slate-100 shadow-xl">
+      <div className="bg-white rounded-[3rem] p-8 md:p-16 border border-slate-100 shadow-2xl">
         <Formik
           initialValues={{
             requestType: 'New',
             name: '',
-            address: { city: '', state: '', email: '', mobile: '', pinCode: '', street: '' },
-            statutory: { vendorType: 'Goods', constitution: 'Private Limited', pan: '', gstin: '' },
-            bank: { beneficiaryName: '', bankName: '', accountNumber: '', ifscCode: '' },
+            address: { 
+              floorBuilding: '', street: '', city: '', district: '', pinCode: '', state: '', country: 'India', 
+              phone: '', fax: '', mobile: '', email: '' 
+            },
+            contact: { name: '', designation: '', phone: '', fax: '', email: '' },
+            statutory: { 
+              vendorType: 'Goods' as any, yearOfEstablishment: '', constitution: 'Private Limited' as any, 
+              cin: '', tradeLicense: '', pan: '', gstin: '', lutNo: '', compoundingDealer: 'NO' as any, 
+              msmedRegNo: '', iecNo: '', pfRegNo: '', esicRegNo: '', labourLicenseNo: '', factoryLicense: '',
+              tdsExemptionDetails: '', consentToOperate: ''
+            },
+            bank: { 
+              beneficiaryName: '', bankName: '', accountNumber: '', branchName: '', branchAddress: '', 
+              accountType: 'Current' as any, ifscCode: '', swiftIban: '', bankEmail: '' 
+            },
+            currency: 'INR',
+            creditTerms: 'NET 30',
+            documents: {
+              gstinCopy: '',
+              panCopy: '',
+              msmedCopy: '',
+              cancelledChequeCopy: '',
+              tdsExemptionCopy: '',
+              signedDeclaration: ''
+            }
           }}
           validationSchema={REGISTRATION_SCHEMA}
           onSubmit={async (values, { setSubmitting }) => {
@@ -720,60 +796,118 @@ function RegistrationForm({ onComplete }: { onComplete: () => void }) {
             }
           }}
         >
-          {({ isSubmitting, errors, touched }) => (
-            <Form className="space-y-10">
-              <section className="space-y-6">
-                <div className="flex items-center gap-3 pb-2 border-b border-slate-50">
-                  <div className="h-8 w-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center"><Building2 className="h-4 w-4" /></div>
-                  <h3 className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">Business Identity</h3>
-                </div>
+          {({ isSubmitting, errors, touched, setFieldValue, values }) => (
+            <Form className="space-y-16">
+              {/* A. General Information */}
+              <FormSection title="A. General Information" icon={Settings}>
                 <div className="grid gap-6 sm:grid-cols-2">
-                  <FormInput label="Official Legal Name" name="name" placeholder="E.g. Acme Corp Pvt Ltd" error={touched.name && errors.name} />
-                  <FormInput label="Request Action" name="requestType" type="select" options={['New', 'Change']} />
+                   <FormInput label="Request Type" name="requestType" type="select" options={['New', 'Change']} />
                 </div>
-              </section>
+              </FormSection>
 
-              <section className="space-y-6">
-                <div className="flex items-center gap-3 pb-2 border-b border-slate-50">
-                  <div className="h-8 w-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center"><MapPin className="h-4 w-4" /></div>
-                  <h3 className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">Location & Contact</h3>
+              {/* B. Address Details */}
+              <FormSection title="B. Address Details" icon={MapPin}>
+                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                   <FormInput label="Name in Full" name="name" placeholder="Legal Name" error={touched.name && errors.name} />
+                   <FormInput label="Floor/Building No" name="address.floorBuilding" placeholder="Unit, Building name" error={touched.address?.floorBuilding && (errors as any).address?.floorBuilding} />
+                   <FormInput label="Street" name="address.street" placeholder="Main road, area" error={touched.address?.street && (errors as any).address?.street} />
+                   <FormInput label="City" name="address.city" placeholder="City" error={touched.address?.city && (errors as any).address?.city} />
+                   <FormInput label="District" name="address.district" placeholder="District" error={touched.address?.district && (errors as any).address?.district} />
+                   <FormInput label="Pin Code" name="address.pinCode" placeholder="6 digits" error={touched.address?.pinCode && (errors as any).address?.pinCode} />
+                   <FormInput label="State" name="address.state" placeholder="State" error={touched.address?.state && (errors as any).address?.state} />
+                   <FormInput label="Country" name="address.country" placeholder="Country" error={touched.address?.country && (errors as any).address?.country} />
+                   <FormInput label="Phone No" name="address.phone" placeholder="Landline" />
+                   <FormInput label="Fax" name="address.fax" placeholder="Fax number" />
+                   <FormInput label="Mobile No" name="address.mobile" placeholder="Contact mobile" error={touched.address?.mobile && (errors as any).address?.mobile} />
+                   <FormInput label="E-Mail ID" name="address.email" placeholder="Business email" error={touched.address?.email && (errors as any).address?.email} />
                 </div>
+              </FormSection>
+
+              {/* C. Contact Details */}
+              <FormSection title="C. Contact Details" icon={User}>
+                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                   <FormInput label="Contact Person" name="contact.name" placeholder="Full name" error={touched.contact?.name && (errors as any).contact?.name} />
+                   <FormInput label="Designation" name="contact.designation" placeholder="Job title" error={touched.contact?.designation && (errors as any).contact?.designation} />
+                   <FormInput label="Phone" name="contact.phone" placeholder="Direct line" error={touched.contact?.phone && (errors as any).contact?.phone} />
+                   <FormInput label="Fax" name="contact.fax" placeholder="Direct fax" />
+                   <FormInput label="E-Mail" name="contact.email" placeholder="Personal business email" error={touched.contact?.email && (errors as any).contact?.email} />
+                </div>
+              </FormSection>
+
+              {/* D. Vendor Classification & Constitution */}
+              <FormSection title="D. Vendor Classification & Constitution" icon={Briefcase}>
+                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                   <FormInput label="Vendor Type" name="statutory.vendorType" type="select" options={['Goods', 'Services']} />
+                   <FormInput label="Year of Establishment" name="statutory.yearOfEstablishment" placeholder="YYYY" error={touched.statutory?.yearOfEstablishment && (errors as any).statutory?.yearOfEstablishment} />
+                   <FormInput label="Constitution" name="statutory.constitution" type="select" options={['Proprietary', 'Private Limited', 'LLP', 'Partnership', 'Public Limited', 'Trust']} />
+                </div>
+              </FormSection>
+
+              {/* E. Statutory Details */}
+              <FormSection title="E. Statutory Details" icon={ShieldCheck}>
+                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                   <FormInput label="CIN" name="statutory.cin" placeholder="Corporate ID No" />
+                   <FormInput label="Trade License" name="statutory.tradeLicense" placeholder="License no" />
+                   <FormInput label="PAN" name="statutory.pan" placeholder="10 Digit PAN" error={touched.statutory?.pan && (errors as any).statutory?.pan} />
+                   <FormInput label="GSTIN" name="statutory.gstin" placeholder="15 Digit GSTIN" error={touched.statutory?.gstin && (errors as any).statutory?.gstin} />
+                   <FormInput label="LUT NO" name="statutory.lutNo" placeholder="LUT number" />
+                   <FormInput label="Compounding Dealer" name="statutory.compoundingDealer" type="select" options={['YES', 'NO']} />
+                   <FormInput label="MSMED Reg No" name="statutory.msmedRegNo" placeholder="MSME registration" />
+                   <FormInput label="IEC No" name="statutory.iecNo" placeholder="Import Export Code" />
+                   <FormInput label="PF Reg No" name="statutory.pfRegNo" placeholder="Provident Fund" />
+                   <FormInput label="ESIC Reg No" name="statutory.esicRegNo" placeholder="ESIC no" />
+                   <FormInput label="Labour License" name="statutory.labourLicenseNo" placeholder="Labour license" />
+                   <FormInput label="Factory License" name="statutory.factoryLicense" placeholder="Factory license" />
+                </div>
+              </FormSection>
+
+              {/* F. Additional Compliance */}
+              <FormSection title="F. Additional Compliance" icon={Activity}>
                 <div className="grid gap-6 sm:grid-cols-2">
-                   <FormInput label="Street" name="address.street" placeholder="Address line 1" />
-                   <FormInput label="City" name="address.city" placeholder="E.g. Mumbai" error={touched.address?.city && (errors as any).address?.city} />
-                   <FormInput label="State" name="address.state" placeholder="E.g. Maharashtra" error={touched.address?.state && (errors as any).address?.state} />
-                   <FormInput label="Contact E-Mail" name="address.email" placeholder="legal@vendor.com" error={touched.address?.email && (errors as any).address?.email} />
+                   <FormInput label="TDS Exemption Details" name="statutory.tdsExemptionDetails" placeholder="Certificate details" />
+                   <FormInput label="Consent to Operate (PCB)" name="statutory.consentToOperate" placeholder="Pollution Control Board" />
                 </div>
-              </section>
+              </FormSection>
 
-              <section className="space-y-6">
-                <div className="flex items-center gap-3 pb-2 border-b border-slate-50">
-                  <div className="h-8 w-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center"><ShieldCheck className="h-4 w-4" /></div>
-                  <h3 className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">Tax & Statutory</h3>
+              {/* G. Bank Details */}
+              <FormSection title="G. Bank Details" icon={CreditCard}>
+                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                   <FormInput label="Beneficiary Name" name="bank.beneficiaryName" placeholder="As per bank record" error={touched.bank?.beneficiaryName && (errors as any).bank?.beneficiaryName} />
+                   <FormInput label="Bank Name" name="bank.bankName" placeholder="Full Bank Name" error={touched.bank?.bankName && (errors as any).bank?.bankName} />
+                   <FormInput label="Account Number" name="bank.accountNumber" placeholder="Bank Account No" error={touched.bank?.accountNumber && (errors as any).bank?.accountNumber} />
+                   <FormInput label="Bank Branch" name="bank.branchName" placeholder="Branch Name" error={touched.bank?.branchName && (errors as any).bank?.branchName} />
+                   <FormInput label="Branch Address" name="bank.branchAddress" placeholder="Full office address" error={touched.bank?.branchAddress && (errors as any).bank?.branchAddress} />
+                   <FormInput label="Account Type" name="bank.accountType" type="select" options={['Savings', 'Current', 'CC/OD']} />
+                   <FormInput label="IFSC Code" name="bank.ifscCode" placeholder="Branch IFSC" error={touched.bank?.ifscCode && (errors as any).bank?.ifscCode} />
+                   <FormInput label="SWIFT/IBAN" name="bank.swiftIban" placeholder="Intl transfers" />
+                   <FormInput label="Bank Email" name="bank.bankEmail" placeholder="Contact of branch" />
                 </div>
+              </FormSection>
+
+              {/* H. Currency & Credit Terms */}
+              <FormSection title="H. Currency & Credit Terms" icon={CircleDollarSign}>
                 <div className="grid gap-6 sm:grid-cols-2">
-                   <FormInput label="Income Tax PAN" name="statutory.pan" placeholder="10 Digit PAN" error={touched.statutory?.pan && (errors as any).statutory?.pan} />
-                   <FormInput label="GSTIN Number" name="statutory.gstin" placeholder="15 Digit GSTIN" error={touched.statutory?.gstin && (errors as any).statutory?.gstin} />
+                   <FormInput label="Transaction Currency" name="currency" type="select" options={['INR', 'USD', 'EUR', 'GBP', 'AED']} />
+                   <FormInput label="Credit Terms" name="creditTerms" placeholder="E.g. NET 30" error={touched.creditTerms && errors.creditTerms} />
                 </div>
-              </section>
+              </FormSection>
 
-              <section className="space-y-6">
-                <div className="flex items-center gap-3 pb-2 border-b border-slate-50">
-                  <div className="h-8 w-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center"><CreditCard className="h-4 w-4" /></div>
-                  <h3 className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">Financial Disbursement</h3>
+              {/* Required Attachment Files */}
+              <FormSection title="Required Attachment Files" icon={Paperclip}>
+                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                   <FileField label="GSTIN Copy" value={values.documents.gstinCopy} onUpload={(url) => setFieldValue('documents.gstinCopy', url)} required />
+                   <FileField label="PAN Copy" value={values.documents.panCopy} onUpload={(url) => setFieldValue('documents.panCopy', url)} required />
+                   <FileField label="MSMED Copy" value={values.documents.msmedCopy} onUpload={(url) => setFieldValue('documents.msmedCopy', url)} />
+                   <FileField label="Cancelled Cheque" value={values.documents.cancelledChequeCopy} onUpload={(url) => setFieldValue('documents.cancelledChequeCopy', url)} required />
+                   <FileField label="TDS Exemption" value={values.documents.tdsExemptionCopy} onUpload={(url) => setFieldValue('documents.tdsExemptionCopy', url)} />
+                   <FileField label="Signed Declaration" value={values.documents.signedDeclaration} onUpload={(url) => setFieldValue('documents.signedDeclaration', url)} />
                 </div>
-                <div className="grid gap-6 sm:grid-cols-2">
-                   <FormInput label="Bank Name" name="bank.bankName" placeholder="E.g. HDFC Bank" error={touched.bank?.bankName && (errors as any).bank?.bankName} />
-                   <FormInput label="Account Number" name="bank.accountNumber" placeholder="Full A/C Number" error={touched.bank?.accountNumber && (errors as any).bank?.accountNumber} />
-                   <FormInput label="IFSC Code" name="bank.ifscCode" placeholder="Branch IFSC Code" error={touched.bank?.ifscCode && (errors as any).bank?.ifscCode} />
-                   <FormInput label="Beneficiary Name" name="bank.beneficiaryName" placeholder="Name as per Passbook" />
-                </div>
-              </section>
+              </FormSection>
 
-              <div className="pt-10 flex items-center justify-center gap-4 border-t border-slate-50">
-                 <button type="button" onClick={() => navigate('/vendors')} className="px-10 py-4 bg-slate-50 text-slate-500 rounded-2xl text-sm font-black uppercase tracking-widest hover:bg-slate-100 transition-all">Cancel</button>
-                 <button type="submit" disabled={isSubmitting} className="px-12 py-4 bg-indigo-600 text-white rounded-2xl text-sm font-black uppercase tracking-widest hover:bg-indigo-700 shadow-xl active:scale-95 transition-all flex items-center gap-2">
-                   {isSubmitting ? <RefreshCw className="h-5 w-5 animate-spin" /> : <ShieldCheck className="h-5 w-5" />}
+              <div className="pt-10 flex items-center justify-center gap-6 border-t border-slate-50">
+                 <button type="button" onClick={() => navigate('/vendors')} className="px-12 py-4 bg-slate-50 text-slate-500 rounded-2xl text-sm font-black uppercase tracking-widest hover:bg-slate-100 transition-all">Cancel</button>
+                 <button type="submit" disabled={isSubmitting} className="px-16 py-4 bg-indigo-600 text-white rounded-2xl text-sm font-black uppercase tracking-widest hover:bg-indigo-700 shadow-xl active:scale-95 transition-all flex items-center gap-2">
+                   {isSubmitting ? <RefreshCw className="h-5 w-5 animate-spin" /> : <CheckCircle2 className="h-5 w-5" />}
                    Submit Onboarding
                  </button>
               </div>
@@ -782,6 +916,80 @@ function RegistrationForm({ onComplete }: { onComplete: () => void }) {
         </Formik>
       </div>
     </motion.div>
+  );
+}
+
+function FormSection({ title, icon: Icon, children }: any) {
+  return (
+    <div className="space-y-8 p-8 md:p-10 bg-slate-50/30 rounded-[2.5rem] border border-slate-50/50">
+      <div className="flex items-center gap-4 border-b border-white pb-6">
+        <div className="h-12 w-12 rounded-2xl bg-white shadow-sm flex items-center justify-center text-indigo-600">
+          <Icon className="h-6 w-6" />
+        </div>
+        <h3 className="text-sm font-black uppercase tracking-[0.15em] text-slate-600 font-mono tracking-tighter">{title}</h3>
+      </div>
+      {children}
+    </div>
+  );
+}
+
+function FileField({ label, value, onUpload, required }: any) {
+  const [uploading, setUploading] = useState(false);
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    try {
+      // Simulate file upload - in real app, we would upload to storage/API
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      onUpload('https://example.com/uploaded/' + file.name);
+    } catch (error) {
+      console.error('Upload failed');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  return (
+    <div className="space-y-3">
+      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1 flex items-center gap-1">
+        {label} {required && <span className="text-rose-500">*</span>}
+      </label>
+      <div className={cn(
+        "relative group h-40 rounded-3xl border-2 border-dashed transition-all flex flex-col items-center justify-center gap-3 overflow-hidden",
+        value ? "bg-emerald-50 border-emerald-200" : "bg-white border-slate-100 hover:border-indigo-400 hover:bg-slate-50"
+      )}>
+        {uploading ? (
+          <div className="flex flex-col items-center gap-2">
+            <RefreshCw className="h-8 w-8 text-indigo-600 animate-spin" />
+            <span className="text-[10px] font-black uppercase tracking-widest text-indigo-600">Uploading...</span>
+          </div>
+        ) : value ? (
+          <div className="flex flex-col items-center gap-2 text-emerald-600">
+            <div className="h-10 w-10 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow-md">
+              <Check className="h-6 w-6" />
+            </div>
+            <span className="text-[10px] font-black uppercase tracking-widest">Document Secured</span>
+            <span className="text-[8px] font-bold opacity-70 max-w-[150px] truncate">{value.split('/').pop()}</span>
+          </div>
+        ) : (
+          <>
+            <div className="h-10 w-10 rounded-2xl bg-slate-50 text-slate-400 flex items-center justify-center group-hover:bg-indigo-600 group-hover:text-white transition-all shadow-sm">
+              <Upload className="h-5 w-5" />
+            </div>
+            <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 group-hover:text-indigo-600">Upload File</span>
+          </>
+        )}
+        <input 
+          type="file" 
+          onChange={handleFileChange} 
+          className="absolute inset-0 opacity-0 cursor-pointer disabled:cursor-not-allowed" 
+          disabled={uploading}
+        />
+      </div>
+    </div>
   );
 }
 
