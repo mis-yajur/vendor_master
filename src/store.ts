@@ -7,15 +7,9 @@ const SCRIPT_URL = (import.meta as any).env.VITE_GOOGLE_SCRIPT_URL;
 
 export const loadVendors = createAsyncThunk('vendors/fetchAll', async () => {
   try {
-    const isDirect = window.location.hostname.includes('github.io') || window.location.hostname.includes('localhost');
-    let data;
-    if (isDirect && SCRIPT_URL) {
-      const resp = await axios.get(`${SCRIPT_URL}?action=list`);
-      data = resp.data;
-    } else {
-      const res = await axios.get('/api/vendors');
-      data = res.data;
-    }
+    const res = await axios.get('/api/vendors');
+    const data = res.data;
+    
     // Handle cases where the API might return an object with a data property
     if (data && typeof data === 'object' && !Array.isArray(data)) {
       if (Array.isArray(data.vendors)) return data.vendors;
@@ -23,7 +17,7 @@ export const loadVendors = createAsyncThunk('vendors/fetchAll', async () => {
     }
     return Array.isArray(data) ? data : DUMMY_VENDORS;
   } catch (error) {
-    console.error('Fetch error:', error);
+    console.error('Fetch error in store:', error);
     return DUMMY_VENDORS;
   }
 });

@@ -77,6 +77,8 @@ import { DUMMY_VENDORS } from './dummyData';
 
 const SCRIPT_URL = (import.meta as any).env.VITE_GOOGLE_SCRIPT_URL;
 
+// axios.defaults.baseURL = window.location.origin;
+
 // Helper for API calls with dummy data fallback
 const apiCall = async (action: string, data: any = {}) => {
   try {
@@ -108,6 +110,7 @@ const apiCall = async (action: string, data: any = {}) => {
       return res.data;
     }
   } catch (error) {
+    console.error(`apiCall ${action} error:`, error);
     if (action === 'list') return DUMMY_VENDORS;
     if (action === 'health') return { status: 'demo', db: 'demo' };
     throw error;
@@ -129,23 +132,33 @@ const THEME_COLORS: Record<Theme, { primary: string, bg: string, ring: string, s
 const themeConfig = createTheme({
   palette: {
     primary: {
-      main: '#4F46E5',
+      main: '#6366f1', // Indigo 600
+    },
+    secondary: {
+      main: '#0f172a', // Slate 900
     },
     background: {
-      default: '#F8F9FD',
+      default: '#f8fafc', // Slate 50
     },
   },
   typography: {
-    fontFamily: '"Inter", "sans-serif"',
-    h1: { fontWeight: 900 },
-    h2: { fontWeight: 900 },
-    h3: { fontWeight: 800 },
-    h4: { fontWeight: 800 },
-    h5: { fontWeight: 700 },
-    h6: { fontWeight: 700 },
+    fontFamily: '"Inter", "system-ui", "-apple-system", sans-serif',
+    h1: { fontWeight: 900, letterSpacing: '-0.02em' },
+    h2: { fontWeight: 800, letterSpacing: '-0.01em' },
   },
   shape: {
-    borderRadius: 16,
+    borderRadius: 20,
+  },
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          textTransform: 'none',
+          fontWeight: 700,
+          borderRadius: 12,
+        },
+      },
+    },
   },
 });
 
@@ -910,100 +923,20 @@ function RegistrationForm({ onComplete }: { onComplete: () => void }) {
           }}
         >
           {({ isSubmitting, errors, touched, setFieldValue, values }) => (
-            <Form className="p-10 md:p-20 space-y-24">
-              <div className="grid gap-24">
+            <Form className="p-10 md:p-20 space-y-32">
+              <div className="grid gap-32">
                 <FormSection title="A. General Information" icon={Settings}>
                   <div className="grid gap-8 sm:grid-cols-2 max-w-2xl">
                      <FormInput label="Request Type" name="requestType" type="select" options={['New', 'Change']} />
                   </div>
                 </FormSection>
 
-                <FormSection title="B. Address Details" icon={MapPin}>
-                  <div className="grid gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                     <FormInput label="Name in Full" name="name" placeholder="Legal Name" error={touched.name && errors.name} />
-                     <FormInput label="Floor/Building No" name="address.floorBuilding" placeholder="Unit/Bldg" />
-                     <FormInput label="Street" name="address.street" placeholder="Street Name" />
-                     <FormInput label="City" name="address.city" placeholder="City" error={touched.address?.city && (errors as any).address?.city} />
-                     <FormInput label="District" name="address.district" placeholder="District" />
-                     <FormInput label="Pin code" name="address.pinCode" placeholder="6 Digits" />
-                     <FormInput label="State" name="address.state" placeholder="State" />
-                     <FormInput label="Country" name="address.country" placeholder="Country" />
-                     <FormInput label="Phone No" name="address.phone" placeholder="Landline" />
-                     <FormInput label="Fax" name="address.fax" placeholder="Fax No" />
-                     <FormInput label="Mobile No" name="address.mobile" placeholder="Mobile" />
-                     <FormInput label="E-Mail id" name="address.email" placeholder="Official Email" />
-                  </div>
-                </FormSection>
-
-                <FormSection title="C. Contact Details" icon={Users}>
-                  <div className="grid gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
-                     <FormInput label="Contact Person Name" name="contact.name" placeholder="Full Name" />
-                     <FormInput label="Designation" name="contact.designation" placeholder="Job Role" />
-                     <FormInput label="Phone" name="contact.phone" placeholder="Contact Phone" />
-                     <FormInput label="Fax" name="contact.fax" placeholder="Contact Fax" />
-                     <FormInput label="E-Mail id" name="contact.email" placeholder="Contact Email" />
-                  </div>
-                </FormSection>
-
-                <FormSection title="D. Vendor Classification & Constitution" icon={Briefcase}>
-                  <div className="grid gap-x-10 gap-y-12 sm:grid-cols-3 max-w-5xl">
-                     <FormInput label="Vendor Type" name="statutory.vendorType" type="select" options={['Goods', 'Services']} />
-                     <FormInput label="Year of Establishment" name="statutory.yearOfEstablishment" placeholder="YYYY" />
-                     <FormInput label="Constitution" name="statutory.constitution" type="select" options={['Proprietary', 'Private Limited', 'LLP', 'Partnership', 'Public Limited', 'Trust']} />
-                  </div>
-                </FormSection>
-
-                <FormSection title="E. Statutory Details" icon={ShieldCheck}>
-                   <div className="grid gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                     <FormInput label="CIN" name="statutory.cin" placeholder="CIN Number" />
-                     <FormInput label="Trade License" name="statutory.tradeLicense" placeholder="License Code" />
-                     <FormInput label="PAN" name="statutory.pan" placeholder="XXXXX0000X" />
-                     <FormInput label="GSTIN" name="statutory.gstin" placeholder="00XXXXX0000X0Z0" />
-                     <FormInput label="LUT NO" name="statutory.lutNo" placeholder="LUT Reference" />
-                     <FormInput label="Compounding Dealer" name="statutory.compoundingDealer" type="select" options={['YES', 'NO']} />
-                     <FormInput label="MSMED Registration No" name="statutory.msmedRegNo" placeholder="UDYAM-XXXX" />
-                     <FormInput label="IEC No." name="statutory.iecNo" placeholder="IEC Code" />
-                     <FormInput label="PF Registration No." name="statutory.pfRegNo" placeholder="PF Number" />
-                     <FormInput label="ESIC Registration No." name="statutory.esicRegNo" placeholder="ESIC Number" />
-                     <FormInput label="Labour License Registration No." name="statutory.labourLicenseNo" placeholder="Labour License" />
-                     <FormInput label="Factory License" name="statutory.factoryLicense" placeholder="Factory Code" />
-                   </div>
-                </FormSection>
-
-                <FormSection title="F. Additional Compliance" icon={Activity}>
-                   <div className="grid gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
-                     <FormInput label="Details of TDS Exemption certificate" name="statutory.tdsExemptionDetails" placeholder="Reference details" />
-                     <FormInput label="Consent to Operate from P.C.B" name="statutory.consentToOperate" placeholder="Pollution Board Ref" />
-                   </div>
-                </FormSection>
-
-                <FormSection title="G. Bank Details" icon={CreditCard}>
-                   <div className="grid gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
-                     <FormInput label="Beneficiary name" name="bank.beneficiaryName" placeholder="As per Bank record" />
-                     <FormInput label="Name of Bank" name="bank.bankName" placeholder="E.g. HDFC Bank" />
-                     <FormInput label="Bank Account Number" name="bank.accountNumber" placeholder="Account No" />
-                     <FormInput label="Name of the Bank Branch" name="bank.branchName" placeholder="Branch Name" />
-                     <FormInput label="Address of Branch" name="bank.branchAddress" placeholder="Full Address" />
-                     <FormInput label="Account type" name="bank.accountType" type="select" options={['Savings', 'Current', 'CC/OD']} />
-                     <FormInput label="IFSC Code" name="bank.ifscCode" placeholder="Branch IFSC" />
-                     <FormInput label="SWIFT/IBAN number" name="bank.swiftIban" placeholder="International Code" />
-                     <FormInput label="Email id of the bank" name="bank.bankEmail" placeholder="bank@service.com" />
-                   </div>
-                </FormSection>
-
-                <FormSection title="H. Currency & Credit Terms" icon={TrendingUp}>
-                   <div className="grid gap-x-10 gap-y-12 sm:grid-cols-2 max-w-4xl">
-                     <FormInput label="Transaction Currency" name="currency" type="select" options={['INR', 'USD', 'EUR', 'GBP', 'AED']} />
-                     <FormInput label="Credit Terms" name="creditTerms" placeholder="E.g. NET 30" />
-                   </div>
-                </FormSection>
-
-                <FormSection title="I. Digital Repository (Attachments)" icon={FolderOpen}>
-                  <div className="bg-slate-50 p-10 rounded-[3rem] border-4 border-slate-100 shadow-inner mb-10">
-                    <h4 className="text-[14px] font-black uppercase tracking-[0.3em] text-slate-400 mb-8 pb-4 border-b-2 border-slate-200 flex items-center gap-3">
-                      <CheckSquare className="h-5 w-5 text-indigo-500" /> Checklist: Certified Copy of Documents Required
+                <FormSection title="B. Digital Repository (Attachments)" icon={FolderOpen}>
+                  <div className="bg-slate-50 p-10 rounded-[3rem] border-4 border-slate-100 shadow-inner mb-2 transition-all hover:border-indigo-100">
+                    <h4 className="text-[12px] font-black uppercase tracking-[0.4em] text-slate-400 mb-10 pb-4 border-b-2 border-slate-200 flex items-center gap-4">
+                      <CheckSquare className="h-6 w-6 text-indigo-500" /> Mandatory Attachment Checklist
                     </h4>
-                    <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
+                    <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-3">
                        <FileField 
                          label="GSTIN Copy" 
                          value={values.documents.gstinCopy} 
@@ -1040,6 +973,86 @@ function RegistrationForm({ onComplete }: { onComplete: () => void }) {
                        />
                     </div>
                   </div>
+                </FormSection>
+
+                <FormSection title="C. Address Details" icon={MapPin}>
+                  <div className="grid gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                     <FormInput label="Name in Full" name="name" placeholder="Legal Name" error={touched.name && errors.name} />
+                     <FormInput label="Floor/Building No" name="address.floorBuilding" placeholder="Unit/Bldg" />
+                     <FormInput label="Street" name="address.street" placeholder="Street Name" />
+                     <FormInput label="City" name="address.city" placeholder="City" error={touched.address?.city && (errors as any).address?.city} />
+                     <FormInput label="District" name="address.district" placeholder="District" />
+                     <FormInput label="Pin code" name="address.pinCode" placeholder="6 Digits" />
+                     <FormInput label="State" name="address.state" placeholder="State" />
+                     <FormInput label="Country" name="address.country" placeholder="Country" />
+                     <FormInput label="Phone No" name="address.phone" placeholder="Landline" />
+                     <FormInput label="Fax" name="address.fax" placeholder="Fax No" />
+                     <FormInput label="Mobile No" name="address.mobile" placeholder="Mobile" />
+                     <FormInput label="E-Mail id" name="address.email" placeholder="Official Email" />
+                  </div>
+                </FormSection>
+
+                <FormSection title="D. Contact Details" icon={Users}>
+                  <div className="grid gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
+                     <FormInput label="Contact Person Name" name="contact.name" placeholder="Full Name" />
+                     <FormInput label="Designation" name="contact.designation" placeholder="Job Role" />
+                     <FormInput label="Phone" name="contact.phone" placeholder="Contact Phone" />
+                     <FormInput label="Fax" name="contact.fax" placeholder="Contact Fax" />
+                     <FormInput label="E-Mail id" name="contact.email" placeholder="Contact Email" />
+                  </div>
+                </FormSection>
+
+                <FormSection title="E. Vendor Classification & Constitution" icon={Briefcase}>
+                  <div className="grid gap-x-10 gap-y-12 sm:grid-cols-3 max-w-5xl">
+                     <FormInput label="Vendor Type" name="statutory.vendorType" type="select" options={['Goods', 'Services']} />
+                     <FormInput label="Year of Establishment" name="statutory.yearOfEstablishment" placeholder="YYYY" />
+                     <FormInput label="Constitution" name="statutory.constitution" type="select" options={['Proprietary', 'Private Limited', 'LLP', 'Partnership', 'Public Limited', 'Trust']} />
+                  </div>
+                </FormSection>
+
+                <FormSection title="F. Statutory Details" icon={ShieldCheck}>
+                   <div className="grid gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                     <FormInput label="CIN" name="statutory.cin" placeholder="CIN Number" />
+                     <FormInput label="Trade License" name="statutory.tradeLicense" placeholder="License Code" />
+                     <FormInput label="PAN" name="statutory.pan" placeholder="XXXXX0000X" />
+                     <FormInput label="GSTIN" name="statutory.gstin" placeholder="00XXXXX0000X0Z0" />
+                     <FormInput label="LUT NO" name="statutory.lutNo" placeholder="LUT Reference" />
+                     <FormInput label="Compounding Dealer" name="statutory.compoundingDealer" type="select" options={['YES', 'NO']} />
+                     <FormInput label="MSMED Registration No" name="statutory.msmedRegNo" placeholder="UDYAM-XXXX" />
+                     <FormInput label="IEC No." name="statutory.iecNo" placeholder="IEC Code" />
+                     <FormInput label="PF Registration No." name="statutory.pfRegNo" placeholder="PF Number" />
+                     <FormInput label="ESIC Registration No." name="statutory.esicRegNo" placeholder="ESIC Number" />
+                     <FormInput label="Labour License Registration No." name="statutory.labourLicenseNo" placeholder="Labour License" />
+                     <FormInput label="Factory License" name="statutory.factoryLicense" placeholder="Factory Code" />
+                   </div>
+                </FormSection>
+
+                <FormSection title="G. Additional Compliance" icon={Activity}>
+                   <div className="grid gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
+                     <FormInput label="Details of TDS Exemption certificate" name="statutory.tdsExemptionDetails" placeholder="Reference details" />
+                     <FormInput label="Consent to Operate from P.C.B" name="statutory.consentToOperate" placeholder="Pollution Board Ref" />
+                   </div>
+                </FormSection>
+
+                <FormSection title="H. Bank Details" icon={CreditCard}>
+                   <div className="grid gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
+                     <FormInput label="Beneficiary name" name="bank.beneficiaryName" placeholder="As per Bank record" />
+                     <FormInput label="Name of Bank" name="bank.bankName" placeholder="E.g. HDFC Bank" />
+                     <FormInput label="Bank Account Number" name="bank.accountNumber" placeholder="Account No" />
+                     <FormInput label="Name of the Bank Branch" name="bank.branchName" placeholder="Branch Name" />
+                     <FormInput label="Address of Branch" name="bank.branchAddress" placeholder="Full Address" />
+                     <FormInput label="Account type" name="bank.accountType" type="select" options={['Savings', 'Current', 'CC/OD']} />
+                     <FormInput label="IFSC Code" name="bank.ifscCode" placeholder="Branch IFSC" />
+                     <FormInput label="SWIFT/IBAN number" name="bank.swiftIban" placeholder="International Code" />
+                     <FormInput label="Email id of the bank" name="bank.bankEmail" placeholder="bank@service.com" />
+                   </div>
+                </FormSection>
+
+                <FormSection title="I. Currency & Credit Terms" icon={TrendingUp}>
+                   <div className="grid gap-x-10 gap-y-12 sm:grid-cols-2 max-w-4xl">
+                     <FormInput label="Transaction Currency" name="currency" type="select" options={['INR', 'USD', 'EUR', 'GBP', 'AED']} />
+                     <FormInput label="Credit Terms" name="creditTerms" placeholder="E.g. NET 30" />
+                   </div>
                 </FormSection>
               </div>
 
@@ -1127,12 +1140,12 @@ function FileField({ label, value, onUpload, required }: any) {
       <label className="text-[12px] font-black text-slate-400 uppercase tracking-[0.2em] pl-1 leading-none flex items-center justify-between">
         <span>{label} {required && <span className="text-rose-500">*</span>}</span>
         {value ? (
-          <span className="text-emerald-500 font-black text-[11px] bg-emerald-50 px-4 py-1.5 rounded-full border-2 border-emerald-100 flex items-center gap-2 animate-in fade-in slide-in-from-right-2 shadow-sm">
-            ✅ REQUIRED/ATTACHED
+          <span className="text-emerald-500 font-black text-[12px] bg-emerald-50 px-5 py-2 rounded-full border-2 border-emerald-100 flex items-center gap-2 animate-in fade-in slide-in-from-right-3 shadow-lg shadow-emerald-700/5">
+            ✅ REQUIRED / ATTACHED
           </span>
         ) : (
-          <span className="text-rose-500 font-black text-[11px] bg-rose-50 px-4 py-1.5 rounded-full border-2 border-rose-100 flex items-center gap-2 shadow-sm">
-            ❌ NOT APPLICABLE/NOT PROVIDED
+          <span className="text-slate-400 font-black text-[12px] bg-slate-50 px-5 py-2 rounded-full border-2 border-slate-100 flex items-center gap-2 shadow-sm">
+            ❌ NOT APPLICABLE / NOT PROVIDED
           </span>
         )}
       </label>
@@ -1172,15 +1185,18 @@ function FileField({ label, value, onUpload, required }: any) {
 function FormInput({ label, name, type = 'text', placeholder, options, error }: any) {
   return (
     <div className="space-y-4">
-       <label className="text-[14px] font-black text-slate-500 uppercase tracking-[0.25em] pl-2 leading-none">{label}</label>
-       {type === 'select' ? (
-         <Field as="select" name={name} className="w-full bg-white border-4 border-slate-100 rounded-[2.5rem] py-7 px-10 text-[18px] font-black text-slate-900 focus:ring-[16px] focus:ring-indigo-100 focus:border-indigo-600 transition-all outline-none shadow-2xl shadow-slate-200/50">
-            {options.map((o: string) => <option key={o} value={o}>{o}</option>)}
-         </Field>
-       ) : (
-         <Field name={name} placeholder={placeholder} className="w-full bg-white border-4 border-slate-100 rounded-[2.5rem] py-7 px-10 text-[18px] font-black text-slate-900 focus:ring-[16px] focus:ring-indigo-100 focus:border-indigo-600 transition-all outline-none shadow-2xl shadow-slate-200/50 placeholder:text-slate-200" />
-       )}
-       <div className="h-6">
+       <label className="text-[12px] font-extrabold text-slate-500 uppercase tracking-[0.15em] pl-1 leading-none block">{label}</label>
+       <div className="relative group">
+         {type === 'select' ? (
+           <Field as="select" name={name} className="w-full bg-slate-50 border-2 border-slate-200 rounded-2xl py-5 px-8 text-[16px] font-semibold text-slate-900 focus:ring-8 focus:ring-indigo-50 focus:border-indigo-500 hover:border-slate-300 transition-all outline-none shadow-sm appearance-none cursor-pointer">
+              {options.map((o: string) => <option key={o} value={o}>{o}</option>)}
+           </Field>
+         ) : (
+           <Field name={name} placeholder={placeholder} className="w-full bg-slate-50 border-2 border-slate-200 rounded-2xl py-5 px-8 text-[16px] font-semibold text-slate-900 focus:ring-8 focus:ring-indigo-50 focus:border-indigo-500 hover:border-slate-300 transition-all outline-none shadow-sm placeholder:text-slate-400" />
+         )}
+         <div className="absolute inset-0 rounded-2xl border border-white/40 pointer-events-none" />
+       </div>
+       <div className="h-5">
          <AnimatePresence>
            {error && (
              <motion.p 
