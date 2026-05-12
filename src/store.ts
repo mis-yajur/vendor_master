@@ -6,7 +6,8 @@ import type { Vendor } from './types/vendor';
 const SCRIPT_URL = (import.meta as any).env.VITE_GOOGLE_SCRIPT_URL;
 
 export const loadVendors = createAsyncThunk('vendors/fetchAll', async () => {
-  const isGithubPages = window.location.hostname.includes('github.io');
+  const isStaticHost = window.location.hostname.includes('github.io') || window.location.hostname.includes('web.app') || window.location.hostname.includes('pages.dev');
+  
   try {
     // Priority: Google Script URL for Sheet Database
     if (SCRIPT_URL) {
@@ -15,6 +16,12 @@ export const loadVendors = createAsyncThunk('vendors/fetchAll', async () => {
       if (Array.isArray(data)) return data;
       if (data && data.vendors && Array.isArray(data.vendors)) return data.vendors;
       if (data && data.data && Array.isArray(data.data)) return data.data;
+    }
+
+    // On static hosts without script URL, skip backend call
+    if (isStaticHost && !SCRIPT_URL) {
+      const stored = localStorage.getItem('vendor_registry');
+      return stored ? JSON.parse(stored) : DUMMY_VENDORS;
     }
 
     const res = await axios.get('/api/vendors');

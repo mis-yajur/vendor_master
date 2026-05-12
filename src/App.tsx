@@ -75,14 +75,13 @@ import { store, RootState, AppDispatch, loadVendors as fetchVendorsThunk, setHea
 
 import { DUMMY_VENDORS } from './dummyData';
 
-const SCRIPT_URL = (import.meta as any).env.VITE_GOOGLE_SCRIPT_URL;
-
-// axios.defaults.baseURL = window.location.origin;
+const SCRIPT_URL = (import.meta as any).env.VITE_GOOGLE_SCRIPT_URL || '';
+const isStaticHost = window.location.hostname.includes('github.io') || window.location.hostname.includes('web.app') || window.location.hostname.includes('pages.dev');
 
 // Helper for API calls with robust static fallback
 const apiCall = async (action: string, data: any = {}) => {
-  if (!SCRIPT_URL) {
-    console.warn('VITE_GOOGLE_SCRIPT_URL is missing. Please check your environment variables in Settings.');
+  if (!SCRIPT_URL && isStaticHost) {
+    console.info('Running in Static Mode (No Google Script URL provided). Data persists locally.');
   }
 
   try {
@@ -118,40 +117,49 @@ const apiCall = async (action: string, data: any = {}) => {
       return result;
     }
     
-    // Default to server-side if not using SCRIPT_URL
-    const isGithubPages = window.location.hostname.includes('github.io');
+    // Default to server-side if not using SCRIPT_URL and not a static host
     if (action === 'list') {
+      if (isStaticHost) {
+        const stored = localStorage.getItem('vendor_registry');
+        return stored ? JSON.parse(stored) : DUMMY_VENDORS;
+      }
+
       try {
         const res = await axios.get('/api/vendors');
         return res.data;
       } catch (err) {
-        if (isGithubPages || (axios.isAxiosError(err) && (err.response?.status === 404 || err.response?.status === 405))) {
-          console.warn('Backend unavailable, using LocalStorage repository');
-          const stored = localStorage.getItem('vendor_registry');
-          return stored ? JSON.parse(stored) : DUMMY_VENDORS;
-        }
-        throw err;
+        console.warn('Backend unavailable, using LocalStorage repository');
+        const stored = localStorage.getItem('vendor_registry');
+        return stored ? JSON.parse(stored) : DUMMY_VENDORS;
       }
     }
     
     if (action === 'add') {
+      if (isStaticHost) {
+        const stored = localStorage.getItem('vendor_registry');
+        const current = stored ? JSON.parse(stored) : DUMMY_VENDORS;
+        const updated = [data.vendor, ...current];
+        localStorage.setItem('vendor_registry', JSON.stringify(updated));
+        return { success: true, mode: 'local_persistence' };
+      }
+
       try {
         const res = await axios.post('/api/vendors', data);
         return res.data;
       } catch (err) {
-        // Fallback for missing backend or static hosts
-        if (isGithubPages || (axios.isAxiosError(err) && (err.response?.status === 404 || err.response?.status === 405))) {
-          const stored = localStorage.getItem('vendor_registry');
-          const current = stored ? JSON.parse(stored) : DUMMY_VENDORS;
-          const updated = [data.vendor, ...current];
-          localStorage.setItem('vendor_registry', JSON.stringify(updated));
-          return { success: true, mode: 'local_persistence' };
-        }
-        throw err;
+        const stored = localStorage.getItem('vendor_registry');
+        const current = stored ? JSON.parse(stored) : DUMMY_VENDORS;
+        const updated = [data.vendor, ...current];
+        localStorage.setItem('vendor_registry', JSON.stringify(updated));
+        return { success: true, mode: 'local_persistence' };
       }
     }
     
     if (action === 'health') {
+      if (isStaticHost) {
+        return { status: 'static_mode', db: SCRIPT_URL ? 'online' : 'local_persistence', message: SCRIPT_URL ? 'Connected to Google Sheets' : 'Offline Persistence Mode' };
+      }
+
       try {
         const res = await axios.get('/api/health');
         return res.data;
@@ -160,8 +168,11 @@ const apiCall = async (action: string, data: any = {}) => {
       }
     }
   } catch (error) {
-    console.error(`apiCall ${action} critical failure:`, error);
-    if (action === 'list') return DUMMY_VENDORS;
+    console.error(`apiCall ${action} failure:`, error);
+    if (action === 'list') {
+      const stored = localStorage.getItem('vendor_registry');
+      return stored ? JSON.parse(stored) : DUMMY_VENDORS;
+    }
     if (action === 'health') return { status: 'offline', db: 'disconnected' };
     throw error;
   }
@@ -375,6 +386,13 @@ function Dashboard({ vendors = [] }: any) {
              <span className="px-3 py-1 bg-indigo-600 text-white text-[10px] font-black uppercase rounded-lg tracking-[0.2em] shadow-lg shadow-indigo-200">v2.1 Gold</span>
           </h2>
           <p className="text-slate-500 text-base mt-2 font-medium">Real-time oversight of the vendor ecosystem and procurement health.</p>
+          {!SCRIPT_URL && isStaticHost && (
+            <div className="mt-4 flex items-center gap-3 px-4 py-2 bg-amber-50 border border-amber-200 rounded-xl text-amber-800 text-[11px] font-bold uppercase tracking-wider animate-pulse">
+               <AlertCircle className="h-4 w-4" />
+               Cloud Sync Disabled: Registry saved to Local Browser Storage only. 
+               <span className="opacity-60 ml-2 underline cursor-help" title="To fix: Add VITE_GOOGLE_SCRIPT_URL to your environment variables.">How to fix?</span>
+            </div>
+          )}
         </div>
         <div className="flex items-center gap-4">
           <button 
