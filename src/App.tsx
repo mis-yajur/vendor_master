@@ -38,6 +38,9 @@ import {
   Globe,
   Bell,
   User,
+  CircleDollarSign,
+  Calendar,
+  ThumbsUp,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn, formatDate } from './lib/utils';
@@ -61,7 +64,7 @@ import {
   CssBaseline,
 } from '@mui/material';
 import { Provider, useDispatch, useSelector } from 'react-redux';
-import { store, RootState, AppDispatch, fetchVendors as fetchVendorsThunk, setHealth } from './store';
+import { store, RootState, AppDispatch, loadVendors as fetchVendorsThunk, setHealth } from './store';
 
 import { DUMMY_VENDORS } from './dummyData';
 
@@ -74,14 +77,13 @@ const apiCall = async (action: string, data: any = {}) => {
     
     if (isDirect && SCRIPT_URL) {
       if (action === 'health' || action === 'list') {
-        const resp = await fetch(`${SCRIPT_URL}?action=${action}`);
-        return resp.json();
+        const resp = await axios.get(`${SCRIPT_URL}?action=${action}`);
+        return resp.data;
       }
-      const response = await fetch(SCRIPT_URL, {
-        method: 'POST',
-        body: JSON.stringify({ action, ...data }),
+      const response = await axios.post(SCRIPT_URL, {
+        action, ...data
       });
-      return response.json();
+      return response.data;
     }
     
     if (action === 'list') {
@@ -297,136 +299,175 @@ function Layout({ children, systemHealth }: { children: React.ReactNode, systemH
   );
 }
 
-function Dashboard({ vendors, health, onRefresh }: any) {
+function Dashboard({ vendors = [], health, onRefresh }: any) {
+  const vendorsArray = Array.isArray(vendors) ? vendors : [];
+  
   const areaChartOptions: any = {
     chart: { type: 'area', toolbar: { show: false }, sparkline: { enabled: false } },
     dataLabels: { enabled: false },
-    stroke: { curve: 'smooth', width: 3 },
+    stroke: { curve: 'smooth', width: 4 },
     fill: {
       type: 'gradient',
       gradient: {
         shadeIntensity: 1,
-        opacityFrom: 0.45,
-        opacityTo: 0.05,
-        stops: [20, 100, 100, 100]
+        opacityFrom: 0.7,
+        opacityTo: 0.1,
+        stops: [0, 90, 100]
       }
     },
     xaxis: {
       categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
       axisBorder: { show: false },
       axisTicks: { show: false },
+      labels: { style: { colors: '#94A3B8', fontWeight: 600 } }
     },
-    yaxis: { labels: { show: true } },
-    grid: { show: true, borderColor: '#f1f1f1' },
-    colors: ['#4F46E5'],
+    yaxis: { labels: { show: false } },
+    grid: { show: false },
+    colors: ['#FFFFFF'],
   };
 
   const areaChartSeries = [{
-    name: 'Onboardings',
-    data: [31, 40, 28, 51, 42, vendors.length || 0]
+    name: 'Sales',
+    data: [31, 40, 28, 51, 42, 60]
   }];
 
   const donutOptions: any = {
     chart: { type: 'donut' },
-    labels: ['Goods', 'Services', 'Consultancy'],
-    colors: ['#F43F5E', '#4F46E5', '#06B6D4'],
-    legend: { position: 'bottom' },
+    labels: ['YouTube', 'Facebook', 'Twitter'],
+    colors: ['#F44336', '#2196F3', '#00BCD4'],
+    legend: { position: 'bottom', markers: { radius: 12 } },
     plotOptions: {
       pie: {
         donut: {
-          size: '70%',
+          size: '65%',
           labels: {
             show: true,
             total: {
               show: true,
               label: 'Total',
-              formatter: () => vendors.length.toString()
+              formatter: () => '2'
             }
           }
         }
       }
-    }
+    },
+    dataLabels: { enabled: false }
   };
 
-  const donutSeries = [
-    vendors.filter((v: any) => v.statutory?.vendorType === 'Goods').length || 10,
-    vendors.filter((v: any) => v.statutory?.vendorType === 'Services').length || 5,
-    2
-  ];
+  const donutSeries = [40, 40, 20];
 
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-black text-slate-900 tracking-tight">Dashboard Overview</h1>
-          <p className="text-slate-500 font-medium text-sm mt-1">Welcome back, Prosun. Here is what is happening today.</p>
-        </div>
-        <button onClick={onRefresh} className="p-3 bg-white border border-slate-100 rounded-2xl shadow-sm hover:shadow-md transition-all text-indigo-600">
-          <RefreshCw className="h-5 w-5" />
-        </button>
-      </div>
-
+    <div className="space-y-6">
+      {/* KPI Cards */}
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard title="Total Earnings" value="$30,200" icon={CreditCard} trend="10% changes on profit" color="amber" />
-        <StatCard title="Active Tasks" value="145" icon={Clock} trend="28% task performance" color="rose" />
+        <StatCard title="All Earnings" value="$30,200" icon={CircleDollarSign} trend="10% changes on profit" color="amber" />
+        <StatCard title="Task" value="145" icon={Calendar} trend="28% task performance" color="rose" />
         <StatCard title="Page Views" value="290+" icon={FileText} trend="10k daily views" color="emerald" />
-        <StatCard title="Downloads" value="500" icon={Download} trend="1k download in App store" color="indigo" />
+        <StatCard title="Downloads" value="500" icon={ThumbsUp} trend="1k download in App store" color="indigo" />
       </div>
 
+      {/* Charts Section */}
       <div className="grid gap-6 lg:grid-cols-3">
-        <div className="lg:col-span-2 bg-white rounded-[2.5rem] border border-slate-100 p-8 shadow-sm">
-          <div className="flex items-center justify-between mb-8">
-            <h3 className="text-lg font-black text-slate-900">Onboarding Velocity</h3>
-            <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full">+3% vs last month</span>
+        <div className="lg:col-span-1 bg-[#2C5EFF] rounded-xl p-0 overflow-hidden shadow-sm flex flex-col">
+          <div className="p-6 text-white">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-sm font-bold opacity-80">Sales Per Day</h3>
+              <div className="flex items-center gap-1 text-xs">
+                <TrendingUp className="h-3 w-3" />
+                <span>3%</span>
+              </div>
+            </div>
+            <div className="h-[200px] -mx-4 -mb-4">
+              <Chart options={areaChartOptions} series={areaChartSeries} type="area" height="100%" />
+            </div>
           </div>
-          <div className="h-[350px]">
-            <Chart options={areaChartOptions} series={areaChartSeries} type="area" height="100%" />
+          <div className="bg-white p-6 grid grid-cols-2 gap-4 border-t border-slate-100 flex-1">
+             <div>
+                <p className="text-2xl font-black text-slate-900">$4230</p>
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Total Revenue</p>
+             </div>
+             <div>
+                <p className="text-2xl font-black text-slate-900">321</p>
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Today Sales</p>
+             </div>
+             <div className="col-span-1 pt-4 border-t border-slate-50">
+               <p className="text-xs font-bold text-slate-400">REALTY</p>
+               <p className="text-lg font-black text-rose-500">-0.99</p>
+             </div>
+             <div className="col-span-1 pt-4 border-t border-slate-50">
+               <p className="text-xs font-bold text-slate-400">INFRA</p>
+               <p className="text-lg font-black text-emerald-500">-7.66</p>
+             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-[2.5rem] border border-slate-100 p-8 shadow-sm">
-          <h3 className="text-lg font-black text-slate-900 mb-8">Vendor Classification</h3>
-          <div className="h-[300px] flex items-center justify-center">
+        <div className="bg-white rounded-xl border border-slate-100 shadow-sm p-6">
+          <h3 className="text-sm font-bold text-slate-900 mb-8 pb-4 border-b">Total Revenue</h3>
+          <div className="h-[250px] flex items-center justify-center">
             <Chart options={donutOptions} series={donutSeries} type="donut" height="100%" />
           </div>
-          <div className="mt-8 space-y-4">
-             <TrafficItem label="Goods" value={75} color="bg-rose-500" />
-             <TrafficItem label="Services" value={50} color="bg-indigo-600" />
-             <TrafficItem label="Consultancy" value={25} color="bg-cyan-500" />
+          <div className="grid grid-cols-3 gap-2 mt-8 py-4 border-t">
+             <div className="text-center">
+                <p className="text-[10px] font-bold text-slate-400">Youtube</p>
+                <p className="text-sm font-bold text-indigo-600">+16.85%</p>
+             </div>
+             <div className="text-center">
+                <p className="text-[10px] font-bold text-slate-400">Facebook</p>
+                <p className="text-sm font-bold text-emerald-600">+45.36%</p>
+             </div>
+             <div className="text-center">
+                <p className="text-[10px] font-bold text-slate-400">Twitter</p>
+                <p className="text-sm font-bold text-amber-600">-50.69%</p>
+             </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-xl border border-slate-100 shadow-sm p-6 overflow-hidden">
+          <h3 className="text-sm font-bold text-slate-900 mb-8 pb-4 border-b">Traffic Sources</h3>
+          <div className="space-y-6">
+             <TrafficItem label="Direct" value={80} color="bg-[#4069FF]" />
+             <TrafficItem label="Social" value={50} color="bg-slate-400" />
+             <TrafficItem label="Referral" value={20} color="bg-[#4069FF]" />
+             <TrafficItem label="Bounce" value={60} color="bg-slate-400" />
+             <TrafficItem label="Internet" value={40} color="bg-[#4069FF]" />
           </div>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }
 
 function StatCard({ title, value, icon: Icon, trend, color }: any) {
   const colors: any = {
-    amber: "from-amber-400 to-amber-600",
-    rose: "from-rose-400 to-rose-600",
-    emerald: "from-emerald-400 to-emerald-600",
-    indigo: "from-indigo-400 to-indigo-600"
+    amber: "bg-amber-400 shadow-amber-100",
+    rose: "bg-rose-500 shadow-rose-100",
+    emerald: "bg-emerald-500 shadow-emerald-100",
+    indigo: "bg-[#4069FF] shadow-indigo-100"
+  };
+
+  const labels: any = {
+    amber: "bg-amber-500",
+    rose: "bg-rose-600",
+    emerald: "bg-emerald-600",
+    indigo: "bg-[#2C5EFF]"
   };
 
   return (
-    <motion.div 
-      whileHover={{ y: -5 }}
-      className="bg-white rounded-[2.5rem] border border-slate-50 shadow-sm overflow-hidden group transition-all hover:shadow-xl"
-    >
-      <div className="p-8">
-        <div className="flex items-center justify-between mb-6">
-          <h4 className="text-3xl font-black text-slate-900 tracking-tight">{value}</h4>
-          <div className={cn("h-12 w-12 rounded-2xl flex items-center justify-center text-white shadow-lg bg-gradient-to-br", colors[color] || colors.indigo)}>
-            <Icon className="h-6 w-6" />
-          </div>
+    <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden flex flex-col hover:shadow-md transition-shadow">
+      <div className="p-6 flex items-center justify-between">
+        <div>
+          <h4 className="text-2xl font-black text-slate-900 leading-tight">{value}</h4>
+          <p className="text-xs font-bold text-slate-400 mt-1">{title}</p>
         </div>
-        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">{title}</p>
+        <div className={cn("h-10 w-10 rounded-lg flex items-center justify-center text-white shadow-md", colors[color])}>
+          <Icon className="h-5 w-5" />
+        </div>
       </div>
-      <div className={cn("px-8 py-3 flex items-center justify-between text-white text-[10px] font-black uppercase tracking-widest bg-gradient-to-r", colors[color] || colors.indigo)}>
+      <div className={cn("px-6 py-2.5 flex items-center justify-between text-white text-[10px] font-bold uppercase tracking-widest", labels[color])}>
         <span>{trend}</span>
         <TrendingUp className="h-3 w-3" />
       </div>
-    </motion.div>
+    </div>
   );
 }
 
@@ -448,11 +489,13 @@ function TrafficItem({ label, value, color }: any) {
   );
 }
 
-function VendorList({ vendors, loading }: { vendors: Vendor[], loading: boolean }) {
+function VendorList({ vendors = [], loading }: { vendors: Vendor[], loading: boolean }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedVendor, setSelectedVendor] = useState<Vendor | null>(null);
 
-  const filteredVendors = vendors.filter(v => 
+  const vendorsArray = Array.isArray(vendors) ? vendors : [];
+
+  const filteredVendors = vendorsArray.filter(v => 
     v.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     v.statutory.gstin.toLowerCase().includes(searchQuery.toLowerCase())
   );
