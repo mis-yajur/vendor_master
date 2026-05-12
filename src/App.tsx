@@ -657,15 +657,15 @@ function VendorDetailModal({ vendor, onClose }: { vendor: Vendor, onClose: () =>
               <ProfileSection title="Address Details" icon={MapPin}>
                  <ProfileItem label="Full Address" value={`${vendor.address.floorBuilding}, ${vendor.address.street}`} />
                  <ProfileItem label="Location" value={`${vendor.address.city}, ${vendor.address.district}`} />
-                 <ProfileItem label="Region" value={`${vendor.address.state}, ${vendor.address.country}`} />
-                 <ProfileItem label="Pin Code" value={vendor.address.pinCode} />
-                 <ProfileItem label="Mobile" value={vendor.address.mobile} highlighted />
-                 <ProfileItem label="Email" value={vendor.address.email} />
+                 <ProfileItem label="Region" value={`${vendor.address.state}, ${vendor.address.country}, ${vendor.address.pinCode}`} />
+                 <ProfileItem label="Contacts" value={`M: ${vendor.address.mobile} | P: ${vendor.address.phone || 'N/A'}`} highlighted />
+                 <ProfileItem label="Official Email" value={vendor.address.email} />
+                 <ProfileItem label="Fax" value={vendor.address.fax} />
               </ProfileSection>
 
-              <ProfileSection title="Currency & Credit" icon={CircleDollarSign}>
-                 <ProfileItem label="Currency" value={vendor.currency} highlighted />
-                 <ProfileItem label="Credit Terms" value={vendor.creditTerms} />
+              <ProfileSection title="Compliance" icon={Activity}>
+                 <ProfileItem label="TDS Exemption" value={vendor.statutory.tdsExemptionDetails} highlighted />
+                 <ProfileItem label="PCB Consent" value={vendor.statutory.consentToOperate} />
               </ProfileSection>
            </div>
 
@@ -679,25 +679,36 @@ function VendorDetailModal({ vendor, onClose }: { vendor: Vendor, onClose: () =>
 
               <ProfileSection title="Classification" icon={Briefcase}>
                  <ProfileItem label="Vendor Type" value={vendor.statutory.vendorType} highlighted />
-                 <ProfileItem label="Established" value={vendor.statutory.yearOfEstablishment} />
-                 <ProfileItem label="Constitution" value={vendor.statutory.constitution} />
+                 <ProfileItem label="Constituency" value={vendor.statutory.constitution} />
+                 <ProfileItem label="Estd. Year" value={vendor.statutory.yearOfEstablishment} />
+              </ProfileSection>
+
+              <ProfileSection title="Trade Terms" icon={CircleDollarSign}>
+                 <ProfileItem label="Currency" value={vendor.currency} highlighted />
+                 <ProfileItem label="Credit Terms" value={vendor.creditTerms} />
               </ProfileSection>
            </div>
 
            <div className="lg:col-span-1 space-y-8">
-              <ProfileSection title="Statutory Details" icon={ShieldCheck}>
-                 <ProfileItem label="PAN" value={vendor.statutory.pan} highlighted />
-                 <ProfileItem label="GSTIN" value={vendor.statutory.gstin} highlighted />
+              <ProfileSection title="Statutory Registry" icon={ShieldCheck}>
+                 <div className="grid grid-cols-2 gap-4">
+                    <ProfileItem label="PAN" value={vendor.statutory.pan} highlighted />
+                    <ProfileItem label="GSTIN" value={vendor.statutory.gstin} highlighted />
+                 </div>
                  <ProfileItem label="CIN" value={vendor.statutory.cin} />
-                 <ProfileItem label="MSMED No" value={vendor.statutory.msmedRegNo} />
+                 <ProfileItem label="MSMED" value={vendor.statutory.msmedRegNo} />
+                 <ProfileItem label="Trade License" value={vendor.statutory.tradeLicense} />
                  <ProfileItem label="IEC Code" value={vendor.statutory.iecNo} />
+                 <ProfileItem label="PF No" value={vendor.statutory.pfRegNo} />
+                 <ProfileItem label="ESIC No" value={vendor.statutory.esicRegNo} />
+                 <ProfileItem label="Labour/Factory" value={`${vendor.statutory.labourLicenseNo || 'N/A'} / ${vendor.statutory.factoryLicense || 'N/A'}`} />
               </ProfileSection>
 
-              <ProfileSection title="Bank Details" icon={CreditCard}>
-                 <ProfileItem label="Bank Name" value={vendor.bank.bankName} />
-                 <ProfileItem label="Account No" value={vendor.bank.accountNumber} highlighted />
-                 <ProfileItem label="IFSC Code" value={vendor.bank.ifscCode} />
-                 <ProfileItem label="Branch" value={vendor.bank.branchName} />
+              <ProfileSection title="Bank Settlement" icon={CreditCard}>
+                 <ProfileItem label="Beneficiary" value={vendor.bank.beneficiaryName} />
+                 <ProfileItem label="Bank & Branch" value={`${vendor.bank.bankName} (${vendor.bank.branchName})`} />
+                 <ProfileItem label="Account" value={`${vendor.bank.accountNumber} [${vendor.bank.accountType}]`} highlighted />
+                 <ProfileItem label="IFSC / SWIFT" value={`${vendor.bank.ifscCode} / ${vendor.bank.swiftIban || 'N/A'}`} />
               </ProfileSection>
            </div>
 
@@ -809,15 +820,26 @@ const REGISTRATION_SCHEMA = Yup.object().shape({
 function RegistrationForm({ onComplete }: { onComplete: () => void }) {
   const navigate = useNavigate();
 
+  const handleRegister = async (values: any) => {
+    try {
+      await apiCall('add', { vendor: { ...values, id: `V${Date.now()}`, createdAt: new Date().toISOString() } });
+      onComplete();
+      navigate('/vendors');
+    } catch (error) {
+      console.error(error);
+      alert('Error finalizing onboarding. Please check your connection.');
+    }
+  };
+
   return (
     <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} className="max-w-full mx-auto space-y-12 pb-32">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-10 bg-white p-12 rounded-[3.5rem] border border-white shadow-2xl relative overflow-hidden">
         <div className="absolute top-0 left-0 w-2 h-full bg-indigo-600" />
         <div>
           <h1 className="text-5xl font-black text-slate-900 font-display tracking-tighter uppercase">Onboarding Terminal</h1>
-          <p className="text-slate-500 text-lg mt-3 font-medium">Initiate statutory master record creation for new supply partners.</p>
+          <p className="text-slate-500 text-lg mt-3 font-medium uppercase tracking-[0.1em] opacity-60">Vendor Master Registry v2.1 • Secure Entry</p>
         </div>
-        <button onClick={() => navigate('/vendors')} className="px-10 py-5 bg-slate-100 text-slate-800 rounded-[2rem] text-[14px] font-black uppercase tracking-widest hover:bg-slate-900 hover:text-white transition-all shadow-xl active:scale-95">
+        <button onClick={() => navigate('/vendors')} className="px-10 py-5 bg-slate-100 text-slate-400 rounded-[2rem] text-[14px] font-black uppercase tracking-widest hover:bg-slate-900 hover:text-white transition-all shadow-xl active:scale-95 border border-slate-200">
           Exit Terminal
         </button>
       </div>
@@ -864,123 +886,167 @@ function RegistrationForm({ onComplete }: { onComplete: () => void }) {
           }}
           validationSchema={REGISTRATION_SCHEMA}
           onSubmit={async (values, { setSubmitting }) => {
-            try {
-              await apiCall('add', { vendor: { ...values, id: `V${Date.now()}`, createdAt: new Date().toISOString() } });
-              onComplete();
-              navigate('/vendors');
-            } catch (error) {
-              console.error(error);
-            } finally {
-              setSubmitting(false);
-            }
+            setSubmitting(true);
+            await handleRegister(values);
+            setSubmitting(false);
           }}
         >
           {({ isSubmitting, errors, touched, setFieldValue, values }) => (
-            <Form className="p-10 md:p-14 space-y-12">
-              <div className="grid gap-12">
-                <FormSection title="A. Master Configuration" icon={Settings}>
-                  <div className="grid gap-6 sm:grid-cols-2 max-w-lg">
-                     <FormInput label="Request Action" name="requestType" type="select" options={['New', 'Change']} />
+            <Form className="p-10 md:p-20 space-y-24">
+              <div className="grid gap-24">
+                <FormSection title="A. General Information" icon={Settings}>
+                  <div className="grid gap-8 sm:grid-cols-2 max-w-2xl">
+                     <FormInput label="Request Type" name="requestType" type="select" options={['New', 'Change']} />
                   </div>
                 </FormSection>
 
-                <FormSection title="B. Identity & Presence" icon={MapPin}>
-                  <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                     <FormInput label="Official Legal Name" name="name" placeholder="E.g. Acme Corp Private Ltd" error={touched.name && errors.name} />
-                     <FormInput label="Floor/Building" name="address.floorBuilding" placeholder="Unit, Level" error={touched.address?.floorBuilding && (errors as any).address?.floorBuilding} />
-                     <FormInput label="Street / Area" name="address.street" placeholder="Main road" error={touched.address?.street && (errors as any).address?.street} />
+                <FormSection title="B. Address Details" icon={MapPin}>
+                  <div className="grid gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                     <FormInput label="Name in Full" name="name" placeholder="Legal Name" error={touched.name && errors.name} />
+                     <FormInput label="Floor/Building No" name="address.floorBuilding" placeholder="Unit/Bldg" />
+                     <FormInput label="Street" name="address.street" placeholder="Street Name" />
                      <FormInput label="City" name="address.city" placeholder="City" error={touched.address?.city && (errors as any).address?.city} />
-                     <FormInput label="Postal Code" name="address.pinCode" placeholder="6 digits" error={touched.address?.pinCode && (errors as any).address?.pinCode} />
-                     <FormInput label="State" name="address.state" placeholder="Province/State" error={touched.address?.state && (errors as any).address?.state} />
-                     <FormInput label="Primary Mobile" name="address.mobile" placeholder="Mobile" error={touched.address?.mobile && (errors as any).address?.mobile} />
-                     <FormInput label="Official Email" name="address.email" placeholder="email@corp.com" error={touched.address?.email && (errors as any).address?.email} />
+                     <FormInput label="District" name="address.district" placeholder="District" />
+                     <FormInput label="Pin code" name="address.pinCode" placeholder="6 Digits" />
+                     <FormInput label="State" name="address.state" placeholder="State" />
+                     <FormInput label="Country" name="address.country" placeholder="Country" />
+                     <FormInput label="Phone No" name="address.phone" placeholder="Landline" />
+                     <FormInput label="Fax" name="address.fax" placeholder="Fax No" />
+                     <FormInput label="Mobile No" name="address.mobile" placeholder="Mobile" />
+                     <FormInput label="E-Mail id" name="address.email" placeholder="Official Email" />
                   </div>
                 </FormSection>
 
-                <FormSection title="C. Statutory Registry" icon={ShieldCheck}>
-                  <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                     <FormInput label="PAN (10 Digit)" name="statutory.pan" placeholder="XXXXX0000X" error={touched.statutory?.pan && (errors as any).statutory?.pan} />
-                     <FormInput label="GSTIN (15 Digit)" name="statutory.gstin" placeholder="00XXXXX0000X0Z0" error={touched.statutory?.gstin && (errors as any).statutory?.gstin} />
-                     <FormInput label="MSMED Reg No" name="statutory.msmedRegNo" placeholder="UDYAM-XX-00-0000000" error={touched.statutory?.msmedRegNo && (errors as any).statutory?.msmedRegNo} />
-                     <FormInput label="TDS Exemption ID" name="statutory.tdsExemptionDetails" placeholder="Certificate No" error={touched.statutory?.tdsExemptionDetails && (errors as any).statutory?.tdsExemptionDetails} />
-                     <FormInput label="Year Estd." name="statutory.yearOfEstablishment" placeholder="YYYY" error={touched.statutory?.yearOfEstablishment && (errors as any).statutory?.yearOfEstablishment} />
-                     <FormInput label="Legal Entity" name="statutory.constitution" type="select" options={['Proprietary', 'Private Limited', 'LLP', 'Partnership', 'Public Limited', 'Trust']} />
+                <FormSection title="C. Contact Details" icon={UserS}>
+                  <div className="grid gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
+                     <FormInput label="Contact Person Name" name="contact.name" placeholder="Full Name" />
+                     <FormInput label="Designation" name="contact.designation" placeholder="Job Role" />
+                     <FormInput label="Phone" name="contact.phone" placeholder="Contact Phone" />
+                     <FormInput label="Fax" name="contact.fax" placeholder="Contact Fax" />
+                     <FormInput label="E-Mail id" name="contact.email" placeholder="Contact Email" />
                   </div>
                 </FormSection>
 
-                <FormSection title="D. Financial Nexus" icon={CreditCard}>
-                  <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                     <FormInput label="Beneficiary" name="bank.beneficiaryName" placeholder="Account Name" error={touched.bank?.beneficiaryName && (errors as any).bank?.beneficiaryName} />
-                     <FormInput label="Bank Name" name="bank.bankName" placeholder="E.g. HDFC Bank" error={touched.bank?.bankName && (errors as any).bank?.bankName} />
-                     <FormInput label="Account Number" name="bank.accountNumber" placeholder="Core account no" error={touched.bank?.accountNumber && (errors as any).bank?.accountNumber} />
-                     <FormInput label="IFSC / BIC" name="bank.ifscCode" placeholder="Branch Code" error={touched.bank?.ifscCode && (errors as any).bank?.ifscCode} />
-                     <FormInput label="Account Type" name="bank.accountType" type="select" options={['Savings', 'Current', 'CC/OD']} />
-                     <FormInput label="Credit Terms" name="creditTerms" placeholder="E.g. NET 30" error={touched.creditTerms && errors.creditTerms} />
+                <FormSection title="D. Vendor Classification & Constitution" icon={Briefcase}>
+                  <div className="grid gap-x-10 gap-y-12 sm:grid-cols-3 max-w-5xl">
+                     <FormInput label="Vendor Type" name="statutory.vendorType" type="select" options={['Goods', 'Services']} />
+                     <FormInput label="Year of Establishment" name="statutory.yearOfEstablishment" placeholder="YYYY" />
+                     <FormInput label="Constitution" name="statutory.constitution" type="select" options={['Proprietary', 'Private Limited', 'LLP', 'Partnership', 'Public Limited', 'Trust']} />
                   </div>
                 </FormSection>
 
-                <FormSection title="E. Digital Repository" icon={Paperclip}>
-                  <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-                     <FileField 
-                       label="GSTIN Copy" 
-                       value={values.documents.gstinCopy} 
-                       onUpload={(url) => setFieldValue('documents.gstinCopy', url)} 
-                       required 
-                     />
-                     <FileField 
-                       label="PAN Copy" 
-                       value={values.documents.panCopy} 
-                       onUpload={(url) => setFieldValue('documents.panCopy', url)} 
-                       required 
-                     />
-                     <FileField 
-                       label="MSMED Copy" 
-                       value={values.documents.msmedCopy} 
-                       onUpload={(url) => setFieldValue('documents.msmedCopy', url)} 
-                       required 
-                     />
-                     <FileField 
-                       label="Cancelled Cheque Copy" 
-                       value={values.documents.cancelledChequeCopy} 
-                       onUpload={(url) => setFieldValue('documents.cancelledChequeCopy', url)} 
-                       required 
-                     />
-                     <FileField 
-                       label="TDS Exemption Certificate Copy" 
-                       value={values.documents.tdsExemptionCopy} 
-                       onUpload={(url) => setFieldValue('documents.tdsExemptionCopy', url)} 
-                     />
-                     <FileField 
-                       label="Signed Declaration Authority" 
-                       value={values.documents.signedDeclaration} 
-                       onUpload={(url) => setFieldValue('documents.signedDeclaration', url)} 
-                     />
+                <FormSection title="E. Statutory Details" icon={ShieldCheck}>
+                   <div className="grid gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                     <FormInput label="CIN" name="statutory.cin" placeholder="CIN Number" />
+                     <FormInput label="Trade License" name="statutory.tradeLicense" placeholder="License Code" />
+                     <FormInput label="PAN" name="statutory.pan" placeholder="XXXXX0000X" />
+                     <FormInput label="GSTIN" name="statutory.gstin" placeholder="00XXXXX0000X0Z0" />
+                     <FormInput label="LUT NO" name="statutory.lutNo" placeholder="LUT Reference" />
+                     <FormInput label="Compounding Dealer" name="statutory.compoundingDealer" type="select" options={['YES', 'NO']} />
+                     <FormInput label="MSMED Registration No" name="statutory.msmedRegNo" placeholder="UDYAM-XXXX" />
+                     <FormInput label="IEC No." name="statutory.iecNo" placeholder="IEC Code" />
+                     <FormInput label="PF Registration No." name="statutory.pfRegNo" placeholder="PF Number" />
+                     <FormInput label="ESIC Registration No." name="statutory.esicRegNo" placeholder="ESIC Number" />
+                     <FormInput label="Labour License Registration No." name="statutory.labourLicenseNo" placeholder="Labour License" />
+                     <FormInput label="Factory License" name="statutory.factoryLicense" placeholder="Factory Code" />
+                   </div>
+                </FormSection>
+
+                <FormSection title="F. Additional Compliance" icon={Activity}>
+                   <div className="grid gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
+                     <FormInput label="Details of TDS Exemption certificate" name="statutory.tdsExemptionDetails" placeholder="Reference details" />
+                     <FormInput label="Consent to Operate from P.C.B" name="statutory.consentToOperate" placeholder="Pollution Board Ref" />
+                   </div>
+                </FormSection>
+
+                <FormSection title="G. Bank Details" icon={CreditCard}>
+                   <div className="grid gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
+                     <FormInput label="Beneficiary name" name="bank.beneficiaryName" placeholder="As per Bank record" />
+                     <FormInput label="Name of Bank" name="bank.bankName" placeholder="E.g. HDFC Bank" />
+                     <FormInput label="Bank Account Number" name="bank.accountNumber" placeholder="Account No" />
+                     <FormInput label="Name of the Bank Branch" name="bank.branchName" placeholder="Branch Name" />
+                     <FormInput label="Address of Branch" name="bank.branchAddress" placeholder="Full Address" />
+                     <FormInput label="Account type" name="bank.accountType" type="select" options={['Savings', 'Current', 'CC/OD']} />
+                     <FormInput label="IFSC Code" name="bank.ifscCode" placeholder="Branch IFSC" />
+                     <FormInput label="SWIFT/IBAN number" name="bank.swiftIban" placeholder="International Code" />
+                     <FormInput label="Email id of the bank" name="bank.bankEmail" placeholder="bank@service.com" />
+                   </div>
+                </FormSection>
+
+                <FormSection title="H. Currency & Credit Terms" icon={TrendingUp}>
+                   <div className="grid gap-x-10 gap-y-12 sm:grid-cols-2 max-w-4xl">
+                     <FormInput label="Transaction Currency" name="currency" type="select" options={['INR', 'USD', 'EUR', 'GBP', 'AED']} />
+                     <FormInput label="Credit Terms" name="creditTerms" placeholder="E.g. NET 30" />
+                   </div>
+                </FormSection>
+
+                <FormSection title="I. Digital Repository (Attachments)" icon={FolderOpen}>
+                  <div className="bg-slate-50 p-10 rounded-[3rem] border-4 border-slate-100 shadow-inner mb-10">
+                    <h4 className="text-[14px] font-black uppercase tracking-[0.3em] text-slate-400 mb-8 pb-4 border-b-2 border-slate-200 flex items-center gap-3">
+                      <CheckSquare className="h-5 w-5 text-indigo-500" /> Checklist: Certified Copy of Documents Required
+                    </h4>
+                    <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
+                       <FileField 
+                         label="GSTIN Copy" 
+                         value={values.documents.gstinCopy} 
+                         onUpload={(url) => setFieldValue('documents.gstinCopy', url)} 
+                         required 
+                       />
+                       <FileField 
+                         label="PAN Copy" 
+                         value={values.documents.panCopy} 
+                         onUpload={(url) => setFieldValue('documents.panCopy', url)} 
+                         required 
+                       />
+                       <FileField 
+                         label="MSMED Copy" 
+                         value={values.documents.msmedCopy} 
+                         onUpload={(url) => setFieldValue('documents.msmedCopy', url)} 
+                         required 
+                       />
+                       <FileField 
+                         label="Cancelled Cheque Copy" 
+                         value={values.documents.cancelledChequeCopy} 
+                         onUpload={(url) => setFieldValue('documents.cancelledChequeCopy', url)} 
+                         required 
+                       />
+                       <FileField 
+                         label="TDS Exemption Certificate Copy" 
+                         value={values.documents.tdsExemptionCopy} 
+                         onUpload={(url) => setFieldValue('documents.tdsExemptionCopy', url)} 
+                       />
+                       <FileField 
+                         label="Signed Declaration Authority" 
+                         value={values.documents.signedDeclaration} 
+                         onUpload={(url) => setFieldValue('documents.signedDeclaration', url)} 
+                       />
+                    </div>
                   </div>
                 </FormSection>
               </div>
 
-              <div className="pt-12 flex items-center justify-end gap-4 border-t border-slate-100">
+              <div className="pt-20 flex items-center justify-end gap-6 border-t-8 border-slate-100">
                  <button 
                    type="button" 
                    onClick={() => navigate('/vendors')} 
-                   className="px-8 py-3 bg-white text-slate-500 rounded-xl text-sm font-bold border border-slate-200 hover:bg-slate-50 hover:text-slate-800 transition-all"
+                   className="px-12 py-6 bg-white text-slate-400 rounded-[2rem] text-[15px] font-black uppercase tracking-widest border-4 border-slate-100 hover:bg-slate-900 hover:text-white transition-all shadow-xl"
                  >
                    Discard
                  </button>
                  <button 
                    type="submit" 
                    disabled={isSubmitting} 
-                   className="px-10 py-3 bg-indigo-600 text-white rounded-xl text-sm font-bold shadow-xl shadow-indigo-600/10 hover:bg-indigo-700 active:scale-95 transition-all flex items-center gap-2"
+                   className="px-16 py-6 bg-indigo-600 text-white rounded-[2.5rem] text-[15px] font-black uppercase tracking-widest shadow-[0_20px_50px_rgba(79,70,229,0.3)] hover:bg-indigo-700 active:scale-95 transition-all flex items-center gap-4 border-4 border-white"
                  >
                    {isSubmitting ? (
                      <>
-                       <RefreshCw className="h-4 w-4 animate-spin" />
-                       Validating Master...
+                       <RefreshCw className="h-6 w-6 animate-spin" />
+                       Finalizing Registry...
                      </>
                    ) : (
                      <>
-                       <CheckCircle2 className="h-4 w-4" />
-                       Finalize Onboarding
+                       <CheckCircle2 className="h-6 w-6" />
+                       Finalize Master Record
                      </>
                    )}
                  </button>
@@ -1043,14 +1109,14 @@ function FileField({ label, value, onUpload, required }: any) {
       <label className="text-[12px] font-black text-slate-400 uppercase tracking-[0.2em] pl-1 leading-none flex items-center justify-between">
         <span>{label} {required && <span className="text-rose-500">*</span>}</span>
         {value ? (
-          <span className="text-emerald-500 font-bold text-[10px] bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100 flex items-center gap-1.5 animate-in fade-in slide-in-from-right-2">
-            ✅ ATTACHED
+          <span className="text-emerald-500 font-black text-[11px] bg-emerald-50 px-4 py-1.5 rounded-full border-2 border-emerald-100 flex items-center gap-2 animate-in fade-in slide-in-from-right-2 shadow-sm">
+            ✅ REQUIRED/ATTACHED
           </span>
-        ) : required ? (
-          <span className="text-slate-300 font-bold text-[9px] border border-slate-100 px-2 py-0.5 rounded-md">
-            REQUIRED
+        ) : (
+          <span className="text-rose-500 font-black text-[11px] bg-rose-50 px-4 py-1.5 rounded-full border-2 border-rose-100 flex items-center gap-2 shadow-sm">
+            ❌ NOT APPLICABLE/NOT PROVIDED
           </span>
-        ) : null}
+        )}
       </label>
       <div className={cn(
         "relative h-44 rounded-[2.5rem] border-4 border-dashed transition-all flex flex-col items-center justify-center gap-4 overflow-hidden shadow-2xl",
