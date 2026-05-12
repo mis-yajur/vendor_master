@@ -3,9 +3,14 @@ import { DUMMY_VENDORS } from './dummyData';
 import axios from 'axios';
 import type { Vendor } from './types/vendor';
 
-const SCRIPT_URL = (import.meta as any).env.VITE_GOOGLE_SCRIPT_URL || "https://script.google.com/macros/s/AKfycbytYZ_AO4hrLTTi7yz5mVfLn4ahTyA-viPld4tb7ghTNmaLz_9vgh0Mhzy2YXUC3xcPYw/exec";
+const getScriptUrl = () => {
+  const custom = localStorage.getItem('VITE_GOOGLE_SCRIPT_URL');
+  if (custom) return custom;
+  return (import.meta as any).env.VITE_GOOGLE_SCRIPT_URL || "https://script.google.com/macros/s/AKfycbytYZ_AO4hrLTTi7yz5mVfLn4ahTyA-viPld4tb7ghTNmaLz_9vgh0Mhzy2YXUC3xcPYw/exec";
+};
 
 export const loadVendors = createAsyncThunk('vendors/fetchAll', async () => {
+  const scriptUrl = getScriptUrl();
   const isStaticHost = window.location.hostname.includes('github.io') || 
                        window.location.hostname.includes('web.app') || 
                        window.location.hostname.includes('pages.dev') ||
@@ -14,8 +19,8 @@ export const loadVendors = createAsyncThunk('vendors/fetchAll', async () => {
   
   try {
     // Priority: Google Script URL for Sheet Database
-    if (SCRIPT_URL) {
-      const res = await axios.get(`${SCRIPT_URL}?action=list`);
+    if (scriptUrl) {
+      const res = await axios.get(`${scriptUrl}?action=list`);
       const data = res.data;
       if (Array.isArray(data)) return data;
       if (data && data.vendors && Array.isArray(data.vendors)) return data.vendors;
@@ -23,7 +28,7 @@ export const loadVendors = createAsyncThunk('vendors/fetchAll', async () => {
     }
 
     // On static hosts without script URL, skip backend call
-    if (isStaticHost && !SCRIPT_URL) {
+    if (isStaticHost && !scriptUrl) {
       const stored = localStorage.getItem('vendor_registry');
       return stored ? JSON.parse(stored) : DUMMY_VENDORS;
     }

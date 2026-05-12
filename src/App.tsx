@@ -75,7 +75,12 @@ import { store, RootState, AppDispatch, loadVendors as fetchVendorsThunk, setHea
 
 import { DUMMY_VENDORS } from './dummyData';
 
-const SCRIPT_URL = (import.meta as any).env.VITE_GOOGLE_SCRIPT_URL || "https://script.google.com/macros/s/AKfycbytYZ_AO4hrLTTi7yz5mVfLn4ahTyA-viPld4tb7ghTNmaLz_9vgh0Mhzy2YXUC3xcPYw/exec";
+const getScriptUrl = () => {
+  const custom = localStorage.getItem('VITE_GOOGLE_SCRIPT_URL');
+  if (custom) return custom;
+  return (import.meta as any).env.VITE_GOOGLE_SCRIPT_URL || "https://script.google.com/macros/s/AKfycbytYZ_AO4hrLTTi7yz5mVfLn4ahTyA-viPld4tb7ghTNmaLz_9vgh0Mhzy2YXUC3xcPYw/exec";
+};
+
 const isStaticHost = window.location.hostname.includes('github.io') || 
                      window.location.hostname.includes('web.app') || 
                      window.location.hostname.includes('pages.dev') ||
@@ -84,20 +89,21 @@ const isStaticHost = window.location.hostname.includes('github.io') ||
 
 // Helper for API calls with robust static fallback
 const apiCall = async (action: string, data: any = {}) => {
-  if (!SCRIPT_URL && isStaticHost) {
+  const currentUrl = getScriptUrl();
+  if (!currentUrl && isStaticHost) {
     console.info('Running in Static Mode (No Google Script URL provided). Data persists locally.');
   }
 
   try {
-    // If SCRIPT_URL is present, always prioritize it for the sheet database
-    if (SCRIPT_URL) {
+    // If currentUrl is present, always prioritize it for the sheet database
+    if (currentUrl) {
       if (action === 'health' || action === 'list') {
-        const resp = await axios.get(`${SCRIPT_URL}?action=${action}`);
+        const resp = await axios.get(`${currentUrl}?action=${action}`);
         return resp.data;
       }
       
       // For POST, we use the Web App URL with text/plain to avoid CORS preflight issues
-      const response = await axios.post(SCRIPT_URL, JSON.stringify({ action, ...data }), {
+      const response = await axios.post(currentUrl, JSON.stringify({ action, ...data }), {
         headers: {
           'Content-Type': 'text/plain;charset=utf-8'
         }
@@ -372,9 +378,10 @@ function Layout({ children, systemHealth }: { children: React.ReactNode, systemH
   );
 }
 
-function Dashboard({ vendors = [] }: any) {
+function Dashboard({ vendors = [], health }: any) {
   const navigate = useNavigate();
   const vendorsArray = Array.isArray(vendors) ? vendors : [];
+  const scriptUrl = getScriptUrl();
 
   const stats = [
     { label: 'Total Registry', value: vendorsArray.length.toString(), icon: Users, color: 'indigo', description: 'Certified Partners' },
@@ -392,7 +399,7 @@ function Dashboard({ vendors = [] }: any) {
              <span className="px-3 py-1 bg-slate-900 text-white text-[10px] font-bold uppercase rounded-lg tracking-[0.2em] shadow-lg">REL 2.1</span>
           </h2>
           <p className="text-slate-500 text-lg mt-2 font-medium">Real-time oversight of the vendor ecosystem and procurement health.</p>
-          {!SCRIPT_URL && isStaticHost && (
+          {!scriptUrl && isStaticHost && (
             <div className="mt-4 flex items-center gap-3 px-4 py-2 bg-amber-50 border border-amber-200 rounded-xl text-amber-800 text-[11px] font-bold uppercase tracking-wider">
                <AlertCircle className="h-4 w-4" />
                Local Mode: Sync disabled. Data persists in browser storage.
@@ -1254,6 +1261,7 @@ function FormSection({ title, icon: Icon, children }: any) {
 
 function FileField({ label, value, onUpload, required }: any) {
   const [uploading, setUploading] = useState(false);
+  const scriptUrl = getScriptUrl();
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -1261,7 +1269,7 @@ function FileField({ label, value, onUpload, required }: any) {
 
     setUploading(true);
     try {
-      if (SCRIPT_URL) {
+      if (scriptUrl) {
         // Convert file to base64
         const reader = new FileReader();
         const base64Promise = new Promise<string>((resolve) => {
@@ -1379,6 +1387,26 @@ function FormInput({ label, name, type = 'text', placeholder, options, error, cl
 }
 
 function SettingsView({ health }: any) {
+  const [customUrl, setCustomUrl] = useState(localStorage.getItem('VITE_GOOGLE_SCRIPT_URL') || '');
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
+
+  const handleUpdateUrl = (e: React.FormEvent) => {
+    e.preventDefault();
+    setSaveStatus('saving');
+    if (customUrl.trim()) {
+      localStorage.setItem('VITE_GOOGLE_SCRIPT_URL', customUrl.trim());
+    } else {
+      localStorage.removeItem('VITE_GOOGLE_SCRIPT_URL');
+    }
+    setTimeout(() => {
+      setSaveStatus('saved');
+      setTimeout(() => {
+        setSaveStatus('idle');
+        window.location.reload(); // Reload to apply global constant change
+      }, 1000);
+    }, 800);
+  };
+
   return (
     <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} className="max-w-5xl mx-auto space-y-10 pb-32">
       <div className="bg-slate-900 p-10 rounded-[2.5rem] border border-slate-800 shadow-xl relative overflow-hidden text-center">
@@ -1399,6 +1427,63 @@ function SettingsView({ health }: any) {
                 )}
               </div>
 
+              <div className="bg-slate-50 p-8 rounded-[2rem] border border-slate-100 shadow-inner space-y-6">
+                <div>
+                  <h4 className="text-[12px] font-black text-slate-900 uppercase tracking-widest flex items-center gap-2 mb-2">
+                    <ExternalLink className="h-4 w-4 text-indigo-500" />
+                    Web App URL Override
+                  </h4>
+                  <p className="text-[11px] text-slate-500 font-medium leading-relaxed max-w-2xl">
+                    Paste your Google Apps Script Web App URL here to establish a direct link between this interface and your secure database.
+                  </p>
+                </div>
+
+                <form onSubmit={handleUpdateUrl} className="flex flex-col sm:flex-row gap-4 items-start">
+                  <div className="flex-1 w-full relative">
+                    <input 
+                      type="text" 
+                      placeholder="https://script.google.com/macros/s/.../exec"
+                      value={customUrl}
+                      onChange={(e) => setCustomUrl(e.target.value)}
+                      className="w-full bg-white border border-slate-200 rounded-xl py-3.5 px-5 text-[13px] font-mono text-slate-700 focus:ring-4 focus:ring-indigo-50 focus:border-indigo-600 transition-all outline-none"
+                    />
+                    {customUrl && (
+                      <button 
+                        type="button" 
+                        onClick={() => setCustomUrl('')}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-rose-500 transition-colors"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    )}
+                  </div>
+                  <button 
+                    type="submit"
+                    disabled={saveStatus !== 'idle'}
+                    className={cn(
+                      "px-8 py-3.5 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all shadow-lg active:scale-95 flex items-center gap-2 min-w-[140px] justify-center",
+                      saveStatus === 'idle' ? "bg-indigo-600 text-white hover:bg-slate-900 shadow-indigo-200" :
+                      saveStatus === 'saving' ? "bg-slate-200 text-slate-400 cursor-wait" :
+                      "bg-emerald-500 text-white shadow-emerald-200"
+                    )}
+                  >
+                    {saveStatus === 'idle' && (
+                      <>
+                        <RefreshCw className="h-4 w-4" />
+                        Update Sync
+                      </>
+                    )}
+                    {saveStatus === 'saving' && <RefreshCw className="h-4 w-4 animate-spin" />}
+                    {saveStatus === 'saved' && (
+                      <>
+                        <Check className="h-4 w-4" />
+                        Connected
+                      </>
+                    )}
+                  </button>
+                </form>
+              </div>
+
               {health.db !== 'online' && (
                 <div className="bg-amber-50 border border-amber-200 rounded-[2rem] p-8 space-y-6">
                   <div className="flex items-center gap-4 text-amber-800">
@@ -1415,7 +1500,7 @@ function SettingsView({ health }: any) {
                     {[
                       { step: '01', title: 'Script Setup', desc: 'Copy "google-apps-script.js" into a new Google Apps Script project attached to your sheet.' },
                       { step: '02', title: 'Deployment', desc: 'Deploy as a Web App with access set to "Anyone" and copy the final Web App URL.' },
-                      { step: '03', title: 'Environment', desc: 'Add "VITE_GOOGLE_SCRIPT_URL" to the AI Studio Settings menu with your URL.' }
+                      { step: '03', title: 'Environment', desc: 'Paste the URL in the "Web App URL Override" field above and click Update.' }
                     ].map((s, idx) => (
                       <div key={idx} className="bg-white/50 p-5 rounded-2xl border border-amber-200/50">
                         <span className="text-[10px] font-black text-amber-500">{s.step}</span>
@@ -1434,8 +1519,8 @@ function SettingsView({ health }: any) {
                        <div>
                           <p className="text-lg font-bold text-slate-900 uppercase tracking-tight">Master Registry</p>
                           <p className="text-[10px] font-bold text-indigo-400 mt-1 uppercase tracking-widest">{health.db === 'demo' ? 'Local Persistence' : 'Cloud Synchronized'}</p>
-                          {SCRIPT_URL && (
-                            <p className="text-[8px] text-slate-400 mt-2 truncate max-w-[200px] font-mono opacity-50">{SCRIPT_URL}</p>
+                          {getScriptUrl() && (
+                            <p className="text-[8px] text-slate-400 mt-2 truncate max-w-[200px] font-mono opacity-50">{getScriptUrl()}</p>
                           )}
                        </div>
                     </div>
