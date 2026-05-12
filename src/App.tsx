@@ -876,6 +876,7 @@ function RegistrationForm({ onComplete, theme }: any) {
             <div className="grid gap-8 sm:grid-cols-2">
               <InputGroup label="PAN (Mandatory)" value={formData.statutory?.pan} onChange={(v: string) => updateNested('statutory', 'pan', v)} theme={theme} />
               <InputGroup label="GSTIN (Mandatory)" value={formData.statutory?.gstin} onChange={(v: string) => updateNested('statutory', 'gstin', v)} theme={theme} />
+              <InputGroup label="LUT NO" value={formData.statutory?.lutNo} onChange={(v: string) => updateNested('statutory', 'lutNo', v)} theme={theme} />
               <InputGroup label="CIN No" value={formData.statutory?.cin} onChange={(v: string) => updateNested('statutory', 'cin', v)} theme={theme} />
               <InputGroup label="MSMED Reg No" value={formData.statutory?.msmedRegNo} onChange={(v: string) => updateNested('statutory', 'msmedRegNo', v)} theme={theme} />
               <InputGroup label="Compounding Dealer" type="select" options={['NO', 'YES']} value={formData.statutory?.compoundingDealer} onChange={(v: any) => updateNested('statutory', 'compoundingDealer', v)} theme={theme} />

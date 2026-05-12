@@ -117,6 +117,7 @@ function addVendor(vendor) {
   try {
     const parentFolder = DriveApp.getFolderById(FOLDER_ID);
     const vendorFolder = parentFolder.createFolder(vendor.name + " (" + id.substring(0, 8) + ")");
+    vendorFolder.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
     folderUrl = vendorFolder.getUrl();
     folderId = vendorFolder.getId();
     
@@ -126,6 +127,7 @@ function addVendor(vendor) {
       const docData = vendor.documents[key];
       if (docData && docData.startsWith('data:')) {
         const file = saveFileToDrive(docData, key + "_" + id.substring(0, 4), vendorFolder);
+        file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
         vendor.documents[key] = file.getUrl();
       }
     }
