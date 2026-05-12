@@ -43,6 +43,7 @@ import {
   FolderOpen,
   CircleDollarSign,
   Calendar,
+  LayoutGrid,
   ThumbsUp,
   Upload,
   Lock,
@@ -471,33 +472,33 @@ function Layout({ children, systemHealth, onLogout }: { children: React.ReactNod
   return (
     <div className="min-h-screen bg-[var(--theme-bg)] font-sans flex flex-col transition-colors duration-500">
       {/* Top bar with Navigation */}
-      <header className="h-36 bg-[var(--theme-nav)] text-white flex items-center justify-between px-16 sticky top-0 z-50 border-b border-white/10 shadow-2xl transition-all duration-500">
-         <div className="flex items-center gap-28">
-            <Link to="/" className="flex items-center gap-7 group">
-              <div className="h-18 w-18 items-center justify-center rounded-[1.75rem] bg-[var(--theme-primary)] text-white shadow-2xl shadow-indigo-500/20 flex transform group-hover:rotate-6 transition-all duration-300">
-                <Building2 className="h-10 w-10" />
+      <header className="h-24 bg-[var(--theme-nav)] text-white flex items-center justify-between px-10 sticky top-0 z-50 border-b border-white/10 shadow-2xl transition-all duration-500">
+         <div className="flex items-center gap-20">
+            <Link to="/" className="flex items-center gap-6 group">
+              <div className="h-14 w-14 items-center justify-center rounded-2xl bg-[var(--theme-primary)] text-white shadow-xl shadow-indigo-500/20 flex transform group-hover:rotate-6 transition-all duration-300">
+                <Building2 className="h-8 w-8" />
               </div>
               <div className="flex flex-col">
-                <span className="text-6xl font-black tracking-tighter text-white leading-none font-display uppercase italic">
+                <span className="text-4xl font-black tracking-tighter text-white leading-none font-display uppercase italic text-shadow-sm">
                   YAJUR<span className="text-[var(--theme-accent)] not-italic opacity-90">PORTAL</span>
                 </span>
-                <span className="text-[13px] font-bold uppercase tracking-[0.7em] text-slate-500 mt-3">Vendor Master v2.6</span>
+                <span className="text-[11px] font-bold uppercase tracking-[0.5em] text-slate-500 mt-2">Vendor Master v2.7</span>
               </div>
             </Link>
-
-            <nav className="hidden xl:flex items-center gap-6 h-full">
+ 
+            <nav className="hidden xl:flex items-center gap-3 h-full">
               {navItems.map((item) => (
                 <Link
                   key={item.path}
                    to={item.path}
                    className={cn(
-                     "flex items-center gap-6 px-12 py-6 rounded-[2.5rem] text-[20px] font-black uppercase tracking-widest transition-all duration-300 active:scale-95",
+                     "flex items-center gap-3.5 px-6 py-3 rounded-xl text-[14px] font-black uppercase tracking-widest transition-all duration-300 active:scale-95",
                      location.pathname === item.path 
-                       ? "bg-[var(--theme-primary)] text-white shadow-2xl shadow-indigo-900/40 ring-1 ring-white/20" 
+                       ? "bg-[var(--theme-primary)] text-white shadow-xl shadow-indigo-900/30 ring-1 ring-white/10" 
                        : "text-slate-400 hover:text-white hover:bg-white/5 font-bold"
                    )}
                  >
-                   <item.icon className={cn("h-8 w-8", location.pathname === item.path ? "text-white" : "text-slate-500")} />
+                   <item.icon className={cn("h-5 w-5", location.pathname === item.path ? "text-white" : "text-slate-500")} />
                    <span>{item.label}</span>
                  </Link>
                ))}
@@ -1136,7 +1137,7 @@ function VendorCard({ vendor, onSelect }: { vendor: Vendor, onSelect: () => void
       </div>
 
       <div className="flex-1">
-        <h3 className="text-lg font-bold text-slate-900 font-display line-clamp-1 group-hover:text-indigo-600 transition-colors uppercase tracking-tight">{vendor.name}</h3>
+        <h3 className="text-lg font-bold text-slate-900 font-display line-clamp-1 group-hover:text-[var(--theme-primary)] transition-colors uppercase tracking-tight">{vendor.name}</h3>
         <div className="flex items-center gap-2 mt-2 mb-6 text-slate-400">
            <MapPin className="h-3.5 w-3.5 text-slate-300" />
            <p className="text-[11px] font-medium tracking-wide">{vendor.address?.city}, {vendor.address?.state}</p>
@@ -1175,7 +1176,7 @@ function VendorDetailModal({ vendor, onClose }: { vendor: Vendor, onClose: () =>
             </div>
             <div className="flex items-center gap-3">
                <button className="px-5 py-2.5 bg-slate-50 text-slate-600 rounded-xl text-[11px] font-bold uppercase tracking-widest hover:bg-slate-100 transition-all flex items-center gap-2 border border-slate-200">
-                 <Download className="h-4 w-4 text-indigo-500" /> Export Dossier
+                 <Download className="h-4 w-4 text-[var(--theme-primary)]" /> Export Dossier
                </button>
                <button onClick={onClose} className="p-3 bg-slate-100 rounded-xl text-slate-400 hover:text-rose-500 hover:bg-rose-50 transition-all border border-slate-200"><X className="h-6 w-6" /></button>
             </div>
@@ -1265,15 +1266,15 @@ function DocLink({ label, url }: { label: string, url?: string }) {
       href={url} 
       target="_blank" 
       rel="noopener noreferrer"
-      className="flex items-center justify-between p-3 bg-white border border-slate-100 rounded-xl hover:border-indigo-400 hover:shadow-sm transition-all group"
+      className="flex items-center justify-between p-3 bg-white border border-slate-100 rounded-xl hover:border-[var(--theme-primary)]/40 hover:shadow-sm transition-all group"
     >
        <div className="flex items-center gap-2.5">
-          <div className="h-7 w-7 rounded-lg bg-slate-50 text-slate-400 group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-colors flex items-center justify-center">
+          <div className="h-7 w-7 rounded-lg bg-slate-50 text-slate-400 group-hover:bg-[var(--theme-primary)]/10 group-hover:text-[var(--theme-primary)] transition-colors flex items-center justify-center">
             <FileText className="h-3.5 w-3.5" />
           </div>
-          <span className="text-[11px] font-bold text-slate-600 group-hover:text-indigo-600 transition-colors">{label}</span>
+          <span className="text-[11px] font-bold text-slate-600 group-hover:text-[var(--theme-primary)] transition-colors">{label}</span>
        </div>
-       <ExternalLink className="h-2.5 w-2.5 text-slate-300 group-hover:text-indigo-400" />
+       <ExternalLink className="h-2.5 w-2.5 text-slate-300 group-hover:text-[var(--theme-accent)]" />
     </a>
   );
 }
@@ -1282,7 +1283,7 @@ function ProfileSection({ title, icon: Icon, children, className }: any) {
   return (
     <div className={cn("bg-white p-5 rounded-2xl border border-slate-100 shadow-sm", className)}>
        <div className="flex items-center gap-2 mb-4 pb-3 border-b border-slate-50">
-          <Icon className="h-4 w-4 text-indigo-600" />
+          <Icon className="h-4 w-4 text-[var(--theme-primary)]" />
           <h4 className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">{title}</h4>
        </div>
        <div className="space-y-3">
@@ -1296,7 +1297,7 @@ function ProfileItem({ label, value, highlighted }: any) {
   return (
     <div>
        <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest mb-1">{label}</p>
-       <p className={cn("text-sm font-bold", highlighted ? "text-indigo-600 font-black" : "text-slate-700")}>{value || 'N/A'}</p>
+       <p className={cn("text-sm font-bold", highlighted ? "text-[var(--theme-primary)] font-black" : "text-slate-700")}>{value || 'N/A'}</p>
     </div>
   );
 }
@@ -1380,18 +1381,18 @@ function RegistrationForm({ onComplete }: { onComplete: () => void }) {
 
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="max-w-7xl mx-auto space-y-10 pb-32">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 bg-[var(--theme-nav)] p-12 rounded-[3.5rem] border border-white/5 shadow-2x1 flex transform transition-all duration-500 relative overflow-hidden">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 bg-[var(--theme-nav)] p-10 rounded-[2.5rem] border border-white/5 shadow-2xl relative overflow-hidden transition-all duration-500">
         <div className="relative z-10">
-          <div className="flex items-center gap-5 mb-3">
-            <Plus className="h-8 w-8 text-[var(--theme-accent)]" />
-            <h1 className="text-5xl font-black text-white font-display tracking-tight uppercase italic">Onboarding Hub</h1>
+          <div className="flex items-center gap-4 mb-3">
+            <Plus className="h-6 w-6 text-[var(--theme-accent)]" />
+            <h1 className="text-4xl font-black text-white font-display tracking-tight uppercase italic">Onboarding Hub</h1>
           </div>
-          <p className="text-slate-400 text-lg font-medium tracking-wide">Initialize new vendor partnership and statutory profiling.</p>
+          <p className="text-slate-400 text-base font-medium tracking-wide">Initialize new vendor partnership and statutory profiling.</p>
         </div>
-        <button onClick={() => navigate('/vendors')} className="px-10 py-5 bg-white/5 text-slate-300 rounded-[2rem] text-[14px] font-black uppercase tracking-widest hover:bg-white/10 hover:text-white transition-all shadow-lg active:scale-95 border border-white/5">
+        <button onClick={() => navigate('/vendors')} className="px-8 py-4 bg-white/5 text-slate-300 rounded-2xl text-[12px] font-black uppercase tracking-widest hover:bg-white/10 hover:text-white transition-all shadow-lg active:scale-95 border border-white/5">
           Cancel Onboarding
         </button>
-        <Building2 className="absolute -right-12 -bottom-12 h-72 w-72 text-white/5 opacity-50 blur-sm" />
+        <Building2 className="absolute -right-10 -bottom-10 h-64 w-64 text-white/5 opacity-50 blur-sm" />
       </div>
 
       <div className="bg-white rounded-[3rem] border border-slate-200 shadow-sm relative overflow-hidden">
@@ -1541,7 +1542,7 @@ function RegistrationForm({ onComplete }: { onComplete: () => void }) {
                  <button 
                    type="submit" 
                    disabled={isSubmitting} 
-                   className="px-12 py-4 bg-indigo-600 text-white rounded-xl text-[12px] font-bold uppercase tracking-widest shadow-xl shadow-indigo-600/20 hover:bg-indigo-700 active:scale-95 transition-all flex items-center gap-3"
+                   className="px-12 py-4 bg-[var(--theme-primary)] text-white rounded-xl text-[12px] font-bold uppercase tracking-widest shadow-xl shadow-indigo-600/20 hover:opacity-90 active:scale-95 transition-all flex items-center gap-3"
                  >
                    {isSubmitting ? (
                      <>
@@ -1573,7 +1574,7 @@ function AttachmentSummary({ values, onOpen }: { values: any, onOpen: () => void
   const isComplete = uploadedCount >= 4; // Mandatory 4
 
   return (
-    <div className="bg-white/50 p-6 rounded-2xl border-2 border-dashed border-slate-200 hover:border-indigo-600/30 transition-all group flex flex-col md:flex-row items-center justify-between gap-6 shadow-sm">
+    <div className="bg-white/50 p-6 rounded-2xl border-2 border-dashed border-slate-200 hover:border-[var(--theme-primary)]/30 transition-all group flex flex-col md:flex-row items-center justify-between gap-6 shadow-sm">
       <div className="flex items-center gap-5">
         <div className={cn(
           "h-12 w-12 rounded-xl flex items-center justify-center transition-all",
@@ -1591,7 +1592,7 @@ function AttachmentSummary({ values, onOpen }: { values: any, onOpen: () => void
       <button 
         type="button"
         onClick={onOpen}
-        className="px-6 py-3 bg-[#0f172a] text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-indigo-600 transition-all shadow-xl active:scale-95 flex items-center gap-2 group-hover:px-8"
+        className="px-6 py-3 bg-[var(--theme-nav)] text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-[var(--theme-primary)] transition-all shadow-xl active:scale-95 flex items-center gap-2 group-hover:px-8"
       >
         <FolderOpen className="h-4 w-4" />
         Manage Attachments
@@ -1611,7 +1612,7 @@ function AttachmentModal({ values, setFieldValue, onClose }: any) {
        >
           <div className="px-10 py-8 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
              <div className="flex items-center gap-4">
-                <div className="h-12 w-12 rounded-2xl bg-indigo-600 text-white flex items-center justify-center shadow-lg transform rotate-3">
+                <div className="h-12 w-12 rounded-2xl bg-[var(--theme-primary)] text-white flex items-center justify-center shadow-lg transform rotate-3">
                    <FolderOpen className="h-6 w-6" />
                 </div>
                 <div>
@@ -1673,7 +1674,7 @@ function AttachmentModal({ values, setFieldValue, onClose }: any) {
           <div className="px-10 py-8 border-t border-slate-100 bg-slate-50/50 flex justify-end">
              <button 
                onClick={onClose}
-               className="px-10 py-4 bg-indigo-600 text-white rounded-2xl text-[12px] font-black uppercase tracking-widest shadow-xl shadow-indigo-600/20 hover:bg-indigo-700 active:scale-95 transition-all"
+               className="px-10 py-4 bg-[var(--theme-primary)] text-white rounded-2xl text-[12px] font-black uppercase tracking-widest shadow-xl shadow-indigo-600/20 hover:opacity-90 active:scale-95 transition-all"
              >
                Confirm & Close
              </button>
@@ -1832,14 +1833,14 @@ function SettingsView({ health, currentTheme, onThemeChange }: { health: any, cu
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
 
   const themes = [
-    { id: 'theme-default', name: 'Midnight Slate', primary: 'bg-[#4F46E5]', secondary: 'bg-[#0f172a]', accent: 'bg-[#6366f1]', bg: 'bg-[#f8fafc]', icon: ShieldCheck },
-    { id: 'theme-midnight', name: 'Cyber Night', primary: 'bg-[#8b5cf6]', secondary: 'bg-[#111827]', accent: 'bg-[#a78bfa]', bg: 'bg-[#030712]', icon: Activity },
-    { id: 'theme-emerald', name: 'Corporate Green', primary: 'bg-[#10b981]', secondary: 'bg-[#064e3b]', accent: 'bg-[#34d399]', bg: 'bg-[#f0fdf4]', icon: CheckCircle2 },
-    { id: 'theme-ocean', name: 'Oceanic Blue', primary: 'bg-[#0ea5e9]', secondary: 'bg-[#0c4a6e]', accent: 'bg-[#38bdf8]', bg: 'bg-[#f0f9ff]', icon: Database },
-    { id: 'theme-amber', name: 'Golden Harvest', primary: 'bg-[#f59e0b]', secondary: 'bg-[#78350f]', accent: 'bg-[#fbbf24]', bg: 'bg-[#fffbeb]', icon: TrendingUp },
-    { id: 'theme-rose', name: 'Rose Petal', primary: 'bg-[#e11d48]', secondary: 'bg-[#881337]', accent: 'bg-[#fb7185]', bg: 'bg-[#fff1f2]', icon: Heart },
-    { id: 'theme-violet', name: 'Digital Violet', primary: 'bg-[#7c3aed]', secondary: 'bg-[#4c1d95]', accent: 'bg-[#8b5cf6]', bg: 'bg-[#f53ff]', icon: Zap },
-    { id: 'theme-crimson', name: 'Crimson Peak', primary: 'bg-[#dc2626]', secondary: 'bg-[#450a0a]', accent: 'bg-[#ef4444]', bg: 'bg-[#fef2f2]', icon: Flame },
+    { id: 'theme-default', name: 'Midnight Slate', primary: '#4F46E5', secondary: '#0f172a', accent: '#6366f1', bg: '#f8fafc', icon: ShieldCheck },
+    { id: 'theme-midnight', name: 'Cyber Night', primary: '#8b5cf6', secondary: '#111827', accent: '#a78bfa', bg: '#030712', icon: Activity },
+    { id: 'theme-emerald', name: 'Corporate Green', primary: '#10b981', secondary: '#064e3b', accent: '#34d399', bg: '#f0fdf4', icon: CheckCircle2 },
+    { id: 'theme-ocean', name: 'Oceanic Blue', primary: '#0ea5e9', secondary: '#0c4a6e', accent: '#38bdf8', bg: '#f0f9ff', icon: Database },
+    { id: 'theme-amber', name: 'Golden Harvest', primary: '#f59e0b', secondary: '#78350f', accent: '#fbbf24', bg: '#fffbeb', icon: TrendingUp },
+    { id: 'theme-rose', name: 'Rose Petal', primary: '#e11d48', secondary: '#881337', accent: '#fb7185', bg: '#fff1f2', icon: Heart },
+    { id: 'theme-violet', name: 'Digital Violet', primary: '#7c3aed', secondary: '#4c1d95', accent: '#8b5cf6', bg: '#f5f3ff', icon: Zap },
+    { id: 'theme-crimson', name: 'Crimson Peak', primary: '#dc2626', secondary: '#450a0a', accent: '#ef4444', bg: '#fef2f2', icon: Flame },
   ];
 
   const handleUpdateUrl = (e: React.FormEvent) => {
@@ -1953,28 +1954,40 @@ function SettingsView({ health, currentTheme, onThemeChange }: { health: any, cu
                     )}
                   </div>
                   <button 
-                    type="submit"
+                    type="submit" 
                     disabled={saveStatus !== 'idle'}
                     className={cn(
-                      "px-8 py-3.5 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all shadow-lg active:scale-95 flex items-center gap-2 min-w-[140px] justify-center",
-                      saveStatus === 'idle' ? "bg-indigo-600 text-white hover:bg-slate-900 shadow-indigo-200" :
-                      saveStatus === 'saving' ? "bg-slate-200 text-slate-400 cursor-wait" :
-                      "bg-emerald-500 text-white shadow-emerald-200"
+                      "px-8 py-3.5 rounded-xl text-[11px] font-bold uppercase tracking-widest transition-all shadow-lg active:scale-95 flex items-center gap-2",
+                      saveStatus === 'idle' ? "bg-[var(--theme-nav)] text-white hover:bg-[var(--theme-primary)] shadow-indigo-200" :
+                      saveStatus === 'saving' ? "bg-slate-200 text-slate-500" : "bg-emerald-500 text-white"
                     )}
                   >
-                    {saveStatus === 'idle' && (
-                      <>
-                        <RefreshCw className="h-4 w-4" />
-                        Update Sync
-                      </>
-                    )}
-                    {saveStatus === 'saving' && <RefreshCw className="h-4 w-4 animate-spin" />}
-                    {saveStatus === 'saved' && (
-                      <>
-                        <Check className="h-4 w-4" />
-                        Connected
-                      </>
-                    )}
+                    {saveStatus === 'idle' ? 'Connect DB' : saveStatus === 'saving' ? 'Syncing...' : 'Connected'}
+                  </button>
+                  <button 
+                    type="button"
+                    onClick={async () => {
+                      if(confirm('Initialize Google Sheet with professional dummy data? This will clear existing sheet content.')) {
+                        setSaveStatus('saving');
+                        try {
+                          await fetch(localStorage.getItem('VITE_GOOGLE_SCRIPT_URL') || '', {
+                            method: 'POST',
+                            mode: 'no-cors',
+                            body: JSON.stringify({ action: 'setup' })
+                          });
+                          alert('Setup signal sent. Please check your Google Sheet after a few seconds.');
+                          window.location.reload();
+                        } catch(e) {
+                          alert('Connection error');
+                        } finally {
+                          setSaveStatus('idle');
+                        }
+                      }
+                    }}
+                    className="px-8 py-3.5 bg-white border border-slate-200 rounded-xl text-[11px] font-bold uppercase tracking-widest text-slate-600 hover:bg-slate-50 transition-all shadow-sm active:scale-95 flex items-center gap-2"
+                  >
+                    <LayoutGrid className="h-4 w-4 text-[var(--theme-primary)]" />
+                    Setup Sheet
                   </button>
                 </form>
               </div>
@@ -2008,12 +2021,12 @@ function SettingsView({ health, currentTheme, onThemeChange }: { health: any, cu
               )}
 
               <div className="grid md:grid-cols-2 gap-6">
-                 <div className="group flex items-center justify-between p-8 bg-slate-50 rounded-[2rem] border border-slate-100 hover:border-indigo-100 hover:bg-white transition-all shadow-inner">
+                 <div className="group flex items-center justify-between p-8 bg-slate-50 rounded-[2rem] border border-slate-100 hover:border-[var(--theme-primary)]/20 hover:bg-white transition-all shadow-inner">
                     <div className="flex items-center gap-6">
-                       <div className="h-14 w-14 rounded-2xl bg-white border border-slate-100 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform"><Database className="h-7 w-7 text-indigo-600" /></div>
+                       <div className="h-14 w-14 rounded-2xl bg-white border border-slate-100 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform"><Database className="h-7 w-7 text-[var(--theme-primary)]" /></div>
                        <div>
                           <p className="text-lg font-bold text-slate-900 uppercase tracking-tight">Master Registry</p>
-                          <p className="text-[10px] font-bold text-indigo-400 mt-1 uppercase tracking-widest">{health.db === 'demo' ? 'Local Persistence' : 'Cloud Synchronized'}</p>
+                          <p className="text-[10px] font-bold text-[var(--theme-accent)] mt-1 uppercase tracking-widest">{health.db === 'demo' ? 'Local Persistence' : 'Cloud Synchronized'}</p>
                           {getScriptUrl() && (
                             <p className="text-[8px] text-slate-400 mt-2 truncate max-w-[200px] font-mono opacity-50">{getScriptUrl()}</p>
                           )}

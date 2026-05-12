@@ -101,6 +101,15 @@ function doPost(e) {
       return ContentService.createTextOutput(JSON.stringify({ error: err.toString() }))
         .setMimeType(ContentService.MimeType.JSON);
     }
+  } else if (action === "setup") {
+    try {
+      setup();
+      return ContentService.createTextOutput(JSON.stringify({ success: true, message: "Sheet initialized with dummy data" }))
+        .setMimeType(ContentService.MimeType.JSON);
+    } catch (err) {
+      return ContentService.createTextOutput(JSON.stringify({ error: err.toString() }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
   }
   
   if (action === "add") {
