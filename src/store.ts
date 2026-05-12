@@ -3,10 +3,14 @@ import { DUMMY_VENDORS } from './dummyData';
 import axios from 'axios';
 import type { Vendor } from './types/vendor';
 
-const SCRIPT_URL = (import.meta as any).env.VITE_GOOGLE_SCRIPT_URL;
+const SCRIPT_URL = (import.meta as any).env.VITE_GOOGLE_SCRIPT_URL || "https://script.google.com/macros/s/AKfycbytYZ_AO4hrLTTi7yz5mVfLn4ahTyA-viPld4tb7ghTNmaLz_9vgh0Mhzy2YXUC3xcPYw/exec";
 
 export const loadVendors = createAsyncThunk('vendors/fetchAll', async () => {
-  const isStaticHost = window.location.hostname.includes('github.io') || window.location.hostname.includes('web.app') || window.location.hostname.includes('pages.dev');
+  const isStaticHost = window.location.hostname.includes('github.io') || 
+                       window.location.hostname.includes('web.app') || 
+                       window.location.hostname.includes('pages.dev') ||
+                       window.location.hostname.includes('run.app') ||
+                       window.location.hostname.includes('localhost');
   
   try {
     // Priority: Google Script URL for Sheet Database
@@ -34,7 +38,7 @@ export const loadVendors = createAsyncThunk('vendors/fetchAll', async () => {
     }
     return Array.isArray(data) ? data : DUMMY_VENDORS;
   } catch (error) {
-    if (isGithubPages || (axios.isAxiosError(error) && (error.response?.status === 404 || error.response?.status === 405))) {
+    if (isStaticHost || (axios.isAxiosError(error) && (error.response?.status === 404 || error.response?.status === 405))) {
       console.warn('Synchronous server not found, falling back to client-side persistence');
       const stored = localStorage.getItem('vendor_registry');
       return stored ? JSON.parse(stored) : DUMMY_VENDORS;
