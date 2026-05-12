@@ -62,15 +62,17 @@ export interface BankDetails {
 }
 
 export interface VendorDocuments {
-  gstinCopy?: string; // File ID or URL
+  gstinCopy?: string;
   panCopy?: string;
   msmedCopy?: string;
   cancelledChequeCopy?: string;
   tdsExemptionCopy?: string;
+  signedDeclaration?: string;
 }
 
 export interface Vendor {
-  id: string; // Document ID or Row Index
+  id: string;
+  requestType: 'New' | 'Change';
   name: string;
   address: VendorAddress;
   contact: VendorContact;

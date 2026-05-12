@@ -12,9 +12,10 @@ function setup() {
   if (!sheet) {
     sheet = ss.insertSheet("Vendors");
     sheet.appendRow([
-      "ID", "Name", "Address Info", "Contact Info", 
-      "Statutory Info", "Bank Info", "Currency", 
-      "Credit Terms", "Documents", "Created At", "Updated At"
+      "id", "name", "address", "contact", 
+      "statutory", "bank", "currency", 
+      "creditTerms", "documents", "createdAt", "updatedAt",
+      "folderUrl", "folderId", "requestType"
     ]);
   }
 }
@@ -75,8 +76,18 @@ function addVendor(vendor) {
     const vendorFolder = parentFolder.createFolder(vendor.name + " (" + id.substring(0, 8) + ")");
     folderUrl = vendorFolder.getUrl();
     folderId = vendorFolder.getId();
+    
+    // Handle Document Uploads if they are base64
+    const docKeys = Object.keys(vendor.documents);
+    for (const key of docKeys) {
+      const docData = vendor.documents[key];
+      if (docData && docData.startsWith('data:')) {
+        const file = saveFileToDrive(docData, key + "_" + id.substring(0, 4), vendorFolder);
+        vendor.documents[key] = file.getUrl();
+      }
+    }
   } catch (e) {
-    console.error("Folder creation failed: " + e.message);
+    console.error("Folder/File operations failed: " + e.message);
   }
 
   sheet.appendRow([
@@ -91,12 +102,23 @@ function addVendor(vendor) {
     JSON.stringify(vendor.documents),
     new Date(),
     new Date(),
-    folderUrl, // Added Folder Link column
-    folderId
+    folderUrl,
+    folderId,
+    vendor.requestType
   ]);
   
   return ContentService.createTextOutput(JSON.stringify({ success: true, id, folderUrl }))
     .setMimeType(ContentService.MimeType.JSON);
+}
+
+function saveFileToDrive(base64Data, fileName, folder) {
+  const parts = base64Data.split(',');
+  const contentType = parts[0].split(':')[1].split(';')[0];
+  const decodedData = Utilities.base64Decode(parts[1]);
+  const blob = Utilities.newBlob(decodedData, contentType, fileName);
+  const file = folder.createFile(blob);
+  file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+  return file;
 }
 
 function updateVendor(vendor) {

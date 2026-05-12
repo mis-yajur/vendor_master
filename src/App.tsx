@@ -360,7 +360,7 @@ function Dashboard({ vendors, health, onExport, theme }: any) {
 
 function VendorList({ vendors, searchQuery, setSearchQuery, theme }: any) {
   const { primary } = THEME_COLORS[theme as Theme];
-  const [previewDoc, setPreviewDoc] = useState<string | null>(null);
+  const [selectedVendor, setSelectedVendor] = useState<Vendor | null>(null);
 
   return (
     <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-6">
@@ -376,26 +376,32 @@ function VendorList({ vendors, searchQuery, setSearchQuery, theme }: any) {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
           <input 
             type="text" 
-            placeholder="Search Registry..."
+            placeholder="Search by Name, GSTIN, PAN or City..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full rounded-2xl border border-slate-200 bg-white py-3 pl-10 pr-4 text-sm outline-none focus:border-indigo-500"
+            className="w-full rounded-2xl border border-slate-200 bg-white py-3 pl-10 pr-4 text-sm outline-none focus:border-indigo-500 shadow-sm"
           />
         </div>
       </div>
 
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {vendors.map((vendor: Vendor) => (
-          <VendorCard key={vendor.id} vendor={vendor} theme={theme} onPreview={(url: string) => setPreviewDoc(url)} />
+          <VendorCard key={vendor.id} vendor={vendor} theme={theme} onSelect={() => setSelectedVendor(vendor)} />
         ))}
+        {vendors.length === 0 && (
+          <div className="col-span-full py-20 text-center">
+            <Users className="h-12 w-12 text-slate-200 mx-auto mb-4" />
+            <p className="text-slate-400 font-bold">No vendors found matching your criteria.</p>
+          </div>
+        )}
       </div>
 
-      {previewDoc && <DocumentPreview url={previewDoc} onClose={() => setPreviewDoc(null)} />}
+      {selectedVendor && <VendorDetailModal vendor={selectedVendor} theme={theme} onClose={() => setSelectedVendor(null)} />}
     </motion.div>
   );
 }
 
-function VendorCard({ vendor, theme, onPreview }: { vendor: Vendor, theme: Theme, onPreview: (url: string) => void }) {
+function VendorCard({ vendor, theme, onSelect }: { vendor: Vendor, theme: Theme, onSelect: () => void }) {
   const { primary, bg, accent } = THEME_COLORS[theme];
   return (
     <div className="group rounded-[2.5rem] border border-slate-100 bg-white p-8 shadow-xl shadow-slate-200/40 transition-all hover:-translate-y-1 hover:shadow-2xl">
@@ -405,9 +411,11 @@ function VendorCard({ vendor, theme, onPreview }: { vendor: Vendor, theme: Theme
         </div>
         <div className="flex flex-col items-end gap-2 text-right">
           <span className={cn("rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-[0.15em]", `bg-${primary}/10 text-${primary}`)}>
+            {vendor.requestType}
+          </span>
+          <span className="text-[10px] font-bold text-slate-300 uppercase tracking-widest leading-none">
             {vendor.statutory.vendorType}
           </span>
-          <span className="text-[10px] font-bold text-slate-300 uppercase tracking-widest leading-none">Registered</span>
         </div>
       </div>
       
@@ -431,43 +439,180 @@ function VendorCard({ vendor, theme, onPreview }: { vendor: Vendor, theme: Theme
       </div>
 
       <div className="mt-8 flex items-center gap-3">
-        {vendor.folderUrl && (
-          <a 
-            href={vendor.folderUrl} 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="flex-1 flex items-center justify-center gap-2 rounded-2xl py-3 text-xs font-black text-slate-700 bg-slate-100 hover:bg-slate-200 transition-all border border-slate-200 uppercase tracking-widest"
-          >
-            <ExternalLink className="h-4 w-4" /> Drive
-          </a>
-        )}
         <button 
-          onClick={() => vendor.documents.gstinCopy && onPreview(vendor.documents.gstinCopy)}
+          onClick={onSelect}
           className={cn("flex-1 flex items-center justify-center gap-2 rounded-2xl py-3 text-xs font-black text-white transition-all uppercase tracking-widest shadow-lg", `bg-gradient-to-r from-${primary} to-${accent} hover:shadow-${primary.split('-')[0]}-200/50`)}
         >
-          <Eye className="h-4 w-4" /> View Doc
+          <Eye className="h-4 w-4" /> View Details
         </button>
       </div>
     </div>
   );
 }
 
-function DocumentPreview({ url, onClose }: { url: string, onClose: () => void }) {
+function VendorDetailModal({ vendor, theme, onClose }: { vendor: Vendor, theme: Theme, onClose: () => void }) {
+  const { primary, accent, ring } = THEME_COLORS[theme];
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/80 backdrop-blur-sm p-4">
-      <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="relative w-full max-w-4xl bg-white rounded-3xl overflow-hidden shadow-2xl">
-        <div className="flex items-center justify-between p-4 border-b">
-          <h3 className="font-bold text-slate-900">Document Preview</h3>
-          <button onClick={onClose} className="p-2 rounded-xl hover:bg-slate-100"><X className="h-6 w-6" /></button>
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4 overflow-y-auto">
+      <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="relative w-full max-w-5xl bg-[#F8F9FD] rounded-[3rem] overflow-hidden shadow-2xl my-8">
+        <div className="sticky top-0 z-10 flex items-center justify-between p-8 bg-white border-b border-slate-100">
+           <div className="flex items-center gap-4">
+              <div className={cn("h-14 w-14 rounded-2xl flex items-center justify-center text-white shadow-lg", `bg-gradient-to-br from-${primary} to-${accent}`)}>
+                <Building2 className="h-7 w-7" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-black text-slate-900 uppercase tracking-tight">{vendor.name}</h2>
+                <div className="flex items-center gap-2 mt-1">
+                  <span className={cn("px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest", `bg-${primary}/10 text-${primary}`)}>{vendor.requestType} Request</span>
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Added {formatDate(vendor.createdAt)}</span>
+                </div>
+              </div>
+           </div>
+           <button onClick={onClose} className="p-3 rounded-2xl bg-slate-100 text-slate-500 hover:bg-slate-200 transition-colors shadow-sm"><X className="h-6 w-6" /></button>
         </div>
-        <div className="aspect-video bg-slate-100 flex items-center justify-center">
-          <img src={url} alt="Document" className="max-h-full object-contain" />
+
+        <div className="p-8 space-y-8 max-h-[70vh] overflow-y-auto">
+          <div className="grid gap-8 lg:grid-cols-3">
+             {/* General & Address */}
+             <DetailSection title="Address Details" icon={MapPin} theme={theme}>
+               <DetailItem label="Floor/Building" value={vendor.address.floorBuilding} />
+               <DetailItem label="Street" value={vendor.address.street} />
+               <DetailItem label="City/District" value={`${vendor.address.city}, ${vendor.address.district}`} />
+               <DetailItem label="State/Country" value={`${vendor.address.state}, ${vendor.address.country}`} />
+               <DetailItem label="Pin Code" value={vendor.address.pinCode} />
+               <DetailItem label="Mobile" value={vendor.address.mobile} />
+               <DetailItem label="Email" value={vendor.address.email} />
+             </DetailSection>
+
+             {/* Contact & Classification */}
+             <DetailSection title="Contact & Classification" icon={Users} theme={theme}>
+               <DetailItem label="Contact Person" value={vendor.contact.name} />
+               <DetailItem label="Designation" value={vendor.contact.designation} />
+               <DetailItem label="Vendor Type" value={vendor.statutory.vendorType} />
+               <DetailItem label="Constitution" value={vendor.statutory.constitution} />
+               <DetailItem label="Year of Est." value={vendor.statutory.yearOfEstablishment} />
+             </DetailSection>
+
+             {/* Statutory */}
+             <DetailSection title="Statutory Details" icon={ShieldCheck} theme={theme}>
+               <DetailItem label="PAN" value={vendor.statutory.pan} highlighted />
+               <DetailItem label="GSTIN" value={vendor.statutory.gstin} highlighted />
+               <DetailItem label="CIN" value={vendor.statutory.cin} />
+               <DetailItem label="MSMED Reg" value={vendor.statutory.msmedRegNo} />
+               <DetailItem label="Trade License" value={vendor.statutory.tradeLicense} />
+               <DetailItem label="IEC Code" value={vendor.statutory.iecNo} />
+             </DetailSection>
+
+             {/* Bank */}
+             <DetailSection title="Bank Details" icon={CreditCard} theme={theme}>
+               <DetailItem label="Beneficiary" value={vendor.bank.beneficiaryName} />
+               <DetailItem label="Bank Name" value={vendor.bank.bankName} />
+               <DetailItem label="Account No" value={vendor.bank.accountNumber} highlighted />
+               <DetailItem label="IFSC Code" value={vendor.bank.ifscCode} highlighted />
+               <DetailItem label="Account Type" value={vendor.bank.accountType} />
+               <DetailItem label="Currency" value={vendor.currency} />
+               <DetailItem label="Credit Terms" value={vendor.creditTerms} />
+             </DetailSection>
+
+             {/* Compliance */}
+             <DetailSection title="Compliance & Others" icon={FileText} theme={theme}>
+               <DetailItem label="TDS Exemption" value={vendor.statutory.tdsExemptionDetails} />
+               <DetailItem label="PCB Consent" value={vendor.statutory.consentToOperate} />
+               <DetailItem label="Labour License" value={vendor.statutory.labourLicenseNo} />
+               <DetailItem label="Factory License" value={vendor.statutory.factoryLicense} />
+             </DetailSection>
+
+             {/* Attachments */}
+             <DetailSection title="Mandatory Attachments" icon={Plus} theme={theme}>
+               <div className="space-y-3 mt-4">
+                  <AttachmentLink label="GSTIN Copy" url={vendor.documents.gstinCopy} theme={theme} />
+                  <AttachmentLink label="PAN Copy" url={vendor.documents.panCopy} theme={theme} />
+                  <AttachmentLink label="MSMED Copy" url={vendor.documents.msmedCopy} theme={theme} />
+                  <AttachmentLink label="Cancelled Cheque" url={vendor.documents.cancelledChequeCopy} theme={theme} />
+                  <AttachmentLink label="TDS Exemption" url={vendor.documents.tdsExemptionCopy} theme={theme} />
+                  <AttachmentLink label="Signed Declaration" url={vendor.documents.signedDeclaration} theme={theme} />
+               </div>
+               {vendor.folderUrl && (
+                  <a 
+                    href={vendor.folderUrl} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className={cn("mt-6 flex items-center justify-center gap-2 w-full p-4 rounded-2xl bg-white border border-slate-200 text-xs font-black text-slate-700 hover:bg-slate-50 transition-all uppercase tracking-widest")}
+                  >
+                    <ExternalLink className="h-4 w-4" /> Open G-Drive Folder
+                  </a>
+               )}
+             </DetailSection>
+          </div>
         </div>
-        <div className="p-4 bg-slate-50 flex justify-end gap-3">
-           <button className="px-4 py-2 text-sm font-bold text-slate-600 hover:underline">Download Original</button>
-           <button className="px-6 py-2 rounded-xl bg-slate-900 text-white text-sm font-bold" onClick={onClose}>Close Preview</button>
+
+        <div className="p-8 bg-white border-t border-slate-100 flex justify-end gap-3">
+           <button onClick={onClose} className="px-8 py-3 rounded-2xl border border-slate-200 text-slate-600 font-black text-xs uppercase tracking-widest hover:bg-slate-50 transition-colors">Close</button>
+           <button 
+            onClick={() => window.print()}
+            className={cn("px-8 py-3 rounded-2xl text-white font-black text-xs uppercase tracking-widest shadow-lg transition-all active:scale-95", `bg-gradient-to-r from-${primary} to-${accent}`)}
+           >
+            Download Info
+           </button>
         </div>
       </motion.div>
+    </div>
+  );
+}
+
+function DetailSection({ title, icon: Icon, children, theme }: any) {
+  const { primary } = THEME_COLORS[theme as Theme];
+  return (
+    <div className="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-50">
+       <div className="flex items-center gap-3 mb-6 border-b border-slate-50 pb-4">
+          <Icon className={cn("h-5 w-5", `text-${primary}`)} />
+          <h4 className="font-black text-slate-900 uppercase tracking-widest text-xs">{title}</h4>
+       </div>
+       <div className="space-y-4">
+          {children}
+       </div>
+    </div>
+  );
+}
+
+function DetailItem({ label, value, highlighted }: { label: string, value?: string, highlighted?: boolean }) {
+  if (!value) return null;
+  return (
+    <div>
+      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{label}</p>
+      <p className={cn("mt-1 text-sm font-bold", highlighted ? "text-indigo-600 font-black" : "text-slate-700")}>{value}</p>
+    </div>
+  );
+}
+
+function AttachmentLink({ label, url, theme }: { label: string, url?: string, theme: Theme }) {
+  const { primary } = THEME_COLORS[theme];
+  if (!url) return (
+    <div className="flex items-center justify-between p-3 rounded-xl bg-slate-50 opacity-50 grayscale border border-slate-100 text-slate-400">
+      <span className="text-xs font-bold">{label}</span>
+      <span className="text-[10px] uppercase font-black tracking-widest">Missing</span>
+    </div>
+  );
+  return (
+    <div className="flex items-center justify-between p-3 rounded-xl bg-white border border-slate-100 shadow-sm group hover:border-indigo-200 transition-all">
+      <span className="text-xs font-bold text-slate-700">{label}</span>
+      <div className="flex items-center gap-2">
+        <a 
+          href={url} 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className={cn("p-1.5 rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 transition-all")}
+        >
+          <ExternalLink className="h-4 w-4" />
+        </a>
+        <a 
+          href={url} 
+          download
+          className={cn("p-1.5 rounded-lg text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 transition-all")}
+        >
+          <Download className="h-4 w-4" />
+        </a>
+      </div>
     </div>
   );
 }
@@ -515,15 +660,25 @@ function RegistrationForm({ onComplete, theme }: any) {
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState<Partial<Vendor>>({
+    requestType: 'New',
     name: '',
     address: { 
-      floorBuilding: '', street: '', city: '', district: '', pinCode: '', state: '', country: 'INDIA', mobile: '', email: '' 
+      floorBuilding: '', street: '', city: '', district: '', pinCode: '', state: '', country: 'INDIA', mobile: '', email: '', phone: '', fax: '' 
     } as any,
-    contact: { name: '', designation: '', phone: '', email: '' },
-    statutory: { vendorType: 'Goods', yearOfEstablishment: '', constitution: 'Proprietary', compoundingDealer: 'NO' } as any,
-    bank: { beneficiaryName: '', bankName: '', accountNumber: '', branchName: '', branchAddress: '', accountType: 'Savings', ifscCode: '' } as any,
+    contact: { name: '', designation: '', phone: '', fax: '', email: '' },
+    statutory: { 
+      vendorType: 'Goods', yearOfEstablishment: '', constitution: 'Proprietary', 
+      cin: '', tradeLicense: '', pan: '', gstin: '', lutNo: '', 
+      compoundingDealer: 'NO', msmedRegNo: '', iecNo: '', pfRegNo: '', 
+      esicRegNo: '', labourLicenseNo: '', factoryLicense: '',
+      tdsExemptionDetails: '', consentToOperate: '' 
+    } as any,
+    bank: { 
+      beneficiaryName: '', bankName: '', accountNumber: '', branchName: '', branchAddress: '', 
+      accountType: 'Savings', ifscCode: '', swiftIban: '', bankEmail: '' 
+    } as any,
     currency: 'INR',
-    creditTerms: 'ADVANCE',
+    creditTerms: 'NET 30',
     documents: {}
   });
 
@@ -539,6 +694,23 @@ function RegistrationForm({ onComplete, theme }: any) {
     }));
   };
 
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, key: string) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData(prev => ({
+          ...prev,
+          documents: {
+            ...prev.documents,
+            [key]: reader.result as string
+          }
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSubmit = async () => {
     setIsSubmitting(true);
     try {
@@ -552,6 +724,8 @@ function RegistrationForm({ onComplete, theme }: any) {
     }
   };
 
+  const totalSteps = 6;
+
   return (
     <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} className="max-w-4xl mx-auto">
       <div className="mb-10 text-center">
@@ -559,103 +733,207 @@ function RegistrationForm({ onComplete, theme }: any) {
           <Plus className="h-8 w-8" />
         </div>
         <h1 className="text-3xl font-black text-slate-900 tracking-tight">Onboard New Vendor</h1>
-        <p className="mt-2 text-slate-500 font-medium tracking-tight">Step {step} of 3: {step === 1 ? 'Primary Identity' : step === 2 ? 'Legal & Statutory' : 'Financial Routing'}</p>
+        <p className="mt-2 text-slate-500 font-medium tracking-tight">
+          Step {step} of {totalSteps}: {
+            step === 1 ? 'General & Address' : 
+            step === 2 ? 'Contact & Classification' : 
+            step === 3 ? 'Statutory Details' : 
+            step === 4 ? 'Bank & Terms' :
+            step === 5 ? 'Additional Compliance' : 
+            'Mandatory Attachments'
+          }
+        </p>
       </div>
 
       <div className="rounded-[2.5rem] border border-slate-100 bg-white p-10 shadow-2xl shadow-slate-200/40">
         <div className="flex gap-2 mb-10 overflow-hidden rounded-full bg-slate-100 h-2">
-           <div className={cn("h-full transition-all duration-500", `bg-${primary}`)} style={{ width: `${(step/3)*100}%` }} />
+           <div className={cn("h-full transition-all duration-500", `bg-${primary}`)} style={{ width: `${(step/totalSteps)*100}%` }} />
         </div>
 
         {step === 1 && (
           <div className="space-y-8">
             <div className="grid gap-8 sm:grid-cols-2">
               <InputGroup 
+                label="Request Type" 
+                type="select"
+                options={['New', 'Change']}
+                value={formData.requestType} 
+                onChange={(v: any) => setFormData({...formData, requestType: v})} 
+                theme={theme}
+              />
+              <InputGroup 
                 label="Full Business Name" 
-                placeholder="Enter formal name"
+                placeholder="Name in Full"
                 value={formData.name} 
                 onChange={(v: string) => setFormData({...formData, name: v})} 
                 theme={theme}
               />
               <InputGroup 
-                label="Registered Mobile" 
-                placeholder="+91-0000000000"
+                label="Floor/Building No" 
+                value={formData.address?.floorBuilding} 
+                onChange={(v: string) => updateNested('address', 'floorBuilding', v)} 
+                theme={theme}
+              />
+              <InputGroup 
+                label="Street" 
+                value={formData.address?.street} 
+                onChange={(v: string) => updateNested('address', 'street', v)} 
+                theme={theme}
+              />
+              <InputGroup 
+                label="City" 
+                value={formData.address?.city} 
+                onChange={(v: string) => updateNested('address', 'city', v)} 
+                theme={theme}
+              />
+              <InputGroup 
+                label="District" 
+                value={formData.address?.district} 
+                onChange={(v: string) => updateNested('address', 'district', v)} 
+                theme={theme}
+              />
+              <InputGroup 
+                label="Pin Code" 
+                value={formData.address?.pinCode} 
+                onChange={(v: string) => updateNested('address', 'pinCode', v)} 
+                theme={theme}
+              />
+              <InputGroup 
+                label="State" 
+                value={formData.address?.state} 
+                onChange={(v: string) => updateNested('address', 'state', v)} 
+                theme={theme}
+              />
+            </div>
+          </div>
+        )}
+
+        {step === 2 && (
+          <div className="space-y-8">
+            <div className="grid gap-8 sm:grid-cols-2">
+              <InputGroup 
+                label="Contact Person Name" 
+                value={formData.contact?.name} 
+                onChange={(v: string) => updateNested('contact', 'name', v)} 
+                theme={theme}
+              />
+              <InputGroup 
+                label="Designation" 
+                value={formData.contact?.designation} 
+                onChange={(v: string) => updateNested('contact', 'designation', v)} 
+                theme={theme}
+              />
+              <InputGroup 
+                label="Vendor Type" 
+                type="select"
+                options={['Goods', 'Services']}
+                value={formData.statutory?.vendorType} 
+                onChange={(v: any) => updateNested('statutory', 'vendorType', v)} 
+                theme={theme}
+              />
+              <InputGroup 
+                label="Constitution" 
+                type="select"
+                options={['Proprietary', 'Private Limited', 'LLP', 'Partnership', 'Public Limited', 'Trust']}
+                value={formData.statutory?.constitution} 
+                onChange={(v: any) => updateNested('statutory', 'constitution', v)} 
+                theme={theme}
+              />
+              <InputGroup 
+                label="Mobile No" 
                 value={formData.address?.mobile} 
                 onChange={(v: string) => updateNested('address', 'mobile', v)} 
                 theme={theme}
               />
               <InputGroup 
-                label="Official Email Address" 
-                placeholder="contact@company.com"
+                label="E-Mail ID" 
                 value={formData.address?.email} 
                 onChange={(v: string) => updateNested('address', 'email', v)} 
                 theme={theme}
               />
-              <InputGroup 
-                label="Base City" 
-                placeholder="Business location"
-                value={formData.address?.city} 
-                onChange={(v: string) => updateNested('address', 'city', v)} 
-                theme={theme}
-              />
             </div>
           </div>
         )}
-        {step === 2 && (
-          <div className="space-y-8">
-            <div className="grid gap-8 sm:grid-cols-2">
-              <InputGroup 
-                label="Tax Identification (GSTIN)" 
-                placeholder="15-digit number"
-                value={formData.statutory?.gstin} 
-                onChange={(v: string) => updateNested('statutory', 'gstin', v)} 
-                theme={theme}
-              />
-              <InputGroup 
-                label="Permanent Account (PAN)" 
-                placeholder="10-digit code"
-                value={formData.statutory?.pan} 
-                onChange={(v: string) => updateNested('statutory', 'pan', v)} 
-                theme={theme}
-              />
-              <InputGroup 
-                label="Classification" 
-                type="select" 
-                options={['Goods', 'Services']} 
-                value={formData.statutory?.vendorType} 
-                onChange={(v: string) => updateNested('statutory', 'vendorType', v)} 
-                theme={theme}
-              />
-            </div>
-          </div>
-        )}
+
         {step === 3 && (
           <div className="space-y-8">
             <div className="grid gap-8 sm:grid-cols-2">
+              <InputGroup label="PAN (Mandatory)" value={formData.statutory?.pan} onChange={(v: string) => updateNested('statutory', 'pan', v)} theme={theme} />
+              <InputGroup label="GSTIN (Mandatory)" value={formData.statutory?.gstin} onChange={(v: string) => updateNested('statutory', 'gstin', v)} theme={theme} />
+              <InputGroup label="CIN No" value={formData.statutory?.cin} onChange={(v: string) => updateNested('statutory', 'cin', v)} theme={theme} />
+              <InputGroup label="MSMED Reg No" value={formData.statutory?.msmedRegNo} onChange={(v: string) => updateNested('statutory', 'msmedRegNo', v)} theme={theme} />
+              <InputGroup label="Compounding Dealer" type="select" options={['NO', 'YES']} value={formData.statutory?.compoundingDealer} onChange={(v: any) => updateNested('statutory', 'compoundingDealer', v)} theme={theme} />
+              <InputGroup label="Trade License" value={formData.statutory?.tradeLicense} onChange={(v: string) => updateNested('statutory', 'tradeLicense', v)} theme={theme} />
+              <InputGroup label="IEC Code" value={formData.statutory?.iecNo} onChange={(v: string) => updateNested('statutory', 'iecNo', v)} theme={theme} />
+              <InputGroup label="PF Reg No" value={formData.statutory?.pfRegNo} onChange={(v: string) => updateNested('statutory', 'pfRegNo', v)} theme={theme} />
+              <InputGroup label="ESIC Reg No" value={formData.statutory?.esicRegNo} onChange={(v: string) => updateNested('statutory', 'esicRegNo', v)} theme={theme} />
+            </div>
+          </div>
+        )}
+
+        {step === 4 && (
+          <div className="space-y-8">
+            <div className="grid gap-8 sm:grid-cols-2">
+              <InputGroup label="Beneficiary Name" value={formData.bank?.beneficiaryName} onChange={(v: string) => updateNested('bank', 'beneficiaryName', v)} theme={theme} />
+              <InputGroup label="Bank Name" value={formData.bank?.bankName} onChange={(v: string) => updateNested('bank', 'bankName', v)} theme={theme} />
+              <InputGroup label="Account Number" value={formData.bank?.accountNumber} onChange={(v: string) => updateNested('bank', 'accountNumber', v)} theme={theme} />
+              <InputGroup label="IFSC Code" value={formData.bank?.ifscCode} onChange={(v: string) => updateNested('bank', 'ifscCode', v)} theme={theme} />
+              <InputGroup label="Account Type" type="select" options={['Savings', 'Current', 'CC/OD']} value={formData.bank?.accountType} onChange={(v: any) => updateNested('bank', 'accountType', v)} theme={theme} />
+              <InputGroup label="Currency" type="select" options={['INR', 'USD', 'EUR', 'GBP']} value={formData.currency} onChange={(v: string) => setFormData({...formData, currency: v})} theme={theme} />
+              <InputGroup label="Bank Email" value={formData.bank?.bankEmail} onChange={(v: string) => updateNested('bank', 'bankEmail', v)} theme={theme} />
+              <InputGroup label="SWIFT/IBAN" value={formData.bank?.swiftIban} onChange={(v: string) => updateNested('bank', 'swiftIban', v)} theme={theme} />
+            </div>
+          </div>
+        )}
+
+        {step === 5 && (
+          <div className="space-y-8">
+            <div className="grid gap-8 sm:grid-cols-2">
+              <InputGroup label="Credit Terms" value={formData.creditTerms} onChange={(v: string) => setFormData({...formData, creditTerms: v})} theme={theme} />
               <InputGroup 
-                label="Settlement Account No." 
-                placeholder="Primary business account"
-                value={formData.bank?.accountNumber} 
-                onChange={(v: string) => updateNested('bank', 'accountNumber', v)} 
+                label="TDS Exemption Cert Details" 
+                value={formData.statutory?.tdsExemptionDetails} 
+                onChange={(v: string) => updateNested('statutory', 'tdsExemptionDetails', v)} 
                 theme={theme}
               />
               <InputGroup 
-                label="IFSC Code" 
-                placeholder="Routing code"
-                value={formData.bank?.ifscCode} 
-                onChange={(v: string) => updateNested('bank', 'ifscCode', v)} 
+                label="P.C.B Consent to Operate" 
+                value={formData.statutory?.consentToOperate} 
+                onChange={(v: string) => updateNested('statutory', 'consentToOperate', v)} 
                 theme={theme}
               />
               <InputGroup 
-                label="Bank Name" 
-                placeholder="Automated detection"
-                value={formData.bank?.bankName} 
-                onChange={(v: string) => updateNested('bank', 'bankName', v)} 
+                label="Labour License No" 
+                value={formData.statutory?.labourLicenseNo} 
+                onChange={(v: string) => updateNested('statutory', 'labourLicenseNo', v)} 
+                theme={theme}
+              />
+              <InputGroup 
+                label="Factory License" 
+                value={formData.statutory?.factoryLicense} 
+                onChange={(v: string) => updateNested('statutory', 'factoryLicense', v)} 
                 theme={theme}
               />
             </div>
           </div>
         )}
+
+        {step === 6 && (
+          <div className="space-y-8">
+            <div className="grid gap-8 sm:grid-cols-2">
+              <FileField label="GSTIN Copy" required uploaded={!!formData.documents?.gstinCopy} onChange={(e) => handleFileUpload(e, 'gstinCopy')} theme={theme} />
+              <FileField label="PAN Copy" required uploaded={!!formData.documents?.panCopy} onChange={(e) => handleFileUpload(e, 'panCopy')} theme={theme} />
+              <FileField label="MSMED Copy" required uploaded={!!formData.documents?.msmedCopy} onChange={(e) => handleFileUpload(e, 'msmedCopy')} theme={theme} />
+              <FileField label="Cancelled Cheque" required uploaded={!!formData.documents?.cancelledChequeCopy} onChange={(e) => handleFileUpload(e, 'cancelledChequeCopy')} theme={theme} />
+              <FileField label="TDS Exemption Cert" uploaded={!!formData.documents?.tdsExemptionCopy} onChange={(e) => handleFileUpload(e, 'tdsExemptionCopy')} theme={theme} />
+              <FileField label="Signed Declaration" required uploaded={!!formData.documents?.signedDeclaration} onChange={(e) => handleFileUpload(e, 'signedDeclaration')} theme={theme} />
+            </div>
+            <div className="p-6 bg-slate-50 rounded-3xl border border-dashed border-slate-200">
+               <p className="text-xs text-slate-500 text-center font-medium">By registering, you confirm that all provided information is accurate and matches the uploaded documents.</p>
+            </div>
+          </div>
+        )}
+
         <div className="mt-12 flex items-center justify-between">
           <button 
             disabled={step === 1 || isSubmitting} 
@@ -667,19 +945,46 @@ function RegistrationForm({ onComplete, theme }: any) {
           </button>
           <button 
             disabled={isSubmitting}
-            onClick={() => step < 3 ? setStep(s => s + 1) : handleSubmit()} 
+            onClick={() => step < totalSteps ? setStep(s => s + 1) : handleSubmit()} 
             className={cn(
               "px-12 py-4 rounded-[1.5rem] text-white font-black flex items-center gap-3 uppercase tracking-widest text-sm shadow-xl transition-all active:scale-95", 
               `bg-gradient-to-r from-${primary} to-${accent}`,
               isSubmitting && "opacity-50"
             )}
           >
-            {isSubmitting ? "Processing..." : (step === 3 ? "Register" : "Continue")}
+            {isSubmitting ? "Processing..." : (step === totalSteps ? "Register" : "Continue")}
             <ArrowRight className="h-4 w-4" />
           </button>
         </div>
       </div>
     </motion.div>
+  );
+}
+
+function FileField({ label, required, uploaded, onChange, theme }: any) {
+  const { primary } = THEME_COLORS[theme as Theme];
+  return (
+    <div className="space-y-3">
+      <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-1">
+        {label} {required && <span className="text-rose-500">*</span>}
+      </label>
+      <div className={cn(
+        "relative flex items-center justify-between p-4 rounded-2xl border transition-all overflow-hidden",
+        uploaded ? "bg-emerald-50 border-emerald-200" : "bg-slate-50 border-slate-100 hover:border-slate-200"
+      )}>
+        <span className="text-sm font-bold text-slate-600 truncate mr-10">
+          {uploaded ? "File Ready" : "Select Document"}
+        </span>
+        <div className={cn("p-2 rounded-xl", uploaded ? "bg-emerald-500 text-white" : `bg-${primary} text-white`)}>
+           {uploaded ? <CheckCircle2 className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
+        </div>
+        <input 
+          type="file" 
+          onChange={onChange} 
+          className="absolute inset-0 opacity-0 cursor-pointer"
+        />
+      </div>
+    </div>
   );
 }
 
