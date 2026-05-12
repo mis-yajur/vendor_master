@@ -81,6 +81,10 @@ const SCRIPT_URL = (import.meta as any).env.VITE_GOOGLE_SCRIPT_URL;
 
 // Helper for API calls with robust static fallback
 const apiCall = async (action: string, data: any = {}) => {
+  if (!SCRIPT_URL) {
+    console.warn('VITE_GOOGLE_SCRIPT_URL is missing. Please check your environment variables in Settings.');
+  }
+
   try {
     // If SCRIPT_URL is present, always prioritize it for the sheet database
     if (SCRIPT_URL) {
@@ -89,23 +93,26 @@ const apiCall = async (action: string, data: any = {}) => {
         return resp.data;
       }
       
-      // For POST, we use the Web App URL. 
-      // Note: Apps Script POST often works better with simple forms or plain text to avoid CORS preflight issues
+      // For POST, we use the Web App URL with text/plain to avoid CORS preflight issues
       const response = await axios.post(SCRIPT_URL, JSON.stringify({ action, ...data }), {
         headers: {
           'Content-Type': 'text/plain;charset=utf-8'
         }
       });
       
-      // Some Apps Script setups return a string if they use ContentService.createTextOutput
       let result = response.data;
       if (typeof result === 'string') {
         try {
           result = JSON.parse(result);
         } catch (e) {
-          // If it's not JSON, it might be a success message
           if (result.toLowerCase().includes('success')) result = { success: true };
+          else if (result.toLowerCase().includes('error')) result = { success: false, error: result };
         }
+      }
+
+      if (result && result.error) {
+        console.error('Google Sheets Script Error:', result.error);
+        throw new Error(`Cloud Sync: ${result.error}`);
       }
       
       return result;
@@ -153,7 +160,7 @@ const apiCall = async (action: string, data: any = {}) => {
       }
     }
   } catch (error) {
-    console.error(`apiCall ${action} error:`, error);
+    console.error(`apiCall ${action} critical failure:`, error);
     if (action === 'list') return DUMMY_VENDORS;
     if (action === 'health') return { status: 'offline', db: 'disconnected' };
     throw error;
@@ -893,15 +900,20 @@ const REGISTRATION_SCHEMA = Yup.object().shape({
 
 function RegistrationForm({ onComplete }: { onComplete: () => void }) {
   const navigate = useNavigate();
+  const [showUploadModal, setShowUploadModal] = useState(false);
 
   const handleRegister = async (values: any) => {
     try {
-      await apiCall('add', { vendor: { ...values, id: `V${Date.now()}`, createdAt: new Date().toISOString() } });
-      onComplete();
-      navigate('/vendors');
-    } catch (error) {
-      console.error(error);
-      alert('Error finalizing onboarding. Please check your connection.');
+      const result = await apiCall('add', { vendor: { ...values, id: `V${Date.now()}`, createdAt: new Date().toISOString() } });
+      if (result && (result.success || result.id)) {
+        onComplete();
+        navigate('/vendors');
+      } else {
+        throw new Error(result?.error || 'Registry update was rejected by the server.');
+      }
+    } catch (error: any) {
+      console.error('Finalization Failure:', error);
+      alert(`Sync Error: ${error.message || 'Unknown protocol error'}. Check your Google Script permissions.`);
     }
   };
 
@@ -966,140 +978,112 @@ function RegistrationForm({ onComplete }: { onComplete: () => void }) {
           }}
         >
           {({ isSubmitting, errors, touched, setFieldValue, values }) => (
-            <Form className="p-10 md:p-20 space-y-32">
-              <div className="grid gap-32">
+            <Form className="p-6 md:p-10 space-y-12">
+              <div className="grid gap-12">
                 <FormSection title="A. General Information" icon={Settings}>
-                  <div className="grid gap-8 sm:grid-cols-2 max-w-2xl">
+                  <div className="grid gap-4 sm:grid-cols-2 max-w-xl">
                      <FormInput label="Request Type" name="requestType" type="select" options={['New', 'Change']} />
                   </div>
                 </FormSection>
 
-                <FormSection title="B. Digital Repository (Attachments)" icon={FolderOpen}>
-                  <div className="bg-slate-50 p-8 rounded-3xl border-2 border-slate-100 shadow-inner mb-2 transition-all hover:border-indigo-100">
-                    <h4 className="text-[11px] font-black uppercase tracking-[0.3em] text-slate-400 mb-8 pb-3 border-b border-slate-200 flex items-center gap-3">
-                      <CheckSquare className="h-5 w-5 text-indigo-500" /> Mandatory Attachment Checklist
-                    </h4>
-                    <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-                       <FileField 
-                         label="GSTIN Copy" 
-                         value={values.documents.gstinCopy} 
-                         onUpload={(url) => setFieldValue('documents.gstinCopy', url)} 
-                         required 
-                       />
-                       <FileField 
-                         label="PAN Copy" 
-                         value={values.documents.panCopy} 
-                         onUpload={(url) => setFieldValue('documents.panCopy', url)} 
-                         required 
-                       />
-                       <FileField 
-                         label="MSMED Copy" 
-                         value={values.documents.msmedCopy} 
-                         onUpload={(url) => setFieldValue('documents.msmedCopy', url)} 
-                         required 
-                       />
-                       <FileField 
-                         label="Cancelled Cheque Copy" 
-                         value={values.documents.cancelledChequeCopy} 
-                         onUpload={(url) => setFieldValue('documents.cancelledChequeCopy', url)} 
-                         required 
-                       />
-                       <FileField 
-                         label="TDS Exemption Certificate Copy" 
-                         value={values.documents.tdsExemptionCopy} 
-                         onUpload={(url) => setFieldValue('documents.tdsExemptionCopy', url)} 
-                       />
-                       <FileField 
-                         label="Signed Declaration Authority" 
-                         value={values.documents.signedDeclaration} 
-                         onUpload={(url) => setFieldValue('documents.signedDeclaration', url)} 
-                       />
-                    </div>
-                  </div>
+                <FormSection title="B. Digital Repository" icon={FolderOpen}>
+                  <AttachmentSummary 
+                    values={values.documents} 
+                    onOpen={() => setShowUploadModal(true)} 
+                  />
+                  <AnimatePresence>
+                    {showUploadModal && (
+                      <AttachmentModal 
+                        values={values.documents} 
+                        setFieldValue={setFieldValue} 
+                        onClose={() => setShowUploadModal(false)} 
+                      />
+                    )}
+                  </AnimatePresence>
                 </FormSection>
 
-                <FormSection title="C. Address Details" icon={MapPin}>
-                  <div className="grid gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                     <FormInput label="Name in Full" name="name" placeholder="Legal Name" error={touched.name && errors.name} />
-                     <FormInput label="Floor/Building No" name="address.floorBuilding" placeholder="Unit/Bldg" />
-                     <FormInput label="Street" name="address.street" placeholder="Street Name" />
+                <FormSection title="C. Address" icon={MapPin}>
+                  <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                     <FormInput label="Legal Name" name="name" placeholder="Full Name" error={touched.name && errors.name} />
+                     <FormInput label="Floor/Building" name="address.floorBuilding" placeholder="Unit" />
+                     <FormInput label="Street" name="address.street" placeholder="Street" />
                      <FormInput label="City" name="address.city" placeholder="City" error={touched.address?.city && (errors as any).address?.city} />
                      <FormInput label="District" name="address.district" placeholder="District" />
-                     <FormInput label="Pin code" name="address.pinCode" placeholder="6 Digits" />
+                     <FormInput label="Pin" name="address.pinCode" placeholder="6 Digits" />
                      <FormInput label="State" name="address.state" placeholder="State" />
                      <FormInput label="Country" name="address.country" placeholder="Country" />
-                     <FormInput label="Phone No" name="address.phone" placeholder="Landline" />
-                     <FormInput label="Fax" name="address.fax" placeholder="Fax No" />
-                     <FormInput label="Mobile No" name="address.mobile" placeholder="Mobile" />
-                     <FormInput label="E-Mail id" name="address.email" placeholder="Official Email" />
+                     <FormInput label="Phone" name="address.phone" placeholder="Landline" />
+                     <FormInput label="Fax" name="address.fax" placeholder="Fax" />
+                     <FormInput label="Mobile" name="address.mobile" placeholder="Mobile" />
+                     <FormInput label="Email" name="address.email" placeholder="Email" />
                   </div>
                 </FormSection>
 
-                <FormSection title="D. Contact Details" icon={Users}>
-                  <div className="grid gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
-                     <FormInput label="Contact Person Name" name="contact.name" placeholder="Full Name" />
-                     <FormInput label="Designation" name="contact.designation" placeholder="Job Role" />
-                     <FormInput label="Phone" name="contact.phone" placeholder="Contact Phone" />
-                     <FormInput label="Fax" name="contact.fax" placeholder="Contact Fax" />
-                     <FormInput label="E-Mail id" name="contact.email" placeholder="Contact Email" />
+                <FormSection title="D. Contacts" icon={Users}>
+                  <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                     <FormInput label="Contact Person" name="contact.name" placeholder="Name" />
+                     <FormInput label="Designation" name="contact.designation" placeholder="Role" />
+                     <FormInput label="Phone" name="contact.phone" placeholder="Phone" />
+                     <FormInput label="Fax" name="contact.fax" placeholder="Fax" />
+                     <FormInput label="Email" name="contact.email" placeholder="Email" />
                   </div>
                 </FormSection>
 
-                <FormSection title="E. Vendor Classification & Constitution" icon={Briefcase}>
-                  <div className="grid gap-x-10 gap-y-12 sm:grid-cols-3 max-w-5xl">
-                     <FormInput label="Vendor Type" name="statutory.vendorType" type="select" options={['Goods', 'Services']} />
-                     <FormInput label="Year of Establishment" name="statutory.yearOfEstablishment" placeholder="YYYY" />
+                <FormSection title="E. Classification" icon={Briefcase}>
+                  <div className="grid gap-4 sm:grid-cols-3 max-w-4xl">
+                     <FormInput label="Type" name="statutory.vendorType" type="select" options={['Goods', 'Services']} />
+                     <FormInput label="Est. Year" name="statutory.yearOfEstablishment" placeholder="YYYY" />
                      <FormInput label="Constitution" name="statutory.constitution" type="select" options={['Proprietary', 'Private Limited', 'LLP', 'Partnership', 'Public Limited', 'Trust']} />
                   </div>
                 </FormSection>
 
-                <FormSection title="F. Statutory Details" icon={ShieldCheck}>
-                   <div className="grid gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                     <FormInput label="CIN" name="statutory.cin" placeholder="CIN Number" />
-                     <FormInput label="Trade License" name="statutory.tradeLicense" placeholder="License Code" />
-                     <FormInput label="PAN" name="statutory.pan" placeholder="XXXXX0000X" />
-                     <FormInput label="GSTIN" name="statutory.gstin" placeholder="00XXXXX0000X0Z0" />
-                     <FormInput label="LUT NO" name="statutory.lutNo" placeholder="LUT Reference" />
-                     <FormInput label="Compounding Dealer" name="statutory.compoundingDealer" type="select" options={['YES', 'NO']} />
-                     <FormInput label="MSMED Registration No" name="statutory.msmedRegNo" placeholder="UDYAM-XXXX" />
-                     <FormInput label="IEC No." name="statutory.iecNo" placeholder="IEC Code" />
-                     <FormInput label="PF Registration No." name="statutory.pfRegNo" placeholder="PF Number" />
-                     <FormInput label="ESIC Registration No." name="statutory.esicRegNo" placeholder="ESIC Number" />
-                     <FormInput label="Labour License Registration No." name="statutory.labourLicenseNo" placeholder="Labour License" />
-                     <FormInput label="Factory License" name="statutory.factoryLicense" placeholder="Factory Code" />
+                <FormSection title="F. Statutory" icon={ShieldCheck}>
+                   <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                     <FormInput label="CIN" name="statutory.cin" placeholder="CIN" />
+                     <FormInput label="License" name="statutory.tradeLicense" placeholder="Trade Lic" />
+                     <FormInput label="PAN" name="statutory.pan" placeholder="PAN" />
+                     <FormInput label="GSTIN" name="statutory.gstin" placeholder="GSTIN" />
+                     <FormInput label="LUT" name="statutory.lutNo" placeholder="LUT" />
+                     <FormInput label="Compounding" name="statutory.compoundingDealer" type="select" options={['YES', 'NO']} />
+                     <FormInput label="MSMED" name="statutory.msmedRegNo" placeholder="UDYAM" />
+                     <FormInput label="IEC" name="statutory.iecNo" placeholder="IEC" />
+                     <FormInput label="PF" name="statutory.pfRegNo" placeholder="PF" />
+                     <FormInput label="ESIC" name="statutory.esicRegNo" placeholder="ESIC" />
+                     <FormInput label="Labour Lic" name="statutory.labourLicenseNo" placeholder="Labour" />
+                     <FormInput label="Factory Lic" name="statutory.factoryLicense" placeholder="Factory" />
                    </div>
                 </FormSection>
 
-                <FormSection title="G. Additional Compliance" icon={Activity}>
-                   <div className="grid gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
-                     <FormInput label="Details of TDS Exemption certificate" name="statutory.tdsExemptionDetails" placeholder="Reference details" />
-                     <FormInput label="Consent to Operate from P.C.B" name="statutory.consentToOperate" placeholder="Pollution Board Ref" />
+                <FormSection title="G. Compliance" icon={Activity}>
+                   <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                     <FormInput label="TDS Exemption" name="statutory.tdsExemptionDetails" placeholder="Ref" />
+                     <FormInput label="PCB Consent" name="statutory.consentToOperate" placeholder="PCB Ref" />
                    </div>
                 </FormSection>
 
-                <FormSection title="H. Bank Details" icon={CreditCard}>
-                   <div className="grid gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
-                     <FormInput label="Beneficiary name" name="bank.beneficiaryName" placeholder="As per Bank record" />
-                     <FormInput label="Name of Bank" name="bank.bankName" placeholder="E.g. HDFC Bank" />
-                     <FormInput label="Bank Account Number" name="bank.accountNumber" placeholder="Account No" />
-                     <FormInput label="Name of the Bank Branch" name="bank.branchName" placeholder="Branch Name" />
-                     <FormInput label="Address of Branch" name="bank.branchAddress" placeholder="Full Address" />
-                     <FormInput label="Account type" name="bank.accountType" type="select" options={['Savings', 'Current', 'CC/OD']} />
-                     <FormInput label="IFSC Code" name="bank.ifscCode" placeholder="Branch IFSC" />
-                     <FormInput label="SWIFT/IBAN number" name="bank.swiftIban" placeholder="International Code" />
-                     <FormInput label="Email id of the bank" name="bank.bankEmail" placeholder="bank@service.com" />
+                <FormSection title="H. Bank" icon={CreditCard}>
+                   <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                     <FormInput label="Beneficiary" name="bank.beneficiaryName" placeholder="Name" />
+                     <FormInput label="Bank" name="bank.bankName" placeholder="Bank" />
+                     <FormInput label="A/C No" name="bank.accountNumber" placeholder="Acc No" />
+                     <FormInput label="Branch" name="bank.branchName" placeholder="Branch" />
+                     <FormInput label="Address" name="bank.branchAddress" placeholder="Address" />
+                     <FormInput label="A/C Type" name="bank.accountType" type="select" options={['Savings', 'Current', 'CC/OD']} />
+                     <FormInput label="IFSC" name="bank.ifscCode" placeholder="IFSC" />
+                     <FormInput label="SWIFT/IBAN" name="bank.swiftIban" placeholder="Code" />
+                     <FormInput label="Bank Email" name="bank.bankEmail" placeholder="Email" />
                    </div>
                 </FormSection>
 
-                <FormSection title="I. Currency & Credit Terms" icon={TrendingUp}>
-                   <div className="grid gap-x-10 gap-y-12 sm:grid-cols-2 max-w-4xl">
-                     <FormInput label="Transaction Currency" name="currency" type="select" options={['INR', 'USD', 'EUR', 'GBP', 'AED']} />
-                     <FormInput label="Credit Terms" name="creditTerms" placeholder="E.g. NET 30" />
+                <FormSection title="I. Terms" icon={TrendingUp}>
+                   <div className="grid gap-4 sm:grid-cols-2 max-w-2xl">
+                     <FormInput label="Currency" name="currency" type="select" options={['INR', 'USD', 'EUR', 'GBP', 'AED']} />
+                     <FormInput label="Credit Terms" name="creditTerms" placeholder="NET 30" />
                    </div>
                 </FormSection>
               </div>
 
-              <div className="pt-12 flex items-center justify-end gap-4 border-t-2 border-slate-100">
+              <div className="pt-8 flex items-center justify-end gap-4 border-t-2 border-slate-50">
                  <button 
                    type="button" 
                    onClick={() => navigate('/vendors')} 
@@ -1133,27 +1117,145 @@ function RegistrationForm({ onComplete }: { onComplete: () => void }) {
   );
 }
 
+function AttachmentSummary({ values, onOpen }: { values: any, onOpen: () => void }) {
+  const docs = [
+    values.gstinCopy, values.panCopy, values.msmedCopy, 
+    values.cancelledChequeCopy, values.tdsExemptionCopy, values.signedDeclaration
+  ];
+  const uploadedCount = docs.filter(v => v && v !== '').length;
+  const isComplete = uploadedCount >= 4; // Mandatory 4
+
+  return (
+    <div className="bg-white/50 p-6 rounded-2xl border-2 border-dashed border-slate-200 hover:border-indigo-600/30 transition-all group flex flex-col md:flex-row items-center justify-between gap-6 shadow-sm">
+      <div className="flex items-center gap-5">
+        <div className={cn(
+          "h-12 w-12 rounded-xl flex items-center justify-center transition-all",
+          isComplete ? "bg-emerald-500 text-white shadow-lg shadow-emerald-200" : "bg-slate-100 text-slate-400"
+        )}>
+          {isComplete ? <CheckCircle2 className="h-6 w-6" /> : <Paperclip className="h-6 w-6" />}
+        </div>
+        <div>
+          <h4 className="text-[12px] font-black uppercase tracking-[0.1em] text-slate-900 leading-none">Document Repository</h4>
+          <p className="text-[10px] font-black text-slate-400 mt-2 uppercase tracking-widest">
+            {uploadedCount} of 6 Files Uploaded • <span className={isComplete ? "text-emerald-500" : "text-rose-500"}>{isComplete ? "Mandatory Ready" : "Pending Mandatory"}</span>
+          </p>
+        </div>
+      </div>
+      <button 
+        type="button"
+        onClick={onOpen}
+        className="px-6 py-3 bg-[#0f172a] text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-indigo-600 transition-all shadow-xl active:scale-95 flex items-center gap-2 group-hover:px-8"
+      >
+        <FolderOpen className="h-4 w-4" />
+        Manage Attachments
+      </button>
+    </div>
+  );
+}
+
+function AttachmentModal({ values, setFieldValue, onClose }: any) {
+  return (
+    <div className="fixed inset-0 z-[200] flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4">
+       <motion.div 
+         initial={{ opacity: 0, scale: 0.95, y: 20 }}
+         animate={{ opacity: 1, scale: 1, y: 0 }}
+         exit={{ opacity: 0, scale: 0.95, y: 20 }}
+         className="bg-white rounded-[2.5rem] w-full max-w-4xl shadow-[0_50px_100px_-20px_rgba(0,0,0,0.3)] overflow-hidden relative border border-white"
+       >
+          <div className="px-10 py-8 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+             <div className="flex items-center gap-4">
+                <div className="h-12 w-12 rounded-2xl bg-indigo-600 text-white flex items-center justify-center shadow-lg transform rotate-3">
+                   <FolderOpen className="h-6 w-6" />
+                </div>
+                <div>
+                   <h2 className="text-xl font-black text-slate-900 font-display uppercase tracking-tight">Upload Terminal</h2>
+                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Registry Attachments • Mandatory & Optional</p>
+                </div>
+             </div>
+             <button onClick={onClose} className="p-3 bg-white border border-slate-100 rounded-2xl text-slate-400 hover:text-rose-500 hover:border-rose-100 transition-all shadow-sm">
+               <X className="h-6 w-6" />
+             </button>
+          </div>
+
+          <div className="p-10 max-h-[70vh] overflow-y-auto">
+             <div className="mb-8 p-6 bg-amber-50 rounded-2xl border border-amber-100 flex items-start gap-4">
+                <AlertCircle className="h-5 w-5 text-amber-500 mt-0.5 shrink-0" />
+                <p className="text-[11px] font-bold text-amber-900 leading-relaxed uppercase tracking-wider">
+                  Important: Ensure all files are clear and readable. Mandatory documents (GST, PAN, MSMED, Cancelled Cheque) must be uploaded to proceed with the final registry synchronization.
+                </p>
+             </div>
+
+             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                 <FileField 
+                   label="GSTIN Copy" 
+                   value={values.gstinCopy} 
+                   onUpload={(url: string) => setFieldValue('documents.gstinCopy', url)} 
+                   required 
+                 />
+                 <FileField 
+                   label="PAN Copy" 
+                   value={values.panCopy} 
+                   onUpload={(url: string) => setFieldValue('documents.panCopy', url)} 
+                   required 
+                 />
+                 <FileField 
+                   label="MSMED Certificate" 
+                   value={values.msmedCopy} 
+                   onUpload={(url: string) => setFieldValue('documents.msmedCopy', url)} 
+                   required 
+                 />
+                 <FileField 
+                   label="Cancelled Cheque" 
+                   value={values.cancelledChequeCopy} 
+                   onUpload={(url: string) => setFieldValue('documents.cancelledChequeCopy', url)} 
+                   required 
+                 />
+                 <FileField 
+                   label="TDS Exemption" 
+                   value={values.tdsExemptionCopy} 
+                   onUpload={(url: string) => setFieldValue('documents.tdsExemptionCopy', url)} 
+                 />
+                 <FileField 
+                   label="Signed Declaration" 
+                   value={values.signedDeclaration} 
+                   onUpload={(url: string) => setFieldValue('documents.signedDeclaration', url)} 
+                 />
+             </div>
+          </div>
+
+          <div className="px-10 py-8 border-t border-slate-100 bg-slate-50/50 flex justify-end">
+             <button 
+               onClick={onClose}
+               className="px-10 py-4 bg-indigo-600 text-white rounded-2xl text-[12px] font-black uppercase tracking-widest shadow-xl shadow-indigo-600/20 hover:bg-indigo-700 active:scale-95 transition-all"
+             >
+               Confirm & Close
+             </button>
+          </div>
+       </motion.div>
+    </div>
+  );
+}
+
 function FormSection({ title, icon: Icon, children }: any) {
   const sectionLetter = title.split('.')[0];
   const sectionTitle = title.split('.').slice(1).join('.');
 
   return (
-    <div className="space-y-8 group">
-      <div className="flex items-center gap-6 pb-6 border-b-4 border-slate-50 group-hover:border-indigo-600 transition-all duration-700 relative">
+    <div className="space-y-4 group">
+      <div className="flex items-center gap-4 pb-3 border-b-2 border-slate-50 group-hover:border-indigo-600 transition-all duration-500 relative">
         <div className="relative">
-          <div className="h-16 w-16 rounded-2xl bg-indigo-600 flex items-center justify-center text-white shadow-xl group-hover:scale-105 transition-all duration-500 z-10 relative">
-            <Icon className="h-8 w-8" />
+          <div className="h-10 w-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-lg group-hover:scale-105 transition-all duration-500 z-10 relative">
+            <Icon className="h-5 w-5" />
           </div>
-          <div className="absolute -top-3 -left-3 h-10 w-10 rounded-xl bg-white text-indigo-700 flex items-center justify-center font-black text-sm shadow-lg border-2 border-indigo-50 z-20">
+          <div className="absolute -top-2 -left-2 h-6 w-6 rounded-lg bg-white text-indigo-700 flex items-center justify-center font-black text-[10px] shadow-md border border-indigo-50 z-20">
             {sectionLetter}
           </div>
         </div>
         <div className="flex flex-col">
-          <h3 className="text-2xl font-black uppercase tracking-[0.2em] text-slate-900 font-display leading-none">{sectionTitle}</h3>
-          <div className="h-1.5 w-20 bg-indigo-600 mt-3 rounded-full group-hover:w-full transition-all duration-700 shadow-lg shadow-indigo-200" />
+          <h3 className="text-base font-black uppercase tracking-[0.1em] text-slate-900 font-display leading-none">{sectionTitle}</h3>
         </div>
       </div>
-      <div className="pl-6">
+      <div className="pl-2">
         {children}
       </div>
     </div>
@@ -1210,39 +1312,33 @@ function FileField({ label, value, onUpload, required }: any) {
   };
 
   return (
-    <div className="space-y-4">
-      <label className="text-[12px] font-black text-slate-400 uppercase tracking-[0.2em] pl-1 leading-none flex items-center justify-between">
+    <div className="space-y-2">
+      <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.1em] pl-1 leading-none flex items-center justify-between">
         <span>{label} {required && <span className="text-rose-500">*</span>}</span>
-        {value ? (
-          <span className="text-emerald-500 font-black text-[12px] bg-emerald-50 px-5 py-2 rounded-full border-2 border-emerald-100 flex items-center gap-2 animate-in fade-in slide-in-from-right-3 shadow-lg shadow-emerald-700/5">
-            ✅ REQUIRED / ATTACHED
-          </span>
-        ) : (
-          <span className="text-slate-400 font-black text-[12px] bg-slate-50 px-5 py-2 rounded-full border-2 border-slate-100 flex items-center gap-2 shadow-sm">
-            ❌ NOT APPLICABLE / NOT PROVIDED
+        {value && (
+          <span className="text-emerald-500 font-bold text-[9px] bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100 flex items-center gap-1 shadow-sm">
+            ATTACHED
           </span>
         )}
       </label>
       <div className={cn(
-        "relative h-32 rounded-3xl border-2 border-dashed transition-all flex flex-col items-center justify-center gap-3 overflow-hidden shadow-lg",
-        value ? "bg-emerald-50 border-emerald-300 shadow-emerald-500/5" : "bg-slate-50 border-slate-200 hover:border-indigo-600 hover:bg-white hover:shadow-indigo-500/10"
+        "relative h-20 rounded-xl border-2 border-dashed transition-all flex flex-col items-center justify-center gap-1 overflow-hidden",
+        value ? "bg-emerald-50 border-emerald-200" : "bg-white border-slate-200 hover:border-indigo-600 hover:bg-slate-50"
       )}>
         {uploading ? (
-          <div className="flex flex-col items-center gap-2 text-indigo-600 animate-pulse">
-            <RefreshCw className="h-8 w-8 animate-spin mb-1" />
-            <span className="text-[10px] font-black uppercase tracking-[0.2em]">Synching Node...</span>
+          <div className="flex flex-col items-center gap-1 text-indigo-600 animate-pulse">
+            <RefreshCw className="h-5 w-5 animate-spin" />
+            <span className="text-[9px] font-black uppercase">uploading...</span>
           </div>
         ) : value ? (
-          <motion.div initial={{ scale: 0.8 }} animate={{ scale: 1 }} className="flex flex-col items-center gap-2 text-emerald-600">
-            <CheckCircle2 className="h-10 w-10 drop-shadow-lg" />
-            <span className="text-[10px] font-black uppercase tracking-[0.2em]">Master Authenticated</span>
+          <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }} className="flex flex-col items-center gap-1 text-emerald-600">
+            <CheckCircle2 className="h-6 w-6" />
+            <span className="text-[9px] font-black uppercase">Verified</span>
           </motion.div>
         ) : (
           <>
-            <div className="h-10 w-10 rounded-xl bg-white text-slate-400 flex items-center justify-center shadow-md border border-slate-100 group-hover:bg-indigo-600 group-hover:text-white transition-all">
-               <Upload className="h-5 w-5" />
-            </div>
-            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Target File Path</span>
+            <Upload className="h-5 w-5 text-slate-300" />
+            <span className="text-[9px] font-black uppercase text-slate-300">Click to upload</span>
           </>
         )}
         <input 
@@ -1258,27 +1354,26 @@ function FileField({ label, value, onUpload, required }: any) {
 
 function FormInput({ label, name, type = 'text', placeholder, options, error }: any) {
   return (
-    <div className="space-y-3">
-       <label className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] pl-1 leading-none block">{label}</label>
+    <div className="space-y-1.5">
+       <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.1em] pl-1 leading-none block">{label}</label>
        <div className="relative group">
          {type === 'select' ? (
-           <Field as="select" name={name} className="w-full bg-white border border-slate-200 rounded-xl py-3 px-5 text-sm font-bold text-slate-900 focus:ring-4 focus:ring-indigo-50 focus:border-indigo-600 hover:border-slate-300 transition-all outline-none shadow-sm appearance-none cursor-pointer">
+           <Field as="select" name={name} className="w-full bg-white border border-slate-200 rounded-lg py-2 px-3 text-xs font-bold text-slate-900 focus:ring-2 focus:ring-indigo-50 focus:border-indigo-600 hover:border-slate-300 transition-all outline-none shadow-sm appearance-none cursor-pointer">
               {options.map((o: string) => <option key={o} value={o}>{o}</option>)}
            </Field>
          ) : (
-           <Field name={name} placeholder={placeholder} className="w-full bg-white border border-slate-200 rounded-xl py-3 px-5 text-sm font-bold text-slate-900 focus:ring-4 focus:ring-indigo-50 focus:border-indigo-600 hover:border-slate-300 transition-all outline-none shadow-sm placeholder:text-slate-300" />
+           <Field name={name} placeholder={placeholder} className="w-full bg-white border border-slate-200 rounded-lg py-2 px-3 text-xs font-bold text-slate-900 focus:ring-2 focus:ring-indigo-50 focus:border-indigo-600 hover:border-slate-300 transition-all outline-none shadow-sm placeholder:text-slate-300" />
          )}
-         <div className="absolute inset-0 rounded-xl border border-white/40 pointer-events-none" />
        </div>
-       <div className="h-6">
+       <div className="h-4">
          <AnimatePresence>
            {error && (
              <motion.p 
-               initial={{ opacity: 0, x: -10 }}
+               initial={{ opacity: 0, x: -5 }}
                animate={{ opacity: 1, x: 0 }}
-               className="text-[12px] font-black text-rose-500 uppercase tracking-[0.2em] pl-4 flex items-center gap-2"
+               className="text-[9px] font-black text-rose-500 uppercase tracking-[0.1em] pl-1 flex items-center gap-1"
              >
-               <AlertCircle className="h-4 w-4" /> {error}
+               <AlertCircle className="h-3 w-3" /> {error}
              </motion.p>
            )}
          </AnimatePresence>
