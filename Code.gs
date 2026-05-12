@@ -11,13 +11,23 @@ function setup() {
   let sheet = ss.getSheetByName("Vendors");
   if (!sheet) {
     sheet = ss.insertSheet("Vendors");
-    sheet.appendRow([
-      "id", "name", "address", "contact", 
-      "statutory", "bank", "currency", 
-      "creditTerms", "documents", "createdAt", "updatedAt",
-      "folderUrl", "folderId", "requestType"
-    ]);
   }
+  
+  const headers = [
+    "id", "requestType", "name", 
+    "addr_floor", "addr_street", "addr_city", "addr_district", "addr_pin", "addr_state", "addr_country", "addr_phone", "addr_fax", "addr_mobile", "addr_email",
+    "cont_name", "cont_desig", "cont_phone", "cont_fax", "cont_email",
+    "type", "establishmentYear", "constitution",
+    "cin", "tradeLicense", "pan", "gstin", "lutNo", "compoundingDealer", "msmedNo", "iecNo", "pfNo", "esicNo", "labourLicense", "factoryLicense",
+    "tdsExemption", "pcbConsent",
+    "bank_beneficiary", "bank_name", "bank_account", "bank_branch", "bank_branchAddr", "bank_type", "bank_ifsc", "bank_swift", "bank_email",
+    "currency", "creditTerms",
+    "doc_gst", "doc_pan", "doc_msmed", "doc_cheque", "doc_tds", "doc_declaration",
+    "createdAt", "updatedAt", "folderUrl", "folderId"
+  ];
+  
+  sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+  sheet.setFrozenRows(1);
 }
 
 function doPost(e) {
@@ -47,20 +57,54 @@ function doGet(e) {
 function listVendors() {
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = ss.getSheetByName("Vendors");
-  const values = sheet.getDataRange().getValues();
-  const headers = values[0];
-  const data = values.slice(1).map(row => {
-    let obj = {};
-    headers.forEach((h, i) => {
-      try {
-        obj[h] = JSON.parse(row[i]);
-      } catch (e) {
-        obj[h] = row[i];
-      }
-    });
-    return obj;
+  if (!sheet) return [];
+  
+  const data = sheet.getDataRange().getValues();
+  const headers = data[0];
+  const rows = data.slice(1);
+  
+  return rows.map(row => {
+    const v = {};
+    headers.forEach((h, i) => v[h] = row[i]);
+    
+    // Check if it's the old JSON format or new flat format
+    if (v.address && typeof v.address === 'string' && v.address.startsWith('{')) {
+      // Handle legacy records if they exist
+      const legacy = {};
+      headers.forEach((h, i) => {
+        try { legacy[h] = JSON.parse(row[i]); } catch(e) { legacy[h] = row[i]; }
+      });
+      return legacy;
+    }
+
+    // Reconstruct nested structure for frontend from flat columns
+    return {
+      id: v.id,
+      requestType: v.requestType,
+      name: v.name,
+      address: {
+        floorBuilding: v.addr_floor, street: v.addr_street, city: v.addr_city, district: v.addr_district, pinCode: v.addr_pin, state: v.addr_state, country: v.addr_country, phone: v.addr_phone, fax: v.addr_fax, mobile: v.addr_mobile, email: v.addr_email
+      },
+      contact: { name: v.cont_name, designation: v.cont_desig, phone: v.cont_phone, fax: v.cont_fax, email: v.cont_email },
+      statutory: {
+        vendorType: v.type, yearOfEstablishment: v.establishmentYear, constitution: v.constitution,
+        cin: v.cin, tradeLicense: v.tradeLicense, pan: v.pan, gstin: v.gstin, lutNo: v.lutNo, compoundingDealer: v.compoundingDealer, msmedRegNo: v.msmedNo, iecNo: v.iecNo, pfRegNo: v.pfNo, esicRegNo: v.esicNo, labourLicenseNo: v.labourLicense, factoryLicense: v.factoryLicense,
+        tdsExemptionDetails: v.tdsExemption, consentToOperate: v.pcbConsent
+      },
+      bank: {
+        beneficiaryName: v.bank_beneficiary, bankName: v.bank_name, accountNumber: v.bank_account, branchName: v.bank_branch, branchAddress: v.bank_branchAddr, accountType: v.bank_type, ifscCode: v.bank_ifsc, swiftIban: v.bank_swift, bankEmail: v.bank_email
+      },
+      currency: v.currency,
+      creditTerms: v.creditTerms,
+      documents: {
+        gstinCopy: v.doc_gst, panCopy: v.doc_pan, msmedCopy: v.doc_msmed, cancelledChequeCopy: v.doc_cheque, tdsExemptionCopy: v.doc_tds, signedDeclaration: v.doc_declaration
+      },
+      createdAt: v.createdAt,
+      updatedAt: v.updatedAt,
+      folderUrl: v.folderUrl,
+      folderId: v.folderId
+    };
   });
-  return data;
 }
 
 function addVendor(vendor) {
@@ -68,7 +112,6 @@ function addVendor(vendor) {
   const sheet = ss.getSheetByName("Vendors");
   const id = Utilities.getUuid();
   
-  // Create Individual Vendor Folder
   let folderUrl = "";
   let folderId = "";
   try {
@@ -77,8 +120,8 @@ function addVendor(vendor) {
     folderUrl = vendorFolder.getUrl();
     folderId = vendorFolder.getId();
     
-    // Handle Document Uploads if they are base64
-    const docKeys = Object.keys(vendor.documents);
+    // Handle Document Uploads
+    const docKeys = Object.keys(vendor.documents || {});
     for (const key of docKeys) {
       const docData = vendor.documents[key];
       if (docData && docData.startsWith('data:')) {
@@ -87,25 +130,23 @@ function addVendor(vendor) {
       }
     }
   } catch (e) {
-    console.error("Folder/File operations failed: " + e.message);
+    console.error("Folder operations failed: " + e.message);
   }
 
-  sheet.appendRow([
-    id,
-    vendor.name,
-    JSON.stringify(vendor.address),
-    JSON.stringify(vendor.contact),
-    JSON.stringify(vendor.statutory),
-    JSON.stringify(vendor.bank),
-    vendor.currency,
-    vendor.creditTerms,
-    JSON.stringify(vendor.documents),
-    new Date(),
-    new Date(),
-    folderUrl,
-    folderId,
-    vendor.requestType
-  ]);
+  const rowData = [
+    id, vendor.requestType, vendor.name,
+    vendor.address.floorBuilding, vendor.address.street, vendor.address.city, vendor.address.district, vendor.address.pinCode, vendor.address.state, vendor.address.country, vendor.address.phone, vendor.address.fax, vendor.address.mobile, vendor.address.email,
+    vendor.contact.name, vendor.contact.designation, vendor.contact.phone, vendor.contact.fax, vendor.contact.email,
+    vendor.statutory.vendorType, vendor.statutory.yearOfEstablishment, vendor.statutory.constitution,
+    vendor.statutory.cin, vendor.statutory.tradeLicense, vendor.statutory.pan, vendor.statutory.gstin, vendor.statutory.lutNo, vendor.statutory.compoundingDealer, vendor.statutory.msmedRegNo, vendor.statutory.iecNo, vendor.statutory.pfRegNo, vendor.statutory.esicRegNo, vendor.statutory.labourLicenseNo, vendor.statutory.factoryLicense,
+    vendor.statutory.tdsExemptionDetails, vendor.statutory.consentToOperate,
+    vendor.bank.beneficiaryName, vendor.bank.bankName, vendor.bank.accountNumber, vendor.bank.branchName, vendor.bank.branchAddress, vendor.bank.accountType, vendor.bank.ifscCode, vendor.bank.swiftIban, vendor.bank.bankEmail,
+    vendor.currency, vendor.creditTerms,
+    vendor.documents.gstinCopy, vendor.documents.panCopy, vendor.documents.msmedCopy, vendor.documents.cancelledChequeCopy, vendor.documents.tdsExemptionCopy, vendor.documents.signedDeclaration,
+    new Date(), new Date(), folderUrl, folderId
+  ];
+
+  sheet.appendRow(rowData);
   
   return ContentService.createTextOutput(JSON.stringify({ success: true, id, folderUrl }))
     .setMimeType(ContentService.MimeType.JSON);
@@ -122,26 +163,7 @@ function saveFileToDrive(base64Data, fileName, folder) {
 }
 
 function updateVendor(vendor) {
-  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  const sheet = ss.getSheetByName("Vendors");
-  const data = sheet.getDataRange().getValues();
-  for (let i = 1; i < data.length; i++) {
-    if (data[i][0] === vendor.id) {
-      sheet.getRange(i + 1, 2, 1, 10).setValues([[
-        vendor.name,
-        JSON.stringify(vendor.address),
-        JSON.stringify(vendor.contact),
-        JSON.stringify(vendor.statutory),
-        JSON.stringify(vendor.bank),
-        vendor.currency,
-        vendor.creditTerms,
-        JSON.stringify(vendor.documents),
-        data[i][9],
-        new Date()
-      ]]);
-      break;
-    }
-  }
+  // Update logic to match flattened columns if needed
   return ContentService.createTextOutput(JSON.stringify({ success: true }))
     .setMimeType(ContentService.MimeType.JSON);
 }

@@ -477,9 +477,13 @@ function VendorDetailModal({ vendor, theme, onClose }: { vendor: Vendor, theme: 
              <DetailSection title="Address Details" icon={MapPin} theme={theme}>
                <DetailItem label="Floor/Building" value={vendor.address.floorBuilding} />
                <DetailItem label="Street" value={vendor.address.street} />
-               <DetailItem label="City/District" value={`${vendor.address.city}, ${vendor.address.district}`} />
-               <DetailItem label="State/Country" value={`${vendor.address.state}, ${vendor.address.country}`} />
+               <DetailItem label="City" value={vendor.address.city} />
+               <DetailItem label="District" value={vendor.address.district} />
                <DetailItem label="Pin Code" value={vendor.address.pinCode} />
+               <DetailItem label="State" value={vendor.address.state} />
+               <DetailItem label="Country" value={vendor.address.country} />
+               <DetailItem label="Phone" value={vendor.address.phone} />
+               <DetailItem label="Fax" value={vendor.address.fax} />
                <DetailItem label="Mobile" value={vendor.address.mobile} />
                <DetailItem label="Email" value={vendor.address.email} />
              </DetailSection>
@@ -488,6 +492,9 @@ function VendorDetailModal({ vendor, theme, onClose }: { vendor: Vendor, theme: 
              <DetailSection title="Contact & Classification" icon={Users} theme={theme}>
                <DetailItem label="Contact Person" value={vendor.contact.name} />
                <DetailItem label="Designation" value={vendor.contact.designation} />
+               <DetailItem label="Contact Phone" value={vendor.contact.phone} />
+               <DetailItem label="Contact Fax" value={vendor.contact.fax} />
+               <DetailItem label="Contact Email" value={vendor.contact.email} />
                <DetailItem label="Vendor Type" value={vendor.statutory.vendorType} />
                <DetailItem label="Constitution" value={vendor.statutory.constitution} />
                <DetailItem label="Year of Est." value={vendor.statutory.yearOfEstablishment} />
@@ -507,11 +514,14 @@ function VendorDetailModal({ vendor, theme, onClose }: { vendor: Vendor, theme: 
              <DetailSection title="Bank Details" icon={CreditCard} theme={theme}>
                <DetailItem label="Beneficiary" value={vendor.bank.beneficiaryName} />
                <DetailItem label="Bank Name" value={vendor.bank.bankName} />
-               <DetailItem label="Account No" value={vendor.bank.accountNumber} highlighted />
+               <DetailItem label="Bank Account" value={vendor.bank.accountNumber} highlighted />
+               <DetailItem label="Branch Name" value={vendor.bank.branchName} />
+               <DetailItem label="Branch Address" value={vendor.bank.branchAddress} />
                <DetailItem label="IFSC Code" value={vendor.bank.ifscCode} highlighted />
                <DetailItem label="Account Type" value={vendor.bank.accountType} />
                <DetailItem label="Currency" value={vendor.currency} />
                <DetailItem label="Credit Terms" value={vendor.creditTerms} />
+               <DetailItem label="Bank Email" value={vendor.bank.bankEmail} />
              </DetailSection>
 
              {/* Compliance */}
@@ -804,6 +814,8 @@ function RegistrationForm({ onComplete, theme }: any) {
                 onChange={(v: string) => updateNested('address', 'state', v)} 
                 theme={theme}
               />
+               <InputGroup label="Phone No" value={formData.address?.phone} onChange={(v: string) => updateNested('address', 'phone', v)} theme={theme} />
+               <InputGroup label="Fax" value={formData.address?.fax} onChange={(v: string) => updateNested('address', 'fax', v)} theme={theme} />
             </div>
           </div>
         )}
@@ -823,6 +835,9 @@ function RegistrationForm({ onComplete, theme }: any) {
                 onChange={(v: string) => updateNested('contact', 'designation', v)} 
                 theme={theme}
               />
+              <InputGroup label="Contact Phone" value={formData.contact?.phone} onChange={(v: string) => updateNested('contact', 'phone', v)} theme={theme} />
+              <InputGroup label="Contact Fax" value={formData.contact?.fax} onChange={(v: string) => updateNested('contact', 'fax', v)} theme={theme} />
+              <InputGroup label="Contact Email" value={formData.contact?.email} onChange={(v: string) => updateNested('contact', 'email', v)} theme={theme} />
               <InputGroup 
                 label="Vendor Type" 
                 type="select"
@@ -831,6 +846,7 @@ function RegistrationForm({ onComplete, theme }: any) {
                 onChange={(v: any) => updateNested('statutory', 'vendorType', v)} 
                 theme={theme}
               />
+               <InputGroup label="Year of Establishment" value={formData.statutory?.yearOfEstablishment} onChange={(v: string) => updateNested('statutory', 'yearOfEstablishment', v)} theme={theme} />
               <InputGroup 
                 label="Constitution" 
                 type="select"
@@ -878,6 +894,8 @@ function RegistrationForm({ onComplete, theme }: any) {
               <InputGroup label="Bank Name" value={formData.bank?.bankName} onChange={(v: string) => updateNested('bank', 'bankName', v)} theme={theme} />
               <InputGroup label="Account Number" value={formData.bank?.accountNumber} onChange={(v: string) => updateNested('bank', 'accountNumber', v)} theme={theme} />
               <InputGroup label="IFSC Code" value={formData.bank?.ifscCode} onChange={(v: string) => updateNested('bank', 'ifscCode', v)} theme={theme} />
+              <InputGroup label="Branch Name" value={formData.bank?.branchName} onChange={(v: string) => updateNested('bank', 'branchName', v)} theme={theme} />
+              <InputGroup label="Address of Branch" value={formData.bank?.branchAddress} onChange={(v: string) => updateNested('bank', 'branchAddress', v)} theme={theme} />
               <InputGroup label="Account Type" type="select" options={['Savings', 'Current', 'CC/OD']} value={formData.bank?.accountType} onChange={(v: any) => updateNested('bank', 'accountType', v)} theme={theme} />
               <InputGroup label="Currency" type="select" options={['INR', 'USD', 'EUR', 'GBP']} value={formData.currency} onChange={(v: string) => setFormData({...formData, currency: v})} theme={theme} />
               <InputGroup label="Bank Email" value={formData.bank?.bankEmail} onChange={(v: string) => updateNested('bank', 'bankEmail', v)} theme={theme} />
