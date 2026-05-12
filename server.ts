@@ -9,7 +9,7 @@ import axios from 'axios';
 const app = express();
 app.use(express.json({ limit: '50mb' }));
 
-const SCRIPT_URL = process.env.GOOGLE_SCRIPT_URL;
+const SCRIPT_URL = process.env.VITE_GOOGLE_SCRIPT_URL || process.env.GOOGLE_SCRIPT_URL;
 
 // Helper to interact with GAS
 async function callScript(action: string, data: any = {}) {

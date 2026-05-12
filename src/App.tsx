@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import axios from 'axios';
 import { 
   Building2, 
   LayoutDashboard, 
@@ -26,13 +27,48 @@ import {
   CheckCircle2,
   AlertCircle,
   Palette,
-  Eye
+  Eye,
+  ArrowLeft,
+  ArrowRight
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn, formatDate } from './lib/utils';
 import type { Vendor } from './types/vendor';
 import { saveAs } from 'file-saver';
 import Papa from 'papaparse';
+
+const SCRIPT_URL = import.meta.env.VITE_GOOGLE_SCRIPT_URL;
+
+// Helper for API calls
+const apiCall = async (action: string, data: any = {}) => {
+  // If we are on GitHub Pages or similar, we must talk to GAS directly
+  const isDirect = window.location.hostname.includes('github.io');
+  
+  if (isDirect && SCRIPT_URL) {
+    // GAS requires POST for everything that modifies or includes complex data
+    const response = await fetch(SCRIPT_URL, {
+      method: 'POST',
+      body: JSON.stringify({ action, ...data }),
+    });
+    return response.json();
+  }
+  
+  // Default to local proxy
+  if (action === 'list') {
+    const res = await axios.get('/api/vendors');
+    return res.data;
+  }
+  
+  if (action === 'add') {
+    const res = await axios.post('/api/vendors', data);
+    return res.data;
+  }
+  
+  if (action === 'health') {
+    const res = await axios.get('/api/health');
+    return res.data;
+  }
+};
 
 type Tab = 'dashboard' | 'vendors' | 'add' | 'settings';
 type Theme = 'pink' | 'purple' | 'indigo' | 'emerald' | 'blue';
@@ -57,8 +93,8 @@ export default function App() {
   const fetchVendors = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await axios.get('/api/vendors');
-      setVendors(Array.isArray(response.data) ? response.data : []);
+      const data = await apiCall('list');
+      setVendors(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Failed to fetch vendors:', error);
     } finally {
@@ -68,8 +104,8 @@ export default function App() {
 
   const checkHealth = useCallback(async () => {
     try {
-      const response = await axios.get('/api/health');
-      setSystemHealth(response.data);
+      const data = await apiCall('health');
+      setSystemHealth(data);
     } catch (error) {
       setSystemHealth({ status: 'error', db: 'disconnected' });
     }
@@ -506,7 +542,7 @@ function RegistrationForm({ onComplete, theme }: any) {
   const handleSubmit = async () => {
     setIsSubmitting(true);
     try {
-      await axios.post('/api/vendors', formData);
+      await apiCall('add', { vendor: formData });
       onComplete();
     } catch (error) {
       console.error('Submission failed:', error);
