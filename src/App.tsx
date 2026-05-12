@@ -45,6 +45,8 @@ import {
   Calendar,
   ThumbsUp,
   Upload,
+  Lock,
+  KeyRound,
   Check,
   Paperclip,
   Box,
@@ -243,10 +245,15 @@ const themeConfig = createTheme({
 function AppContent() {
   const dispatch = useDispatch<AppDispatch>();
   const { items: vendors, loading, systemHealth } = useSelector((state: RootState) => state.vendors);
+  
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    localStorage.getItem('terminal_auth') === 'true'
+  );
 
   const refreshData = useCallback(() => {
+    if (!isAuthenticated) return;
     dispatch(fetchVendorsThunk());
-  }, [dispatch]);
+  }, [dispatch, isAuthenticated]);
 
   const checkHealth = useCallback(async () => {
     try {
@@ -258,17 +265,31 @@ function AppContent() {
   }, [dispatch]);
 
   useEffect(() => {
-    refreshData();
-    checkHealth();
-    const interval = setInterval(checkHealth, 30000);
-    return () => clearInterval(interval);
-  }, [refreshData, checkHealth]);
+    if (isAuthenticated) {
+      refreshData();
+      checkHealth();
+      const interval = setInterval(checkHealth, 30000);
+      return () => clearInterval(interval);
+    }
+  }, [refreshData, checkHealth, isAuthenticated]);
+
+  if (!isAuthenticated) {
+    return (
+      <ThemeProvider theme={themeConfig}>
+        <CssBaseline />
+        <LoginTerminal onLogin={() => setIsAuthenticated(true)} />
+      </ThemeProvider>
+    );
+  }
 
   return (
     <ThemeProvider theme={themeConfig}>
       <CssBaseline />
       <Router>
-        <Layout systemHealth={systemHealth}>
+        <Layout systemHealth={systemHealth} onLogout={() => {
+          localStorage.removeItem('terminal_auth');
+          setIsAuthenticated(false);
+        }}>
           <Routes>
             <Route path="/" element={<Dashboard vendors={vendors} health={systemHealth} onRefresh={refreshData} />} />
             <Route path="/vendors" element={<VendorList vendors={vendors} loading={loading} />} />
@@ -289,7 +310,136 @@ export default function App() {
   );
 }
 
-function Layout({ children, systemHealth }: { children: React.ReactNode, systemHealth: any }) {
+function LoginTerminal({ onLogin }: { onLogin: () => void }) {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsProcessing(true);
+    
+    // Simulate biometric check delay
+    setTimeout(() => {
+      if (username === 'admin' && password === '1234') {
+        localStorage.setItem('terminal_auth', 'true');
+        onLogin();
+      } else {
+        setError(true);
+        setIsProcessing(false);
+        setTimeout(() => setError(false), 2000);
+      }
+    }, 800);
+  };
+
+  return (
+    <div className="min-h-screen bg-slate-950 flex items-center justify-center p-6 relative overflow-hidden font-sans">
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-[-10%] left-[-10%] h-[40%] w-[40%] bg-indigo-600/20 blur-[120px] rounded-full animate-pulse" />
+        <div className="absolute bottom-[-10%] right-[-10%] h-[40%] w-[40%] bg-blue-600/10 blur-[120px] rounded-full" />
+        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-100 contrast-150" />
+      </div>
+
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="w-full max-w-[440px] relative z-10"
+      >
+        <div className="mb-10 text-center">
+          <div className="h-16 w-16 bg-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-2xl shadow-indigo-500/20 border border-indigo-400/30">
+            <ShieldCheck className="h-8 w-8 text-white" />
+          </div>
+          <h1 className="text-3xl font-black text-white tracking-tight uppercase italic leading-none">
+            YAJUR<span className="text-indigo-400 not-italic">PORTAL</span>
+          </h1>
+          <p className="text-slate-500 text-[10px] font-bold uppercase tracking-[0.4em] mt-3">Identity Verification Protocol</p>
+        </div>
+
+        <div className="bg-slate-900/50 backdrop-blur-xl p-8 rounded-[2.5rem] border border-white/5 shadow-2xl space-y-8 relative overflow-hidden">
+          <form onSubmit={handleLogin} className="space-y-6">
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest pl-1">Command Node ID</label>
+                <div className="relative">
+                  <User className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-600" />
+                  <input 
+                    type="text" 
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    placeholder="Enter Username"
+                    disabled={isProcessing}
+                    className="w-full bg-slate-950/50 border border-slate-800 rounded-xl py-3.5 pl-12 pr-4 text-white text-sm font-bold focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500/50 transition-all outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest pl-1">Authorization Code</label>
+                <div className="relative">
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-600" />
+                  <input 
+                    type="password" 
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••"
+                    disabled={isProcessing}
+                    className="w-full bg-slate-950/50 border border-slate-800 rounded-xl py-3.5 pl-12 pr-4 text-white text-sm font-bold tracking-widest focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500/50 transition-all outline-none"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <AnimatePresence>
+              {error && (
+                <motion.div 
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="bg-rose-500/10 border border-rose-500/20 text-rose-500 p-3 rounded-xl text-[10px] font-bold uppercase tracking-widest flex items-center justify-center gap-2"
+                >
+                  <AlertCircle className="h-4 w-4" /> 
+                  Authentication Failed: Access Denied
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            <button 
+              type="submit"
+              disabled={isProcessing}
+              className={cn(
+                "w-full py-4 rounded-xl text-[12px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-3 active:scale-95",
+                isProcessing ? "bg-slate-800 text-slate-500 cursor-wait" : "bg-indigo-600 text-white hover:bg-indigo-500 shadow-xl shadow-indigo-600/20"
+              )}
+            >
+              {isProcessing ? (
+                <RefreshCw className="h-4 w-4 animate-spin" />
+              ) : (
+                <>
+                  <KeyRound className="h-4 w-4" />
+                  Authorize Access
+                </>
+              )}
+            </button>
+          </form>
+
+          <div className="pt-6 border-t border-white/5 flex items-center justify-between">
+            <span className="text-[9px] font-bold text-slate-600 uppercase tracking-widest flex items-center gap-2">
+              <div className="h-1.5 w-1.5 rounded-full bg-emerald-500/50" /> System Active
+            </span>
+            <span className="text-[9px] font-bold text-slate-700 uppercase tracking-widest">REL 2.1 GOLD</span>
+          </div>
+        </div>
+
+        <p className="mt-8 text-center text-slate-600 text-[10px] font-medium tracking-wide uppercase opacity-50">
+          Electronic Authorized Access Only. All transactions logged.
+        </p>
+      </motion.div>
+    </div>
+  );
+}
+
+function Layout({ children, systemHealth, onLogout }: { children: React.ReactNode, systemHealth: any, onLogout: () => void }) {
   const location = useLocation();
 
   const navItems = [
@@ -357,7 +507,7 @@ function Layout({ children, systemHealth }: { children: React.ReactNode, systemH
                <button 
                  onClick={() => {
                    if(confirm('Signal terminal log-off?')) {
-                     window.location.reload();
+                     onLogout();
                    }
                  }}
                  className="p-2.5 bg-slate-800 hover:bg-rose-600 text-slate-400 hover:text-white rounded-xl transition-all shadow-md border border-slate-700 hover:border-rose-500 active:scale-95 group"
